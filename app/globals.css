@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------ */
+/* CONDDO.IO design tokens — shared with the marketing site + Studio.  */
+/* Also exposed as CSS variables for non-Tailwind contexts.            */
+/* ------------------------------------------------------------------ */
+:root {
+  /* Primary */
+  --primary: #7c5cbf;
+  --primary-hover: #6a4dad;
+  --primary-light: #a07fd4;
+  --primary-bg: #f0ecfa;
+  --primary-border: #d4c8f0;
+
+  /* Neutrals */
+  --bg: #f8f8f6;
+  --surface: #ffffff;
+  --surface-2: #f2f2f0;
+  --border: #e5e5e3;
+  --border-strong: #cecec9;
+
+  /* Text */
+  --text-primary: #111111;
+  --text-secondary: #6b6b6b;
+  --text-muted: #9b9b9b;
+
+  /* Semantic */
+  --success: #1a6b4a;
+  --success-bg: #e8f4ef;
+  --warning: #c17f3a;
+  --warning-bg: #faf3e8;
+  --danger: #c0392b;
+  --danger-bg: #fdeeee;
+  --info: #2563eb;
+  --info-bg: #eef4ff;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--text-secondary);
+    font-feature-settings: "cv11", "ss01";
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    color: var(--text-primary);
+    font-weight: 500;
+    letter-spacing: -0.01em;
+  }
+
+  ::selection {
+    background-color: var(--primary);
+    color: #ffffff;
+  }
+}
+
+@layer components {
+  /* Eyebrow / label — 11px uppercase violet, tracked out. */
+  .eyebrow {
+    @apply text-[11px] font-medium uppercase tracking-[0.1em] text-primary;
+  }
+}
