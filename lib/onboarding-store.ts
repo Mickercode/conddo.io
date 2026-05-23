@@ -5,7 +5,8 @@ import { create } from "zustand";
 // (POST /api/v1/tenants) comes once the screens are built from the design.
 
 export type OnboardingData = {
-  // Step 1 — business details
+  // Step 1 — account
+  fullName: string;
   businessName: string;
   phone: string;
   email: string;
@@ -27,6 +28,7 @@ type OnboardingStore = OnboardingData & {
 };
 
 export const useOnboarding = create<OnboardingStore>((set) => ({
+  fullName: "",
   businessName: "",
   phone: "",
   email: "",

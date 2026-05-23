@@ -1,60 +1,68 @@
-// The guided signup flow (PRD §15). Single source of truth for step order,
-// labels, and navigation. The Stitch design fills in each step's UI; this
-// defines the skeleton they slot into.
+// The guided signup flow (PRD §15), built from the Stitch designs.
+//
+// There are 6 *routes* but only 5 numbered *progress steps* — phone
+// verification (verify-phone) is a sub-step of step 1 (account creation), so
+// it shares progressIndex 1. This matches the Stitch screens, which label the
+// flow "Step X of 5" (Create account = 1 … Ready = 5).
 
-export type OnboardingStep = {
+export type OnboardingRoute = {
   slug: string;
-  index: number; // 1-based
+  progressIndex: number; // 1..TOTAL_STEPS
   title: string;
   subtitle: string;
 };
 
-export const ONBOARDING_STEPS: OnboardingStep[] = [
+export const TOTAL_STEPS = 5;
+
+export const FLOW: OnboardingRoute[] = [
   {
-    slug: "business-details",
-    index: 1,
-    title: "Let's set up your business",
-    subtitle: "Start with the basics. This takes about a minute.",
+    slug: "create-account",
+    progressIndex: 1,
+    title: "Create your account",
+    subtitle: "Free for 14 days. No credit card.",
+  },
+  {
+    slug: "verify-phone",
+    progressIndex: 1,
+    title: "Verify your phone number",
+    subtitle: "Enter the code we sent to continue.",
   },
   {
     slug: "business-type",
-    index: 2,
-    title: "What kind of business is it?",
-    subtitle: "We pre-configure the platform for your industry.",
+    progressIndex: 2,
+    title: "What kind of business do you run?",
+    subtitle: "We set everything up based on your answer.",
   },
   {
     slug: "business-profile",
-    index: 3,
-    title: "Add your brand",
-    subtitle: "Your logo and details — used across your website and tools.",
+    progressIndex: 3,
+    title: "Tell us about your business",
+    subtitle: "This builds your website automatically based on the details you provide.",
   },
   {
     slug: "choose-plan",
-    index: 4,
-    title: "Choose your plan",
-    subtitle: "14 days free on every plan. No card charged today.",
+    progressIndex: 4,
+    title: "Choose your plan.",
+    subtitle: "14 days free on every plan. No credit card needed.",
   },
   {
     slug: "ready",
-    index: 5,
-    title: "Your business is ready",
-    subtitle: "Your site is being prepared. Here's what to do next.",
+    progressIndex: 5,
+    title: "You're all set",
+    subtitle: "",
   },
 ];
 
-export const TOTAL_STEPS = ONBOARDING_STEPS.length;
-
 export const hrefFor = (slug: string) => `/onboarding/${slug}`;
 
-export const stepBySlug = (slug: string) =>
-  ONBOARDING_STEPS.find((s) => s.slug === slug);
+export const routeBySlug = (slug: string) => FLOW.find((r) => r.slug === slug);
 
 export const nextStep = (slug: string) => {
-  const i = ONBOARDING_STEPS.findIndex((s) => s.slug === slug);
-  return i >= 0 && i < ONBOARDING_STEPS.length - 1 ? ONBOARDING_STEPS[i + 1] : undefined;
+  const i = FLOW.findIndex((r) => r.slug === slug);
+  return i >= 0 && i < FLOW.length - 1 ? FLOW[i + 1] : undefined;
 };
 
 export const prevStep = (slug: string) => {
-  const i = ONBOARDING_STEPS.findIndex((s) => s.slug === slug);
-  return i > 0 ? ONBOARDING_STEPS[i - 1] : undefined;
+  const i = FLOW.findIndex((r) => r.slug === slug);
+  return i > 0 ? FLOW[i - 1] : undefined;
 };

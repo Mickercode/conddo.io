@@ -70,4 +70,13 @@
   .eyebrow {
     @apply text-[11px] font-medium uppercase tracking-[0.1em] text-primary;
   }
+
+  /* Marketing layout helpers (shared with the landing sections). */
+  .container-x {
+    @apply mx-auto w-full max-w-container px-6 lg:px-8;
+  }
+
+  .section-y {
+    @apply py-16 md:py-24;
+  }
 }

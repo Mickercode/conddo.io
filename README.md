@@ -36,12 +36,18 @@ app/
     ready/                Step 5 — "website being prepared"
 components/
   ui/                     Button, Chip (ported from landing)
-  onboarding/             Stepper, StepShell, Field
+  onboarding/             OnboardingChrome (header + progress + footer),
+                          StepShell, Field
 lib/
   onboarding-steps.ts     step order / nav (single source of truth)
-  onboarding-store.ts     Zustand wizard state (stubbed)
+  onboarding-store.ts     Zustand wizard state
 tailwind.config.ts        brand tokens
 ```
+
+All steps share **one consistent chrome** (`OnboardingChrome`: logo · "Step X of
+5" · Save & Exit, thin progress bars, footer). The Stitch source designs are
+*not* internally consistent (Business Profile shipped with a sidebar + preview
+layout); we deliberately normalised every step into the same chrome.
 
 ## Brand
 
@@ -51,11 +57,15 @@ actions/active states, off-white surfaces, **no gradients or drop shadows**
 
 ## Status & next steps
 
-- Onboarding is **scaffolded, not wired**. Step pages are placeholders; the
-  Stitch designs define the final UI per step.
-- **To do:** build each step from the Stitch design; wire React Hook Form + Zod
-  validation against the Zustand store; connect signup to the backend
+- **Built from Stitch (UI done, not yet wired):** Business Type (step 2),
+  Business Profile + live preview (step 3), Plan Selection (step 4). Verified
+  against the designs.
+- **Still placeholders (no Stitch design yet):** Business Details (step 1),
+  Ready (step 5).
+- **To do:** design + build steps 1 & 5; wire React Hook Form + Zod validation
+  against the Zustand store; connect signup to the backend
   (`POST /api/v1/tenants`); add OTP (Termii) on the phone step; then the
-  dashboard.
-- **Pricing note:** plan cards use PRD §14 (₦15k/35k/65k); the landing site
-  shows ₦25k/45k/80k — reconcile which is canonical.
+  dashboard / CRM / orders screens (already designed in Stitch).
+- **Pricing — resolved:** ₦25k / ₦45k / ₦80k (Starter/Business/Pro), per the
+  Stitch design and landing page. (The PRD §14 figures of ₦15k/35k/65k are
+  superseded by the design; confirm the PRD gets updated to match.)

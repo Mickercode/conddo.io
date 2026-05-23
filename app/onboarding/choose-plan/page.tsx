@@ -1,70 +1,143 @@
-import { Check } from "lucide-react";
-import { StepShell } from "@/components/onboarding/StepShell";
+"use client";
 
-// Step 4 — Choose Plan (PRD §15.1). Pricing per PRD §14 (Subscription model).
-// NOTE: the marketing landing page currently shows ₦25k/45k/80k — reconcile
-// which pricing is canonical before launch. Placeholder selection UI.
-const plans = [
+import { useRouter } from "next/navigation";
+import { CircleCheck } from "lucide-react";
+import { Button } from "@/components/ui/Button";
+import { useOnboarding } from "@/lib/onboarding-store";
+import { hrefFor, nextStep } from "@/lib/onboarding-steps";
+
+// Built from the Stitch "Plan Selection" screen. Pricing ₦25k/45k/80k is the
+// design's canonical (matches the landing page).
+type Plan = {
+  id: string;
+  name: string;
+  blurb: string;
+  price: string;
+  inherits?: string;
+  features: string[];
+  popular?: boolean;
+};
+
+const plans: Plan[] = [
   {
     id: "starter",
     name: "Starter",
-    price: "₦15,000",
-    features: ["Website", "CRM", "Payments", "Analytics"],
+    blurb: "For businesses getting properly set up.",
+    price: "₦25,000",
+    features: ["Website", "CRM", "Payment processing", "Business analytics"],
   },
   {
     id: "business",
     name: "Business",
-    price: "₦35,000",
+    blurb: "For businesses ready to grow.",
+    price: "₦45,000",
+    inherits: "Everything in Starter",
+    features: [
+      "Booking & Orders",
+      "Inventory",
+      "Social media scheduler",
+      "Email/SMS campaigns",
+      "Marketing dashboard",
+    ],
     popular: true,
-    features: ["Everything in Starter", "Bookings & Orders", "Social scheduler", "Email & SMS"],
   },
   {
     id: "pro",
     name: "Pro",
-    price: "₦65,000",
-    features: ["Everything in Business", "Ad Manager", "API access", "Priority support"],
+    blurb: "For businesses running serious operations.",
+    price: "₦80,000",
+    inherits: "Everything in Business",
+    features: ["Ad management", "API access", "Advanced analytics", "Priority support"],
   },
 ];
 
 export default function ChoosePlanStep() {
+  const router = useRouter();
+  const { update } = useOnboarding();
+
+  const select = (planId: string) => {
+    update({ planId });
+    const next = nextStep("choose-plan");
+    if (next) router.push(hrefFor(next.slug));
+  };
+
   return (
-    <StepShell slug="choose-plan" continueLabel="Start free trial">
-      <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+    <>
+      <header className="mb-10 text-center">
+        <h1 className="text-[28px] leading-tight tracking-[-0.02em] md:text-[32px]">
+          Choose your plan.
+        </h1>
+        <p className="mt-2 text-[16px] text-content-secondary">
+          14 days free on every plan. No credit card needed.
+        </p>
+      </header>
+
+      <div className="grid w-full max-w-5xl grid-cols-1 items-start gap-6 md:grid-cols-3">
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className={`relative flex flex-col rounded-lg bg-neutral-surface p-5 ${
-              plan.popular ? "border-2 border-primary" : "border border-neutral-border"
+            className={`relative flex h-full flex-col rounded-xl bg-neutral-surface p-7 ${
+              plan.popular
+                ? "border-2 border-primary md:-mt-4 md:pb-9 md:pt-9"
+                : "border border-neutral-border"
             }`}
           >
             {plan.popular && (
-              <span className="absolute -top-2.5 left-5 inline-flex items-center rounded-full bg-primary px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-[0.08em] text-white">
-                Popular
+              <span className="absolute -top-3 left-1/2 inline-flex -translate-x-1/2 items-center rounded-full bg-primary px-3 py-1 font-mono text-[10px] font-medium uppercase tracking-[0.08em] text-white">
+                Most popular
               </span>
             )}
+
             <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-content-secondary">
               {plan.name}
             </p>
-            <div className="mt-2 flex items-baseline gap-1">
-              <span className="font-mono text-[24px] font-medium leading-none text-ink">
+            <p className="mt-1.5 text-[14px] leading-relaxed text-content-secondary">
+              {plan.blurb}
+            </p>
+
+            <div className="mt-4 flex items-baseline gap-1">
+              <span className="font-mono text-[30px] font-medium leading-none text-ink">
                 {plan.price}
               </span>
-              <span className="text-[13px] text-content-muted">/mo</span>
+              <span className="text-[14px] text-content-muted">/month</span>
             </div>
-            <ul className="mt-4 space-y-2">
+
+            <div className="my-6 h-px bg-neutral-border" />
+
+            {plan.inherits && (
+              <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.05em] text-content-secondary">
+                {plan.inherits} +
+              </p>
+            )}
+            <ul className="mb-7 flex-1 space-y-3">
               {plan.features.map((f) => (
-                <li key={f} className="flex items-start gap-2 text-[13px] text-content-secondary">
-                  <Check size={15} className="mt-0.5 shrink-0 text-primary" strokeWidth={2.5} />
-                  {f}
+                <li key={f} className="flex items-start gap-2.5">
+                  <CircleCheck size={17} className="mt-0.5 shrink-0 text-primary" />
+                  <span className="text-[14px] text-content-secondary">{f}</span>
                 </li>
               ))}
             </ul>
+
+            <Button
+              onClick={() => select(plan.id)}
+              variant={plan.popular ? "primary" : "secondary"}
+              size="md"
+              className="w-full"
+            >
+              Start free trial
+            </Button>
           </div>
         ))}
       </div>
-      <p className="mt-5 text-center text-[14px] text-content-secondary">
-        14-day free trial on all plans. No card charged today.
-      </p>
-    </StepShell>
+
+      <div className="mt-8 flex flex-col items-center gap-1.5 text-center">
+        <a href="#" className="text-[14px] font-medium text-primary hover:underline">
+          Save 2 months with an annual plan
+        </a>
+        <p className="text-[13px] text-content-muted">
+          No credit card required. Cancel anytime.
+        </p>
+      </div>
+    </>
   );
 }
