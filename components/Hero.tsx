@@ -1,5 +1,6 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/Button";
+import { RotatingWord } from "./ui/RotatingWord";
 import { DashboardPreview } from "./mocks/DashboardPreview";
 
 export function Hero() {
@@ -12,7 +13,12 @@ export function Hero() {
           </span>
 
           <h1 className="text-balance text-[42px] font-medium leading-[1.05] tracking-[-0.02em] text-white md:text-[64px]">
-            Everything your business needs to sell, operate, and grow.
+            Everything your{" "}
+            <RotatingWord
+              words={["business", "pharmacy", "fashion brand", "restaurant", "salon", "consultancy"]}
+              className="text-primary-light"
+            />{" "}
+            needs to sell, operate, and grow.
           </h1>
 
           <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-white/70">

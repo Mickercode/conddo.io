@@ -3,12 +3,14 @@ import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
 import { ProofBar } from "@/components/ProofBar";
 import { Features } from "@/components/Features";
+import { RealBusinesses } from "@/components/RealBusinesses";
 import { BusinessTypes } from "@/components/BusinessTypes";
 import { Pricing } from "@/components/Pricing";
 import { SocialProof } from "@/components/SocialProof";
 import { FAQ } from "@/components/FAQ";
 import { FinalCTA } from "@/components/FinalCTA";
 import { Footer } from "@/components/Footer";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Conddo.io — Sell more. Stress less.",
@@ -28,16 +30,17 @@ export default function Home() {
       <Nav />
       <main>
         {/* Section sequence: dark hero → off-white content → one light-purple
-            section → off-white → violet CTA strip → dark footer. Never two
-            darks or two purples back to back. */}
+            section → off-white → violet CTA strip → dark footer. Below-the-fold
+            sections fade-and-rise into view via <Reveal>. */}
         <Hero />
         <ProofBar />
-        <Features />
-        <BusinessTypes />
-        <Pricing />
-        <SocialProof />
-        <FAQ />
-        <FinalCTA />
+        <Reveal><Features /></Reveal>
+        <Reveal><RealBusinesses /></Reveal>
+        <Reveal><BusinessTypes /></Reveal>
+        <Reveal><Pricing /></Reveal>
+        <Reveal><SocialProof /></Reveal>
+        <Reveal><FAQ /></Reveal>
+        <Reveal><FinalCTA /></Reveal>
       </main>
       <Footer />
     </>

@@ -80,3 +80,15 @@
     @apply py-16 md:py-24;
   }
 }
+
+/* Rotating-word entrance (hero headline). */
+@keyframes wordIn {
+  from {
+    opacity: 0;
+    transform: translateY(0.45em);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
