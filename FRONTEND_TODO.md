@@ -20,9 +20,14 @@ Core operator dashboard, fully wired to the live backend (verified by a 22/22 li
 - **Shared infra** — Toast, Modal, Field, CustomerPicker, Measurements/Product/Campaign/Post modals.
 - **Email templates** — verification, password-reset, welcome, staff-invite (`email-templates/`).
 
+> **2026-05-25 — backend deploy landed.** All new endpoints are live (payments,
+> website +sections/change-requests, rich analytics, registry/manifests, customer
+> history). **Login now emits `activeModules`** → the manifest-driven sidebar is
+> now ACTIVE (verified: fashion/starter → Home·Website·Customers·Orders·Payments·Analytics·Settings).
+
 ## 🔜 Track A — SME app gaps (endpoints exist; wire/extend)
 - [ ] **1. Website management** — `/website/{sections,analytics,change-requests,domain}`. Today reads a status blob; "Request changes", "Connect domain", "Request update" are dead. Build: change-request flow, custom-domain connect, site analytics, real sections.
-- [ ] **2. Payments → live** — `/payments/{summary,transactions,outstanding,reminders}`. Page still demo data. *(Blocked: endpoints 500 pending deploy.)*
+- [x] **2. Payments → live** — wired to `/payments/{summary,transactions,outstanding,reminders}` (KPIs, filterable ledger, outstanding-by-customer + send reminder). ✅
 - [ ] **3. Analytics (rich)** — `/analytics/{revenue,orders,customers,top,traffic}`. Only `/overview` consumed; add series/charts/top-lists/traffic.
 - [ ] **4. Connected accounts** — rewire Settings → `/marketing/connections` (currently hits non-existent `/settings/connections`); wire Connect/Disconnect.
 - [ ] **5. Order pipeline stages** — `/orders/stages` CRUD. Wire "Add Stage" + column menu (rename/reorder/delete).
@@ -51,8 +56,9 @@ Full backend at `/api/jobs/*`; zero frontend. Its own login + portal:
 - [ ] Remove demo scaffolding (`lib/demo/*`).
 - [ ] Deploy the frontend (Vercel) + set `NEXT_PUBLIC_API_URL`/`NEXT_PUBLIC_APP_URL`; CORS origin on the backend.
 
-## ⛔ Backend dependencies (not frontend)
-- [ ] **Deploy is stale** — new build (payments/website/registry/dashboard-integration) isn't live; `/payments`, `/website`, `/registry/manifests`, `/customers/{id}/orders` all 500; login JWT omits `activeModules`. Likely a Flyway migration failing at boot.
-- [ ] Enrich the **login** JWT with `vertical/plan/activeModules` (as `register/complete` already does) → activates the manifest flip.
+## Backend dependencies
+- [x] **Deploy landed (2026-05-25)** — new build live; payments/website/registry/customer-history all 200.
+- [x] **Login emits `activeModules`** → manifest flip active.
 - [ ] Wire the HTML **email templates** into `NotificationService` (send as Resend `html`).
 - [ ] Set Resend/Brevo env vars on Render (file: `../conddo-backend-render.env`) + rotate the keys.
+- [ ] Dashboard **widgets** in manifests (catalogue returns `widgets: []`) → unlocks the §16.2 widget-zone renderer.
