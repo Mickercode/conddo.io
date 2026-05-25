@@ -52,9 +52,10 @@ Full backend at `/api/jobs/*`; zero frontend. Its own login + portal:
 - [ ] Rendered public website for `businessname.conddo.io` — `/api/v1/public/tenant`. (We have public booking only.)
 
 ## 🚀 Prod readiness
-- [ ] Refresh-token flow via the `/auth/refresh` httpOnly cookie (auto-renew the 15-min access token).
+- [x] **Refresh-token flow** — client silently refreshes on 401 (POST `/auth/refresh`, single in-flight, retries once); AppShell guard recovers the session from the cookie on load. Backend cookie verified `Secure; HttpOnly; SameSite=None` (cross-site ready). ✅
 - [ ] Remove demo scaffolding (`lib/demo/*`).
-- [ ] Deploy the frontend (Vercel) + set `NEXT_PUBLIC_API_URL`/`NEXT_PUBLIC_APP_URL`; CORS origin on the backend.
+- [ ] Deploy the frontend (Vercel) + set `NEXT_PUBLIC_API_URL=https://conddo-backend.onrender.com` and `NEXT_PUBLIC_APP_URL=<your vercel/app domain>`.
+- [ ] **Backend CORS:** add the deployed frontend origin to `CONDDO_CORS_ALLOWED_ORIGINS` (currently `http://localhost:3000`) — required for credentialed requests + the refresh cookie.
 
 ## Backend dependencies
 - [x] **Deploy landed (2026-05-25)** — new build live; payments/website/registry/customer-history all 200.

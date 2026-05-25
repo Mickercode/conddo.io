@@ -10,6 +10,7 @@ import { useAppNav } from "@/hooks/useAppNav";
 import type { NavLink } from "@/lib/manifest/types";
 import { logout, meQuery, type Me } from "@/lib/api/account";
 import { getAccessToken } from "@/lib/api/auth";
+import { refreshAccessToken } from "@/lib/api/client";
 
 type Identity = { businessName: string; userName: string; roleLabel: string; initials: string };
 
@@ -134,15 +135,28 @@ export function AppShell({
   const identity = deriveIdentity(me);
   const nav = useAppNav();
 
-  // Client-side auth guard: app screens require an access token. Until the
-  // token is confirmed we render nothing, to avoid a flash of protected UI.
+  // Client-side auth guard: app screens require an access token. If it's missing
+  // (e.g. cleared/expired on reload) we try the refresh cookie once before
+  // bouncing to /login. Renders nothing until resolved, to avoid a protected-UI flash.
   useEffect(() => {
-    if (getAccessToken()) {
-      setAuthed(true);
-    } else {
-      setAuthed(false);
-      router.replace("/login");
-    }
+    let active = true;
+    (async () => {
+      if (getAccessToken()) {
+        if (active) setAuthed(true);
+        return;
+      }
+      const recovered = await refreshAccessToken();
+      if (!active) return;
+      if (recovered) {
+        setAuthed(true);
+      } else {
+        setAuthed(false);
+        router.replace("/login");
+      }
+    })();
+    return () => {
+      active = false;
+    };
   }, [router]);
 
   async function handleLogout() {
