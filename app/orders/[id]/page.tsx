@@ -383,7 +383,7 @@ export default function OrderDetailPage({ params }: { params: { id: string } }) 
   const { data, loading, error, refetch } = useApiQuery(() => ordersApi.get(params.id), [params.id]);
 
   return (
-    <AppShell title={data?.reference ?? "Order"} subtitle="Orders" backHref="/orders" actions={<Button variant="primary" size="md"><Plus size={17} /><span className="hidden sm:inline">New Entry</span></Button>}>
+    <AppShell title={data?.reference ?? "Order"} subtitle="Orders" backHref="/orders">
       <QueryBoundary
         loading={loading}
         error={error}

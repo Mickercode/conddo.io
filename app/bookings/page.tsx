@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import {
   Plus,
   Share2,
@@ -13,7 +14,10 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
+import { NewBookingModal } from "@/components/app/NewBookingModal";
+import { AvailabilityModal } from "@/components/app/AvailabilityModal";
 import { Button } from "@/components/ui/Button";
+import { useToast } from "@/components/ui/Toast";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
 import { meQuery } from "@/lib/api/account";
@@ -62,19 +66,38 @@ function placeEvent(ev: BookingEvent, dates: Date[]) {
 }
 
 export default function BookingsPage() {
+  const toast = useToast();
   const { dates, monthLabel } = thisWeek();
   const today = new Date();
+  const [bookingOpen, setBookingOpen] = useState(false);
+  const [availOpen, setAvailOpen] = useState(false);
 
-  const { data: events } = useApiQuery(() => bookingsApi.range(iso(dates[0]), iso(dates[6])), [iso(dates[0])]);
-  const { data: upcoming } = useApiQuery(bookingsApi.upcoming);
-  const { data: availability } = useApiQuery(bookingsApi.availability);
+  const events = useApiQuery(() => bookingsApi.range(iso(dates[0]), iso(dates[6])), [iso(dates[0])]);
+  const upcoming = useApiQuery(bookingsApi.upcoming);
+  const availabilityQ = useApiQuery(bookingsApi.availability);
   const { data: performance } = useApiQuery(bookingsApi.performance);
   const { data: me } = useApiQuery(meQuery);
 
-  const evs = events ?? [];
-  const upcomingList = upcoming ?? [];
+  const evs = events.data ?? [];
+  const upcomingList = upcoming.data ?? [];
+  const availability = availabilityQ.data;
   const hours = availability?.workingHours;
   const bookingLink = me?.tenant?.subdomain ? `conddo.io/book/${me.tenant.subdomain}` : "conddo.io/book/…";
+
+  function refetchAll() {
+    events.refetch();
+    upcoming.refetch();
+    availabilityQ.refetch();
+  }
+
+  async function copyLink() {
+    try {
+      await navigator.clipboard.writeText(bookingLink.startsWith("http") ? bookingLink : `https://${bookingLink}`);
+      toast.success("Link copied", bookingLink);
+    } catch {
+      toast.error("Couldn't copy", "Copy the link manually.");
+    }
+  }
 
   return (
     <AppShell
@@ -82,11 +105,11 @@ export default function BookingsPage() {
       subtitle="Manage your consultation schedule and client meetings."
       actions={
         <>
-          <Button variant="secondary" size="md" className="hidden sm:inline-flex">
+          <Button variant="secondary" size="md" className="hidden sm:inline-flex" onClick={copyLink}>
             <Share2 size={16} />
             Share link
           </Button>
-          <Button variant="primary" size="md">
+          <Button variant="primary" size="md" onClick={() => setBookingOpen(true)}>
             <Plus size={17} />
             <span className="hidden sm:inline">New Booking</span>
           </Button>
@@ -226,35 +249,24 @@ export default function BookingsPage() {
                   </div>
                 );
               })}
-              <button className="text-[13px] font-medium text-primary hover:underline">Edit schedule</button>
+              <button onClick={() => setAvailOpen(true)} className="text-[13px] font-medium text-primary hover:underline">Edit schedule</button>
             </div>
           </div>
 
           <div className="space-y-4">
-            <div>
-              <label className="mb-2 block text-[11px] uppercase tracking-[0.05em] text-content-muted">Booking Duration</label>
-              <select
-                value={availability ? `${availability.slotDurationMinutes} Minutes` : "60 Minutes"}
-                onChange={() => {}}
-                className="w-full rounded-lg border border-neutral-border bg-neutral-bg px-3 py-2 text-[14px] text-ink focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              >
-                <option>30 Minutes</option>
-                <option>60 Minutes</option>
-                <option>90 Minutes</option>
-              </select>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Booking Duration</span>
+              <span className="font-mono text-[13px] text-ink">{availability ? `${availability.slotDurationMinutes} min` : "—"}</span>
             </div>
-            <div>
-              <label className="mb-2 block text-[11px] uppercase tracking-[0.05em] text-content-muted">Buffer Time</label>
-              <select
-                value={availability ? (availability.bufferMinutes === 0 ? "No buffer" : `${availability.bufferMinutes} Minutes`) : "No buffer"}
-                onChange={() => {}}
-                className="w-full rounded-lg border border-neutral-border bg-neutral-bg px-3 py-2 text-[14px] text-ink focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
-              >
-                <option>No buffer</option>
-                <option>15 Minutes</option>
-                <option>30 Minutes</option>
-              </select>
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Buffer Time</span>
+              <span className="font-mono text-[13px] text-ink">
+                {availability ? (availability.bufferMinutes === 0 ? "No buffer" : `${availability.bufferMinutes} min`) : "—"}
+              </span>
             </div>
+            <Button variant="secondary" size="md" className="w-full" onClick={() => setAvailOpen(true)}>
+              Edit availability
+            </Button>
           </div>
 
           <div className="border-t border-neutral-border pt-6">
@@ -263,9 +275,9 @@ export default function BookingsPage() {
               <p className="mb-2 text-[12px] text-content-muted">Allow clients to book directly on your calendar.</p>
               <div className="mb-3 flex items-center gap-2 rounded-lg border border-neutral-border bg-neutral-surface p-2">
                 <span className="flex-1 truncate font-mono text-[11px] text-content-secondary">{bookingLink}</span>
-                <button aria-label="Copy link" className="rounded-md p-1 text-content-muted hover:bg-neutral-surface2 hover:text-ink"><Copy size={14} /></button>
+                <button onClick={copyLink} aria-label="Copy link" className="rounded-md p-1 text-content-muted hover:bg-neutral-surface2 hover:text-ink"><Copy size={14} /></button>
               </div>
-              <button className="w-full rounded-lg border border-primary-border bg-primary-bg py-2 text-[14px] font-bold text-primary transition-colors hover:bg-primary/10">
+              <button onClick={copyLink} className="w-full rounded-lg border border-primary-border bg-primary-bg py-2 text-[14px] font-bold text-primary transition-colors hover:bg-primary/10">
                 Copy booking link
               </button>
             </div>
@@ -289,6 +301,19 @@ export default function BookingsPage() {
           </div>
         </aside>
       </div>
+
+      <NewBookingModal
+        open={bookingOpen}
+        onClose={() => setBookingOpen(false)}
+        defaultDate={iso(today)}
+        onCreated={refetchAll}
+      />
+      <AvailabilityModal
+        open={availOpen}
+        onClose={() => setAvailOpen(false)}
+        current={availability ?? null}
+        onSaved={refetchAll}
+      />
     </AppShell>
   );
 }

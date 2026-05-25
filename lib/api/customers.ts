@@ -1,6 +1,10 @@
 // Customers module — typed API surface (write once, reuse anywhere).
 // Endpoints: ACTION_LIST §11.3. Consumed by the Customers list, profile, search, etc.
 import { api } from "./client";
+import type { Order } from "./orders";
+
+// GET /customers/{id}/payments — a payment across the customer's orders.
+export type CustomerPayment = { id: string; amount: number; method: string | null; note: string | null; paidAt: string };
 
 export type CustomerTag = "VIP" | "New" | "Lead" | null;
 
@@ -55,6 +59,8 @@ export const customersApi = {
     return api.get<Customer[]>(`/customers?${qs.toString()}`);
   },
   get: (id: string) => api.get<CustomerDetail>(`/customers/${id}`),
+  orders: (id: string) => api.get<Order[]>(`/customers/${id}/orders`),
+  payments: (id: string) => api.get<CustomerPayment[]>(`/customers/${id}/payments`),
   create: (body: CreateCustomerInput) => api.post<CustomerDetail>("/customers", body),
   update: (id: string, body: UpdateCustomerInput) => api.patch<CustomerDetail>(`/customers/${id}`, body),
   remove: (id: string) => api.del<void>(`/customers/${id}`),
