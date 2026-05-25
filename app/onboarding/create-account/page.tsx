@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useOnboarding } from "@/lib/onboarding-store";
 import { hrefFor, nextStep } from "@/lib/onboarding-steps";
+import { registerStart } from "@/lib/api/account";
 
 const inputCls =
   "h-11 w-full rounded-md border border-neutral-strong bg-neutral-surface px-3.5 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none";
@@ -22,11 +23,37 @@ export default function CreateAccountStep() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const onContinue = () => {
-    update({ fullName, phone, email, password });
-    const next = nextStep("create-account");
-    if (next) router.push(hrefFor(next.slug));
+  // Normalize the local number to E.164-ish for the backend (min 7 chars).
+  const normalizedPhone = () => {
+    const digits = phone.replace(/\D/g, "").replace(/^0+/, "");
+    return digits ? `+234${digits}` : "";
+  };
+
+  const onContinue = async () => {
+    setError(null);
+    if (!fullName.trim()) return setError("Enter your full name.");
+    if (normalizedPhone().length < 7) return setError("Enter a valid phone number.");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) return setError("Enter a valid email address.");
+    if (password.length < 8) return setError("Password must be at least 8 characters.");
+
+    setSubmitting(true);
+    try {
+      const { registrationId, resendCooldownSeconds } = await registerStart({
+        fullName: fullName.trim(),
+        phone: normalizedPhone(),
+        email: email.trim(),
+        password,
+      });
+      update({ fullName, phone, email, password, registrationId, resendCooldownSeconds });
+      const next = nextStep("create-account");
+      if (next) router.push(hrefFor(next.slug));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't create your account. Please try again.");
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -41,6 +68,11 @@ export default function CreateAccountStep() {
       </header>
 
       <div className="space-y-5">
+        {error && (
+          <div className="flex items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
+            <AlertCircle size={18} className="shrink-0" /> {error}
+          </div>
+        )}
         <div>
           <label className={labelCls}>Full name</label>
           <input
@@ -63,7 +95,7 @@ export default function CreateAccountStep() {
               onChange={(e) => setPhone(e.target.value)}
             />
           </div>
-          <p className="mt-1.5 text-[13px] text-content-muted">We&apos;ll send an OTP to verify it.</p>
+          <p className="mt-1.5 text-[13px] text-content-muted">We&apos;ll email you a code to verify your account.</p>
         </div>
         <div>
           <label className={labelCls}>Email address</label>
@@ -97,8 +129,9 @@ export default function CreateAccountStep() {
           <p className="mt-1.5 text-[13px] text-content-muted">Minimum 8 characters.</p>
         </div>
 
-        <Button onClick={onContinue} variant="primary" size="lg" className="w-full">
-          Create account
+        <Button onClick={onContinue} variant="primary" size="lg" className="w-full" disabled={submitting}>
+          {submitting ? <Loader2 size={18} className="animate-spin" /> : null}
+          {submitting ? "Creating account…" : "Create account"}
         </Button>
 
         <div className="flex items-center gap-3">

@@ -6,7 +6,6 @@ import { CircleCheck, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useOnboarding } from "@/lib/onboarding-store";
 import { hrefFor, nextStep } from "@/lib/onboarding-steps";
-import { signup, login, slugify } from "@/lib/api/account";
 
 // Built from the Stitch "Plan Selection" screen. Pricing ₦25k/45k/80k is the
 // design's canonical (matches the landing page).
@@ -55,33 +54,17 @@ const plans: Plan[] = [
 
 export default function ChoosePlanStep() {
   const router = useRouter();
-  const { update, businessName, email, password, verticalId } = useOnboarding();
+  const { update } = useOnboarding();
   const [submitting, setSubmitting] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error] = useState<string | null>(null);
 
-  const select = async (planId: string) => {
+  // Just record the plan and advance — the tenant is created at the final step
+  // (POST /auth/register/complete on the "ready" page), which issues the JWT.
+  const select = (planId: string) => {
     update({ planId });
-
-    // If the account details aren't in the store (e.g. page opened directly),
-    // skip the API call and just advance — the flow still works for design review.
-    if (!businessName || !email || !password) {
-      const next = nextStep("choose-plan");
-      if (next) router.push(hrefFor(next.slug));
-      return;
-    }
-
-    setError(null);
     setSubmitting(planId);
-    try {
-      const slug = slugify(businessName);
-      await signup({ name: businessName, slug, adminEmail: email, adminPassword: password, verticalId: verticalId ?? undefined });
-      await login({ email, password, tenantSlug: slug });
-      const next = nextStep("choose-plan");
-      if (next) router.push(hrefFor(next.slug));
-    } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not create your account. Please try again.");
-      setSubmitting(null);
-    }
+    const next = nextStep("choose-plan");
+    if (next) router.push(hrefFor(next.slug));
   };
 
   return (

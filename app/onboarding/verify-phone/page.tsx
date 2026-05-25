@@ -2,19 +2,23 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useOnboarding } from "@/lib/onboarding-store";
 import { hrefFor, nextStep, prevStep } from "@/lib/onboarding-steps";
+import { registerVerify, registerResend } from "@/lib/api/account";
 
 const CODE_LENGTH = 4;
 
-// Built from the Stitch "OTP Verification" screen (split-panel dropped for
-// flow consistency). Phone OTP is the verification sub-step of step 1.
+// Built from the Stitch "OTP Verification" screen. The code is emailed (Resend
+// free path), so this verifies the account email. Sub-step of step 1.
 export default function VerifyPhoneStep() {
   const router = useRouter();
-  const { phone } = useOnboarding();
+  const { email, registrationId, resendCooldownSeconds, update } = useOnboarding();
   const [digits, setDigits] = useState<string[]>(Array(CODE_LENGTH).fill(""));
-  const [seconds, setSeconds] = useState(52);
+  const [seconds, setSeconds] = useState(resendCooldownSeconds || 30);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const inputs = useRef<Array<HTMLInputElement | null>>([]);
 
   useEffect(() => {
@@ -37,9 +41,33 @@ export default function VerifyPhoneStep() {
     if (e.key === "Backspace" && !digits[i] && i > 0) inputs.current[i - 1]?.focus();
   };
 
-  const onVerify = () => {
-    const next = nextStep("verify-phone");
-    if (next) router.push(hrefFor(next.slug));
+  const onVerify = async () => {
+    setError(null);
+    const code = digits.join("");
+    if (code.length < CODE_LENGTH) return setError("Enter the full code.");
+    if (!registrationId) return setError("Your session expired. Please start over.");
+    setSubmitting(true);
+    try {
+      await registerVerify({ registrationId, code });
+      const next = nextStep("verify-phone");
+      if (next) router.push(hrefFor(next.slug));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "That code didn't work. Check it and try again.");
+      setSubmitting(false);
+    }
+  };
+
+  const onResend = async () => {
+    if (!registrationId) return setError("Your session expired. Please start over.");
+    setError(null);
+    try {
+      const { resendCooldownSeconds: cd } = await registerResend(registrationId);
+      update({ resendCooldownSeconds: cd });
+      setSeconds(cd || 30);
+      setDigits(Array(CODE_LENGTH).fill(""));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Couldn't resend the code. Please wait a moment.");
+    }
   };
 
   const goBack = () => {
@@ -47,7 +75,7 @@ export default function VerifyPhoneStep() {
     if (prev) router.push(hrefFor(prev.slug));
   };
 
-  const masked = phone ? `+234 ${phone}` : "your phone number";
+  const masked = email || "your email";
   const mm = Math.floor(seconds / 60);
   const ss = String(seconds % 60).padStart(2, "0");
 
@@ -55,13 +83,19 @@ export default function VerifyPhoneStep() {
     <div className="w-full max-w-md rounded-xl border border-neutral-border bg-neutral-surface p-8">
       <header className="mb-7 text-center">
         <h1 className="text-[24px] leading-tight tracking-[-0.01em] md:text-[26px]">
-          Verify your phone number
+          Verify your account
         </h1>
         <p className="mt-2 text-[15px] leading-relaxed text-content-secondary">
           We&apos;ve sent a 4-digit code to{" "}
           <span className="font-medium text-ink">{masked}</span>. Enter it below to continue.
         </p>
       </header>
+
+      {error && (
+        <div className="mb-5 flex items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
+          <AlertCircle size={18} className="shrink-0" /> {error}
+        </div>
+      )}
 
       <div className="mb-6 flex justify-center gap-3">
         {digits.map((d, i) => (
@@ -84,21 +118,22 @@ export default function VerifyPhoneStep() {
         {seconds > 0 ? (
           <>Resend code in {mm}:{ss}</>
         ) : (
-          <button className="font-medium text-primary hover:underline" onClick={() => setSeconds(52)}>
+          <button className="font-medium text-primary hover:underline" onClick={onResend}>
             Resend code
           </button>
         )}
       </p>
 
-      <Button onClick={onVerify} variant="primary" size="lg" className="w-full">
-        Verify and continue
+      <Button onClick={onVerify} variant="primary" size="lg" className="w-full" disabled={submitting}>
+        {submitting ? <Loader2 size={18} className="animate-spin" /> : null}
+        {submitting ? "Verifying…" : "Verify and continue"}
       </Button>
 
       <button
         onClick={goBack}
         className="mt-4 block w-full text-center text-[14px] text-content-secondary hover:text-ink"
       >
-        Change phone number
+        Change my details
       </button>
 
       <p className="mt-6 text-center text-[13px] text-content-muted">

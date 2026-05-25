@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import {
   Check,
   LayoutGrid,
@@ -9,21 +11,51 @@ import {
   UserPlus,
   ShoppingBag,
   Instagram,
+  Loader2,
+  AlertCircle,
   type LucideIcon,
 } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { useOnboarding } from "@/lib/onboarding-store";
+import { registerComplete } from "@/lib/api/account";
 
-const tasks: { label: string; icon: LucideIcon }[] = [
-  { label: "Add your first customer", icon: UserPlus },
-  { label: "Create your first order", icon: ShoppingBag },
-  { label: "Connect Instagram", icon: Instagram },
+const tasks: { label: string; href: string; icon: LucideIcon }[] = [
+  { label: "Add your first customer", href: "/customers", icon: UserPlus },
+  { label: "Create your first order", href: "/orders", icon: ShoppingBag },
+  { label: "Connect Instagram", href: "/settings", icon: Instagram },
 ];
 
-// Built from the Stitch "Onboarding Completion" screen (step 5 of 5).
+// Built from the Stitch "Onboarding Completion" screen (step 5 of 5). On mount
+// this finalises signup (POST /auth/register/complete) — creating the tenant and
+// logging the user in — so "Go to my dashboard" lands them authenticated.
 export default function ReadyStep() {
-  const { fullName, businessName } = useOnboarding();
+  const router = useRouter();
+  const { fullName, businessName, verticalId, planId, registrationId } = useOnboarding();
+  const [status, setStatus] = useState<"creating" | "ready" | "error">(registrationId ? "creating" : "ready");
+  const [error, setError] = useState<string | null>(null);
+  const started = useRef(false);
+
+  async function finalise() {
+    if (!registrationId) return;
+    setStatus("creating");
+    setError(null);
+    try {
+      await registerComplete({ registrationId, businessName: businessName.trim() || "My business", businessType: verticalId, planId });
+      setStatus("ready");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "We couldn't finish setting up your workspace.");
+      setStatus("error");
+    }
+  }
+
+  useEffect(() => {
+    if (started.current || !registrationId) return;
+    started.current = true;
+    finalise();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const firstName = fullName.trim().split(/\s+/)[0];
   const greeting = firstName ? `You're all set, ${firstName}.` : "You're all set!";
   const business = businessName.trim() || "Your business";
@@ -78,10 +110,10 @@ export default function ReadyStep() {
       <div className="mb-8 rounded-xl border border-neutral-border bg-neutral-surface p-5">
         <p className="mb-3 text-[14px] font-medium text-ink">While you wait, get a head start:</p>
         <ul className="divide-y divide-neutral-border">
-          {tasks.map(({ label, icon: Icon }) => (
+          {tasks.map(({ label, href, icon: Icon }) => (
             <li key={label}>
               <a
-                href="#"
+                href={href}
                 className="flex items-center justify-between py-3 transition-colors hover:text-primary"
               >
                 <span className="flex items-center gap-3">
@@ -99,9 +131,24 @@ export default function ReadyStep() {
 
       {/* Actions */}
       <div className="flex flex-col items-center gap-5">
-        <Button href="/dashboard" variant="primary" size="lg" className="w-full max-w-sm">
-          Go to my dashboard
-        </Button>
+        {status === "error" && (
+          <div className="flex w-full max-w-sm items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
+            <AlertCircle size={18} className="shrink-0" /> {error}
+          </div>
+        )}
+        {status === "creating" ? (
+          <Button variant="primary" size="lg" className="w-full max-w-sm" disabled>
+            <Loader2 size={18} className="animate-spin" /> Setting up your workspace…
+          </Button>
+        ) : status === "error" ? (
+          <Button onClick={finalise} variant="primary" size="lg" className="w-full max-w-sm">
+            Try again
+          </Button>
+        ) : (
+          <Button onClick={() => router.push("/dashboard")} variant="primary" size="lg" className="w-full max-w-sm">
+            Go to my dashboard
+          </Button>
+        )}
         <div className="text-center">
           <p className="mb-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-content-muted">
             Share your conddo.io link

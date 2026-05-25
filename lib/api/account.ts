@@ -71,6 +71,47 @@ export async function getMe(): Promise<Me> {
   return data;
 }
 
+// ----- Staged signup wizard (/auth/register/*, §6.2) -------------------------
+// start → verify (email OTP) → complete (creates tenant + logs in with a JWT
+// carrying vertical/plan/activeModules).
+
+export type RegisterStartResult = { registrationId: string; resendCooldownSeconds: number };
+
+export async function registerStart(input: {
+  fullName: string; phone: string; email: string; password: string;
+}): Promise<RegisterStartResult> {
+  const { data } = await authApi.post<RegisterStartResult>("/auth/register/start", input);
+  return data;
+}
+
+export async function registerVerify(input: { registrationId: string; code: string }): Promise<void> {
+  await authApi.post("/auth/register/verify", input);
+}
+
+export async function registerResend(registrationId: string): Promise<RegisterStartResult> {
+  const { data } = await authApi.post<RegisterStartResult>("/auth/register/resend", { registrationId });
+  return data;
+}
+
+/** Final step — creates the tenant + admin and logs in (stores the access token). */
+export async function registerComplete(input: {
+  registrationId: string; businessName: string; businessType?: string | null; planId?: string | null;
+}): Promise<LoginResult> {
+  const { data } = await authApi.post<LoginResult>("/auth/register/complete", input);
+  setAccessToken(data.accessToken);
+  return data;
+}
+
+/** Start a password reset. Always succeeds server-side (doesn't reveal if the email exists). */
+export async function forgotPassword(input: { tenantSlug: string; email: string }): Promise<void> {
+  await authApi.post("/auth/forgot-password", input);
+}
+
+/** Complete a password reset with the emailed token. */
+export async function resetPassword(input: { token: string; newPassword: string }): Promise<void> {
+  await authApi.post("/auth/reset-password", input);
+}
+
 /** `/me` as a Result, for use with `useApiQuery`. */
 export const meQuery = () => api.get<Me>("/me");
 

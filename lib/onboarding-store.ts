@@ -11,6 +11,9 @@ export type OnboardingData = {
   phone: string;
   email: string;
   password: string;
+  // Set after POST /auth/register/start; carried through verify → complete.
+  registrationId: string | null;
+  resendCooldownSeconds: number;
   // Step 2 — type
   verticalId: string | null;
   // Step 3 — profile
@@ -33,6 +36,8 @@ export const useOnboarding = create<OnboardingStore>((set) => ({
   phone: "",
   email: "",
   password: "",
+  registrationId: null,
+  resendCooldownSeconds: 30,
   verticalId: null,
   description: "",
   address: "",
