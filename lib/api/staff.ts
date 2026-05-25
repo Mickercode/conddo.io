@@ -12,6 +12,12 @@ export type StaffMember = {
   lastActive: string | null;
 };
 
+export type RoleDef = { role: string; label: string; permissions: string[] };
+
 export const staffApi = {
   list: () => api.get<StaffMember[]>("/staff"),
+  roles: () => api.get<RoleDef[]>("/staff/roles"),
+  invite: (email: string, role: StaffRole) => api.post<StaffMember>("/staff/invite", { email, role }),
+  update: (id: string, body: { role?: StaffRole; active?: boolean }) => api.patch<StaffMember>(`/staff/${id}`, body),
+  resendInvite: (id: string) => api.post<void>(`/staff/${id}/resend-invite`),
 };

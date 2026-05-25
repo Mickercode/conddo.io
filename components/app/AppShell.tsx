@@ -4,7 +4,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { ArrowLeft, Bell, LogOut, Menu, X } from "lucide-react";
+import { ArrowLeft, Bell, LogOut, Menu, Search, X } from "lucide-react";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { useAppNav } from "@/hooks/useAppNav";
 import type { NavLink } from "@/lib/manifest/types";
@@ -214,6 +214,15 @@ export function AppShell({
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
+            <Link
+              href="/search"
+              aria-label="Search"
+              className={`inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-surface2 hover:text-ink ${
+                pathname === "/search" ? "bg-primary-bg text-primary" : "text-content-secondary"
+              }`}
+            >
+              <Search size={19} />
+            </Link>
             <Link
               href="/notifications"
               aria-label="Notifications"

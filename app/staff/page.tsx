@@ -1,13 +1,16 @@
 "use client";
 
+import { useState } from "react";
 import { UserPlus, IdCard } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
+import { InviteStaffModal } from "@/components/app/InviteStaffModal";
+import { ManageStaffModal } from "@/components/app/ManageStaffModal";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
-import { staffApi, type StaffRole, type StaffStatus } from "@/lib/api/staff";
+import { staffApi, type StaffMember, type StaffRole, type StaffStatus } from "@/lib/api/staff";
 
 const roleLabel: Record<StaffRole, string> = { TENANT_ADMIN: "Admin", STAFF: "Staff" };
 const statusChip: Record<StaffStatus, { tone: "success" | "warning" | "neutral"; label: string }> = {
@@ -28,13 +31,15 @@ const fmtLastActive = (t: string | null) => {
 export default function StaffPage() {
   const { data, loading, error, refetch } = useApiQuery(staffApi.list);
   const staff = data ?? [];
+  const [inviteOpen, setInviteOpen] = useState(false);
+  const [managing, setManaging] = useState<StaffMember | null>(null);
 
   return (
     <AppShell
       title="Staff"
       subtitle="Team members and roles"
       actions={
-        <Button variant="primary" size="md">
+        <Button variant="primary" size="md" onClick={() => setInviteOpen(true)}>
           <UserPlus size={17} />
           <span className="hidden sm:inline">Invite staff</span>
         </Button>
@@ -52,7 +57,7 @@ export default function StaffPage() {
             title="No team members yet"
             description="Invite staff to help run your business. You control what each person can access by their role."
             action={
-              <Button variant="primary" size="md">
+              <Button variant="primary" size="md" onClick={() => setInviteOpen(true)}>
                 <UserPlus size={17} /> Invite your first teammate
               </Button>
             }
@@ -93,7 +98,10 @@ export default function StaffPage() {
                     </td>
                     <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-content-secondary">{fmtLastActive(m.lastActive)}</td>
                     <td className="px-5 py-3.5 text-right">
-                      <button className="text-[13px] font-medium text-primary opacity-0 transition-opacity hover:underline group-hover:opacity-100">
+                      <button
+                        onClick={() => setManaging(m)}
+                        className="text-[13px] font-medium text-primary opacity-0 transition-opacity hover:underline group-hover:opacity-100"
+                      >
                         Manage
                       </button>
                     </td>
@@ -104,6 +112,14 @@ export default function StaffPage() {
           </div>
         </div>
       </QueryBoundary>
+
+      <InviteStaffModal open={inviteOpen} onClose={() => setInviteOpen(false)} onInvited={refetch} />
+      <ManageStaffModal
+        open={managing !== null}
+        onClose={() => setManaging(null)}
+        member={managing}
+        onChanged={refetch}
+      />
     </AppShell>
   );
 }
