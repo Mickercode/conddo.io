@@ -114,7 +114,7 @@ export default function CreateAccountStep() {
 
         <p className="text-center text-[14px] text-content-secondary">
           Already have an account?{" "}
-          <a href="#" className="font-medium text-primary hover:underline">
+          <a href="/login" className="font-medium text-primary hover:underline">
             Sign in
           </a>
         </p>

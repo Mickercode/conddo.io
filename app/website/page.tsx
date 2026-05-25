@@ -1,0 +1,136 @@
+"use client";
+
+import { Globe, ExternalLink, MessageSquarePlus, Eye, MailQuestion, Lock, LayoutTemplate } from "lucide-react";
+import { AppShell } from "@/components/app/AppShell";
+import { Button } from "@/components/ui/Button";
+import { Chip } from "@/components/ui/Chip";
+import { QueryBoundary } from "@/components/ui/QueryBoundary";
+import { EmptyState } from "@/components/ui/States";
+import { api } from "@/lib/api/client";
+import { useApiQuery } from "@/hooks/useApiQuery";
+
+type WebsiteStatus = "live" | "in_progress" | "draft";
+type WebsiteSection = { id: string; name: string; status: string };
+type Website = {
+  subdomain: string;
+  customDomain: string | null;
+  status: WebsiteStatus;
+  publishedAt: string | null;
+  visitsToday: number;
+  enquiries: number;
+  sections: WebsiteSection[];
+};
+
+const statusChip: Record<WebsiteStatus, { tone: "success" | "warning" | "neutral"; label: string }> = {
+  live: { tone: "success", label: "● Live" },
+  in_progress: { tone: "warning", label: "In progress" },
+  draft: { tone: "neutral", label: "Draft" },
+};
+
+function WebsiteContent({ site }: { site: Website }) {
+  const domain = site.customDomain ?? `${site.subdomain}.conddo.io`;
+  const chip = statusChip[site.status];
+
+  return (
+    <div className="space-y-6">
+      {/* Status hero */}
+      <div className="flex flex-col gap-4 rounded-xl border border-neutral-border bg-neutral-surface p-6 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <div className="mb-2 flex items-center gap-2">
+            <Chip tone={chip.tone}>{chip.label}</Chip>
+            {site.publishedAt && <span className="text-[12px] text-content-muted">Published {site.publishedAt}</span>}
+          </div>
+          <p className="font-mono text-[18px] text-ink">{domain}</p>
+        </div>
+        <div className="flex gap-2">
+          <Button href={`https://${domain}`} variant="secondary" size="md">
+            <Eye size={16} /> View site
+          </Button>
+          <Button variant="primary" size="md">
+            <MessageSquarePlus size={16} /> Request changes
+          </Button>
+        </div>
+      </div>
+
+      {/* Traffic */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-[13px] text-content-secondary">Visits today</p>
+            <Eye size={18} className="text-content-muted" />
+          </div>
+          <p className="font-mono text-[24px] font-medium leading-none text-ink">{site.visitsToday}</p>
+        </div>
+        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-[13px] text-content-secondary">New enquiries</p>
+            <MailQuestion size={18} className="text-content-muted" />
+          </div>
+          <p className="font-mono text-[24px] font-medium leading-none text-ink">{site.enquiries}</p>
+        </div>
+      </div>
+
+      {/* Sections */}
+      <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+        <div className="border-b border-neutral-border px-6 py-4">
+          <h2 className="text-[15px] font-medium text-ink">Pages &amp; sections</h2>
+        </div>
+        {site.sections.length > 0 ? (
+          <ul className="divide-y divide-neutral-border">
+            {site.sections.map((s) => (
+              <li key={s.id} className="flex items-center justify-between px-6 py-3.5">
+                <span className="flex items-center gap-3 text-[14px] text-ink">
+                  <LayoutTemplate size={16} className="text-content-muted" />
+                  {s.name}
+                </span>
+                <Chip tone="neutral">{s.status}</Chip>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="px-6 py-8 text-center text-[14px] text-content-secondary">No sections configured yet.</p>
+        )}
+      </div>
+
+      {/* Custom domain */}
+      <div className="rounded-xl border border-neutral-border bg-neutral-surface p-6">
+        <div className="mb-3 flex items-center gap-2">
+          <h2 className="text-[15px] font-medium text-ink">Custom domain</h2>
+          <span className="rounded bg-primary-bg px-1.5 py-0.5 text-[10px] font-bold text-primary">PRO</span>
+        </div>
+        <p className="mb-4 text-[14px] text-content-secondary">
+          Point your own domain (e.g. yourbusiness.com) at your conddo.io website.
+        </p>
+        <Button variant="secondary" size="md">
+          <Lock size={16} /> Connect a domain
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+export default function WebsitePage() {
+  const { data, loading, error, refetch } = useApiQuery<Website>(() => api.get("/website"));
+
+  return (
+    <AppShell title="Website" subtitle="Your online storefront">
+      <QueryBoundary
+        loading={loading}
+        error={error}
+        isEmpty={!data}
+        onRetry={refetch}
+        loadingLabel="Loading your website…"
+        empty={
+          <EmptyState
+            icon={Globe}
+            title="Your website isn't live yet"
+            description="Our team is building your site from your business brief. Its status, traffic, and pages will appear here once it's ready."
+            action={<Button variant="primary" size="md">Request a status update</Button>}
+          />
+        }
+      >
+        {data && <WebsiteContent site={data} />}
+      </QueryBoundary>
+    </AppShell>
+  );
+}

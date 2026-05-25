@@ -99,7 +99,7 @@ export default function ReadyStep() {
 
       {/* Actions */}
       <div className="flex flex-col items-center gap-5">
-        <Button href="/" variant="primary" size="lg" className="w-full max-w-sm">
+        <Button href="/dashboard" variant="primary" size="lg" className="w-full max-w-sm">
           Go to my dashboard
         </Button>
         <div className="text-center">

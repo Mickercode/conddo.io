@@ -1,0 +1,219 @@
+"use client";
+
+import Link from "next/link";
+import {
+  Plus,
+  Rocket,
+  Wallet,
+  ClipboardList,
+  UserPlus,
+  Package,
+  ChevronRight,
+  type LucideIcon,
+} from "lucide-react";
+import { AppShell } from "@/components/app/AppShell";
+import { Button } from "@/components/ui/Button";
+import { Chip } from "@/components/ui/Chip";
+import { useApiQuery } from "@/hooks/useApiQuery";
+import { naira } from "@/lib/format";
+import { dashboardApi, type Summary, type Tone } from "@/lib/api/dashboard";
+import { ordersApi } from "@/lib/api/orders";
+import { bookingsApi } from "@/lib/api/bookings";
+import { websiteApi } from "@/lib/api/website";
+
+// KPI cards: fixed presentation (label/icon/href) + live values from /dashboard/summary.
+type StatKey = keyof Summary;
+
+const STAT_META: { key: StatKey; label: string; icon: LucideIcon; href: string; currency?: boolean }[] = [
+  { key: "revenueToday", label: "Revenue today", icon: Wallet, href: "/payments", currency: true },
+  { key: "pendingOrders", label: "Pending orders", icon: ClipboardList, href: "/orders" },
+  { key: "newCustomers", label: "New customers", icon: UserPlus, href: "/customers" },
+  { key: "lowStockItems", label: "Low stock items", icon: Package, href: "/inventory" },
+];
+
+const deltaColor: Record<Tone, string> = {
+  success: "text-success",
+  warning: "text-warning",
+  danger: "text-danger",
+  neutral: "text-content-muted",
+};
+
+const stageTone = (stage?: string): "info" | "warning" | "primary" | "success" | "neutral" => {
+  const s = (stage ?? "").toLowerCase();
+  if (!s) return "neutral";
+  if (s.includes("deliver")) return "success";
+  if (s.includes("production")) return "warning";
+  if (s.includes("ready")) return "primary";
+  return "info";
+};
+
+const fmtTime = (t: string) => {
+  const m = t.match(/(\d{2}):(\d{2})/); // "HH:MM[:SS]" or ISO → HH:MM
+  return m ? `${m[1]}:${m[2]}` : t;
+};
+
+export default function DashboardPage() {
+  const { data: summary } = useApiQuery(dashboardApi.summary);
+  const { data: recentOrders } = useApiQuery(() => ordersApi.listRecent(4));
+  const { data: todayBookings } = useApiQuery(bookingsApi.today);
+  const { data: website } = useApiQuery(websiteApi.status);
+  const recent = (recentOrders ?? []).slice(0, 4);
+  const todays = todayBookings ?? [];
+
+  return (
+    <AppShell
+      title="Good morning, Amaka."
+      subtitle="Saturday, 24 May 2026"
+      actions={
+        <Button href="/orders" variant="primary" size="md">
+          <Plus size={17} />
+          <span className="hidden sm:inline">New Order</span>
+        </Button>
+      }
+    >
+      {/* Setup nudge */}
+      <div className="mb-6 flex flex-col gap-3 rounded-lg bg-warning-bg px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-warning/15 text-warning">
+            <Rocket size={18} />
+          </span>
+          <div>
+            <p className="text-[14px] font-medium text-ink">Finish setting up your business</p>
+            <p className="text-[13px] text-content-secondary">2 of 6 steps complete</p>
+          </div>
+        </div>
+        <Link href="/settings" className="text-[14px] font-medium text-warning hover:underline">
+          Continue setup →
+        </Link>
+      </div>
+
+      {/* Stat cards */}
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {STAT_META.map(({ key, label, icon: Icon, href, currency }) => {
+          const s = summary?.[key];
+          const value = s ? (currency ? naira(s.value) : String(s.value)) : "—";
+          const tone: Tone = s?.tone ?? "neutral";
+          const inner = (
+            <>
+              <div className="mb-3 flex items-start justify-between">
+                <p className="text-[13px] text-content-secondary">{label}</p>
+                <Icon size={18} className="text-content-muted" />
+              </div>
+              <p className="font-mono text-[24px] font-medium leading-none text-ink">{value}</p>
+              <p className={`mt-2 text-[12px] ${deltaColor[tone]}`}>{s?.delta ?? " "}</p>
+            </>
+          );
+          const base = "rounded-lg border border-neutral-border bg-neutral-surface p-5";
+          return (
+            <Link key={key} href={href} className={`${base} block transition-colors hover:border-primary hover:bg-neutral-surface2/40`}>
+              {inner}
+            </Link>
+          );
+        })}
+      </div>
+
+      {/* Two-column: orders + side cards */}
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+        {/* Recent orders */}
+        <div className="rounded-lg border border-neutral-border bg-neutral-surface lg:col-span-2">
+          <div className="flex items-center justify-between border-b border-neutral-border px-5 py-4">
+            <h2 className="text-[15px] font-medium text-ink">Recent Orders</h2>
+            <a href="/orders" className="text-[13px] font-medium text-primary hover:underline">
+              View all orders
+            </a>
+          </div>
+          <div className="overflow-x-auto">
+          <table className="w-full min-w-[540px] text-left">
+            <thead>
+              <tr className="border-b border-neutral-border text-[11px] uppercase tracking-[0.05em] text-content-muted">
+                <th className="whitespace-nowrap px-5 py-2.5 font-medium">Order ID</th>
+                <th className="whitespace-nowrap px-5 py-2.5 font-medium">Customer</th>
+                <th className="whitespace-nowrap px-5 py-2.5 font-medium">Status</th>
+                <th className="whitespace-nowrap px-5 py-2.5 text-right font-medium">Amount</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-neutral-border">
+              {recent.length > 0 ? (
+                recent.map((o) => (
+                  <tr key={o.id}>
+                    <td className="whitespace-nowrap px-5 py-3 font-mono text-[13px] text-content-secondary">{o.id}</td>
+                    <td className="whitespace-nowrap px-5 py-3 text-[14px] text-ink">{o.customer}</td>
+                    <td className="whitespace-nowrap px-5 py-3"><Chip tone={stageTone(o.stage)}>{o.stage ?? "—"}</Chip></td>
+                    <td className="whitespace-nowrap px-5 py-3 text-right font-mono text-[13px] text-ink">{naira(o.amount)}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="px-5 py-10 text-center text-[14px] text-content-secondary">No orders yet</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+          </div>
+        </div>
+
+        {/* Side column */}
+        <div className="space-y-6">
+          {/* Website status */}
+          <div className="rounded-lg border border-neutral-border bg-neutral-surface p-5">
+            <div className="mb-3 flex items-center justify-between">
+              <h2 className="text-[15px] font-medium text-ink">Website Status</h2>
+              {website?.subdomain ? <Chip tone="success">● Live</Chip> : <Chip tone="warning">In progress</Chip>}
+            </div>
+            {website?.subdomain ? (
+              <>
+                <div className="mb-4 rounded-md bg-neutral-surface2 px-3 py-2 font-mono text-[12px] text-content-secondary">
+                  {website.subdomain}.conddo.io
+                </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <p className="font-mono text-[20px] font-medium leading-none text-ink">{website.visitsToday ?? 0}</p>
+                    <p className="mt-1 text-[12px] text-content-muted">Visits today</p>
+                  </div>
+                  <div>
+                    <p className="font-mono text-[20px] font-medium leading-none text-ink">{website.enquiries ?? 0}</p>
+                    <p className="mt-1 text-[12px] text-content-muted">New enquiries</p>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <p className="text-[13px] leading-relaxed text-content-secondary">
+                Your website is being set up. Its status and traffic will appear here once it&apos;s live.
+              </p>
+            )}
+          </div>
+
+          {/* Today's bookings */}
+          <div className="rounded-lg border border-neutral-border bg-neutral-surface">
+            <div className="border-b border-neutral-border px-5 py-4">
+              <h2 className="text-[15px] font-medium text-ink">Today&apos;s Bookings</h2>
+            </div>
+            {todays.length > 0 ? (
+              <ul className="divide-y divide-neutral-border">
+                {todays.map((b) => (
+                  <li key={b.id} className="flex items-center gap-3 px-5 py-3">
+                    <span className="shrink-0 rounded-md bg-primary-bg px-2 py-1 font-mono text-[11px] font-medium text-primary">
+                      {fmtTime(b.start)}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-[14px] text-ink">{b.customer}</p>
+                      <p className="truncate text-[12px] text-content-muted">{b.service}</p>
+                    </div>
+                    <ChevronRight size={16} className="text-content-muted" />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="px-5 py-8 text-center text-[14px] text-content-secondary">No bookings today</p>
+            )}
+            <div className="px-5 py-4">
+              <Button href="/bookings" variant="secondary" size="md" className="w-full">
+                View calendar
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </AppShell>
+  );
+}
