@@ -1,41 +1,41 @@
 "use client";
 
+import { useState } from "react";
 import { Plus, MessageSquare } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
+import { CreateCampaignModal } from "@/components/app/CreateCampaignModal";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { MarketingTabs } from "@/components/app/MarketingTabs";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
-import { api } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
+import { marketingApi } from "@/lib/api/marketing";
 
-type CampaignStatus = "sent" | "running" | "scheduled" | "draft";
-type SmsCampaign = {
-  id: string;
-  name: string;
-  status: CampaignStatus;
-  delivered: number;
-  clickRate: string;
-  date: string;
+type Tone = "success" | "warning" | "neutral";
+const statusTone = (s: string): Tone => {
+  const v = s.toLowerCase();
+  if (v.includes("sent") || v.includes("run") || v.includes("active") || v.includes("complete")) return "success";
+  if (v.includes("schedul")) return "warning";
+  return "neutral";
 };
-
-const statusChip: Record<CampaignStatus, { tone: "success" | "warning" | "neutral"; label: string }> = {
-  sent: { tone: "success", label: "Sent" },
-  running: { tone: "success", label: "Active" },
-  scheduled: { tone: "warning", label: "Scheduled" },
-  draft: { tone: "neutral", label: "Draft" },
+const titleCase = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : s);
+const fmtDate = (t: string | null) => {
+  if (!t) return "Draft";
+  const d = new Date(t);
+  return isNaN(d.getTime()) ? t : d.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" });
 };
 
 export default function SmsCampaignsPage() {
-  const { data, loading, error, refetch } = useApiQuery<SmsCampaign[]>(() => api.get("/marketing/campaigns?type=sms"));
+  const { data, loading, error, refetch } = useApiQuery(() => marketingApi.campaigns("type=sms"));
   const campaigns = data ?? [];
+  const [addOpen, setAddOpen] = useState(false);
 
   return (
     <AppShell
       title="Marketing"
       actions={
-        <Button variant="primary" size="md">
+        <Button variant="primary" size="md" onClick={() => setAddOpen(true)}>
           <Plus size={17} />
           <span className="hidden sm:inline">New SMS blast</span>
         </Button>
@@ -52,7 +52,7 @@ export default function SmsCampaignsPage() {
             icon={MessageSquare}
             title="No SMS campaigns yet"
             description="SMS gets read fast — perfect for flash sales and reminders. Send your first blast to your customer list."
-            action={<Button variant="primary" size="md"><Plus size={17} /> New SMS blast</Button>}
+            action={<Button variant="primary" size="md" onClick={() => setAddOpen(true)}><Plus size={17} /> New SMS blast</Button>}
           />
         }
       >
@@ -61,23 +61,25 @@ export default function SmsCampaignsPage() {
             <div key={c.id} className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
               <div className="mb-4 flex items-start justify-between">
                 <h3 className="text-[15px] font-semibold text-ink">{c.name}</h3>
-                <Chip tone={statusChip[c.status].tone}>{statusChip[c.status].label}</Chip>
+                <Chip tone={statusTone(c.status)}>{titleCase(c.status)}</Chip>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Delivered</p>
-                  <p className="font-mono text-[18px] text-ink">{c.delivered.toLocaleString()}</p>
+                  <p className="font-mono text-[18px] text-ink">{(c.delivered || 0).toLocaleString()}</p>
                 </div>
                 <div>
                   <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Click rate</p>
-                  <p className="font-mono text-[18px] text-ink">{c.clickRate}</p>
+                  <p className="font-mono text-[18px] text-ink">{c.clickRate ? `${c.clickRate.toFixed(1)}%` : "—"}</p>
                 </div>
               </div>
-              <p className="mt-3 text-[12px] text-content-muted">{c.date}</p>
+              <p className="mt-3 text-[12px] text-content-muted">{fmtDate(c.scheduledAt)}</p>
             </div>
           ))}
         </div>
       </QueryBoundary>
+
+      <CreateCampaignModal open={addOpen} onClose={() => setAddOpen(false)} type="sms" onCreated={refetch} />
     </AppShell>
   );
 }

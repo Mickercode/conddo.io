@@ -1,71 +1,88 @@
-import {
-  Plus,
-  ChevronLeft,
-  ChevronRight,
-  Camera,
-  ThumbsUp,
-  MessageCircle,
-  Briefcase,
-  type LucideIcon,
-} from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { Plus, ChevronLeft, ChevronRight, Camera, ThumbsUp, MessageCircle, Briefcase, Send, type LucideIcon } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
-import { Button } from "@/components/ui/Button";
 import { MarketingTabs } from "@/components/app/MarketingTabs";
+import { SchedulePostModal } from "@/components/app/SchedulePostModal";
+import { Button } from "@/components/ui/Button";
+import { QueryBoundary } from "@/components/ui/QueryBoundary";
+import { useToast } from "@/components/ui/Toast";
+import { useApiQuery } from "@/hooks/useApiQuery";
+import { marketingApi, type MarketingPost } from "@/lib/api/marketing";
+import { ApiError } from "@/lib/api/client";
 
-type Platform = "instagram" | "facebook" | "twitter" | "linkedin";
-type Post = { title: string; platform: Platform; highlight?: boolean };
-type Cell = { day: number; muted?: boolean; dot?: boolean; posts?: Post[] };
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const FILTERS = ["All", "instagram", "facebook", "twitter", "linkedin"];
+const FILTER_LABEL: Record<string, string> = { All: "All", instagram: "Instagram", facebook: "Facebook", twitter: "Twitter", linkedin: "LinkedIn" };
 
-const platformStyle: Record<Platform, { box: string; icon: LucideIcon }> = {
+const platformStyle: Record<string, { box: string; icon: LucideIcon }> = {
   instagram: { box: "bg-primary-bg text-primary", icon: Camera },
   facebook: { box: "bg-info-bg text-info", icon: ThumbsUp },
   twitter: { box: "bg-neutral-surface2 text-ink", icon: MessageCircle },
   linkedin: { box: "bg-info-bg text-info", icon: Briefcase },
 };
+const styleFor = (p: string | null) => platformStyle[(p ?? "").toLowerCase()] ?? { box: "bg-neutral-surface2 text-ink", icon: MessageCircle };
 
-const FILTERS: { label: string; active?: boolean }[] = [
-  { label: "All", active: true },
-  { label: "Instagram" },
-  { label: "Facebook" },
-  { label: "Twitter" },
-  { label: "LinkedIn" },
-];
+const iso = (d: Date) => d.toISOString().slice(0, 10);
+const sameDay = (a: Date, b: Date) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 
-const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-
-const CELLS: Cell[] = [
-  // Row 1 (prev month + May 1–2)
-  { day: 26, muted: true }, { day: 27, muted: true }, { day: 28, muted: true }, { day: 29, muted: true }, { day: 30, muted: true }, { day: 1 }, { day: 2 },
-  // Row 2
-  { day: 3 },
-  { day: 4, posts: [{ title: "New product teaser…", platform: "instagram" }] },
-  { day: 5, posts: [{ title: "Hiring update for Q3", platform: "linkedin" }] },
-  { day: 6, dot: true, posts: [{ title: "Spring Campaign V1", platform: "instagram", highlight: true }] },
-  { day: 7 }, { day: 8 }, { day: 9 },
-  // Row 3
-  { day: 10 },
-  { day: 11, posts: [{ title: "Twitter Poll: Best…", platform: "twitter" }] },
-  { day: 12 }, { day: 13 }, { day: 14 },
-  { day: 15, posts: [{ title: "Client testimonial…", platform: "facebook" }] },
-  { day: 16 },
-  // Row 4
-  { day: 17 }, { day: 18 },
-  { day: 19, posts: [{ title: "Behind the scenes…", platform: "instagram" }] },
-  { day: 20 },
-  { day: 21, posts: [{ title: "Industry news share", platform: "twitter" }] },
-  { day: 22 }, { day: 23 },
-  // Row 5
-  { day: 24 }, { day: 25 },
-  { day: 26, posts: [{ title: "Company milestone", platform: "linkedin" }] },
-  { day: 27 }, { day: 28 }, { day: 29 }, { day: 30 },
-];
+function monthGrid(year: number, month: number) {
+  const firstWeekday = new Date(year, month, 1).getDay();
+  const daysInMonth = new Date(year, month + 1, 0).getDate();
+  const cells: { date: Date; muted: boolean }[] = [];
+  for (let i = 0; i < firstWeekday; i++) cells.push({ date: new Date(year, month, 1 - (firstWeekday - i)), muted: true });
+  for (let d = 1; d <= daysInMonth; d++) cells.push({ date: new Date(year, month, d), muted: false });
+  while (cells.length % 7 !== 0 || cells.length < 42) cells.push({ date: new Date(year, month, daysInMonth + (cells.length - firstWeekday - daysInMonth + 1)), muted: true });
+  return cells.slice(0, 42);
+}
 
 export default function SocialCalendarPage() {
+  const toast = useToast();
+  const today = new Date();
+  const [offset, setOffset] = useState(0);
+  const [filter, setFilter] = useState("All");
+  const [postOpen, setPostOpen] = useState(false);
+  const [publishing, setPublishing] = useState<string | null>(null);
+
+  const base = new Date(today.getFullYear(), today.getMonth() + offset, 1);
+  const year = base.getFullYear();
+  const month = base.getMonth();
+  const cells = monthGrid(year, month);
+  const monthLabel = base.toLocaleString("en-US", { month: "long", year: "numeric" });
+
+  const { data, loading, error, refetch } = useApiQuery(
+    () => marketingApi.posts(`from=${iso(cells[0].date)}&to=${iso(cells[cells.length - 1].date)}`),
+    [year, month],
+  );
+  const posts = (data ?? []).filter((p) => filter === "All" || p.platforms.some((pl) => pl.toLowerCase() === filter));
+
+  const postsOn = (d: Date) =>
+    posts.filter((p) => {
+      if (!p.scheduledAt) return false;
+      const pd = new Date(p.scheduledAt);
+      return !isNaN(pd.getTime()) && sameDay(pd, d);
+    });
+
+  async function publish(p: MarketingPost) {
+    if (p.status?.toLowerCase() === "published") return;
+    setPublishing(p.id);
+    try {
+      await marketingApi.publishPost(p.id);
+      toast.success("Post published", p.title ?? undefined);
+      refetch();
+    } catch (err) {
+      toast.error("Couldn't publish", err instanceof ApiError ? err.message : "Please try again.");
+    } finally {
+      setPublishing(null);
+    }
+  }
+
   return (
     <AppShell
       title="Marketing"
       actions={
-        <Button variant="primary" size="md">
+        <Button variant="primary" size="md" onClick={() => setPostOpen(true)}>
           <Plus size={17} />
           <span className="hidden sm:inline">New Post</span>
         </Button>
@@ -76,82 +93,78 @@ export default function SocialCalendarPage() {
       {/* Toolbar */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h2 className="text-[20px] font-medium tracking-[-0.01em] text-ink">May 2026</h2>
+          <h2 className="text-[20px] font-medium tracking-[-0.01em] text-ink">{monthLabel}</h2>
           <div className="flex items-center overflow-hidden rounded-lg border border-neutral-border">
-            <button className="p-1.5 hover:bg-neutral-surface2"><ChevronLeft size={18} /></button>
-            <button className="border-l border-neutral-border p-1.5 hover:bg-neutral-surface2"><ChevronRight size={18} /></button>
+            <button onClick={() => setOffset((o) => o - 1)} className="p-1.5 hover:bg-neutral-surface2"><ChevronLeft size={18} /></button>
+            <button onClick={() => setOffset((o) => o + 1)} className="border-l border-neutral-border p-1.5 hover:bg-neutral-surface2"><ChevronRight size={18} /></button>
           </div>
-          <button className="rounded-lg border border-neutral-border bg-neutral-surface px-3.5 py-1.5 text-[13px] font-medium hover:bg-neutral-surface2">Today</button>
-        </div>
-        <div className="inline-flex rounded-lg border border-neutral-border bg-neutral-surface2 p-1">
-          <button className="rounded-md px-4 py-1 text-[13px] text-content-secondary hover:text-ink">Week</button>
-          <button className="rounded-md bg-neutral-surface px-4 py-1 text-[13px] font-medium text-primary">Month</button>
+          <button onClick={() => setOffset(0)} className="rounded-lg border border-neutral-border bg-neutral-surface px-3.5 py-1.5 text-[13px] font-medium hover:bg-neutral-surface2">Today</button>
         </div>
       </div>
 
-      {/* Filters */}
+      {/* Platform filters */}
       <div className="mb-5 flex flex-wrap gap-2">
         {FILTERS.map((f) => (
           <button
-            key={f.label}
+            key={f}
+            onClick={() => setFilter(f)}
             className={`rounded-full px-4 py-1.5 text-[13px] transition-colors ${
-              f.active
-                ? "bg-ink text-white"
-                : "border border-neutral-border bg-neutral-surface text-content-secondary hover:border-primary-light"
+              f === filter ? "bg-ink text-white" : "border border-neutral-border bg-neutral-surface text-content-secondary hover:border-primary-light"
             }`}
           >
-            {f.label}
+            {FILTER_LABEL[f]}
           </button>
         ))}
       </div>
 
-      {/* Month grid */}
-      <div className="overflow-x-auto rounded-xl border border-neutral-border bg-neutral-surface">
-        <div className="min-w-[760px]">
-          {/* Weekday header */}
-          <div className="grid grid-cols-7 border-b border-neutral-border bg-neutral-surface2">
-            {WEEKDAYS.map((d) => (
-              <div key={d} className="py-2 text-center text-[11px] uppercase tracking-[0.05em] text-content-secondary">
-                {d}
-              </div>
-            ))}
-          </div>
-          {/* Days */}
-          <div className="grid grid-cols-7">
-            {CELLS.map((cell, i) => (
-              <div
-                key={i}
-                className={`min-h-[100px] border-b border-r border-neutral-border p-2 [&:nth-child(7n)]:border-r-0 ${
-                  cell.muted ? "bg-neutral-surface2/40" : ""
-                }`}
-              >
-                <span className={`flex items-center gap-1 font-mono text-[13px] ${cell.muted ? "text-content-muted" : "text-ink"}`}>
-                  {cell.day}
-                  {cell.dot && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
-                </span>
-                {cell.posts && (
-                  <div className="mt-1.5 space-y-1">
-                    {cell.posts.map((p) => {
-                      const s = platformStyle[p.platform];
-                      return (
-                        <div
-                          key={p.title}
-                          className={`flex cursor-pointer items-center gap-1 rounded px-1.5 py-0.5 ${s.box} ${
-                            p.highlight ? "ring-1 ring-primary/30" : ""
-                          }`}
-                        >
-                          <s.icon size={12} className="shrink-0" />
-                          <span className="truncate text-[10px] font-medium">{p.title}</span>
-                        </div>
-                      );
-                    })}
+      <QueryBoundary loading={loading} error={error} onRetry={refetch} isEmpty={false} empty={null} loadingLabel="Loading your calendar…">
+        <div className="overflow-x-auto rounded-xl border border-neutral-border bg-neutral-surface">
+          <div className="min-w-[760px]">
+            <div className="grid grid-cols-7 border-b border-neutral-border bg-neutral-surface2">
+              {WEEKDAYS.map((d) => (
+                <div key={d} className="py-2 text-center text-[11px] uppercase tracking-[0.05em] text-content-secondary">{d}</div>
+              ))}
+            </div>
+            <div className="grid grid-cols-7">
+              {cells.map((cell, i) => {
+                const dayPosts = cell.muted ? [] : postsOn(cell.date);
+                const isToday = sameDay(cell.date, today);
+                return (
+                  <div key={i} className={`min-h-[100px] border-b border-r border-neutral-border p-2 [&:nth-child(7n)]:border-r-0 ${cell.muted ? "bg-neutral-surface2/40" : ""}`}>
+                    <span className={`flex items-center gap-1 font-mono text-[13px] ${cell.muted ? "text-content-muted" : isToday ? "font-bold text-primary" : "text-ink"}`}>
+                      {cell.date.getDate()}
+                      {isToday && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
+                    </span>
+                    {dayPosts.length > 0 && (
+                      <div className="mt-1.5 space-y-1">
+                        {dayPosts.map((p) => {
+                          const s = styleFor(p.platform);
+                          const published = p.status?.toLowerCase() === "published";
+                          return (
+                            <button
+                              key={p.id}
+                              onClick={() => publish(p)}
+                              disabled={published || publishing === p.id}
+                              title={published ? "Published" : "Click to publish now"}
+                              className={`group flex w-full items-center gap-1 rounded px-1.5 py-0.5 text-left ${s.box} ${published ? "opacity-70" : "hover:ring-1 hover:ring-primary/40"}`}
+                            >
+                              <s.icon size={12} className="shrink-0" />
+                              <span className="truncate text-[10px] font-medium">{p.title || p.content || "Post"}</span>
+                              {!published && <Send size={10} className="ml-auto shrink-0 opacity-0 group-hover:opacity-100" />}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-            ))}
+                );
+              })}
+            </div>
           </div>
         </div>
-      </div>
+      </QueryBoundary>
+
+      <SchedulePostModal open={postOpen} onClose={() => setPostOpen(false)} defaultDate={iso(today)} onCreated={refetch} />
     </AppShell>
   );
 }
