@@ -3,6 +3,7 @@
 
 import { api, authApi } from "./client";
 import { setAccessToken, clearAccessToken } from "./auth";
+import { resetManifests } from "@/hooks/useManifests";
 
 export type SignupInput = {
   name: string;
@@ -64,6 +65,7 @@ export async function logout(): Promise<void> {
     /* best-effort */
   }
   clearAccessToken();
+  resetManifests();
 }
 
 export async function getMe(): Promise<Me> {

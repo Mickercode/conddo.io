@@ -15,14 +15,15 @@ export type ManifestNavItem = {
 
 export type ManifestRoute = { path: string; component: string };
 
-export type ManifestWidget = { component: string; position: WidgetZone };
+export type ManifestWidget = { component: string; zone: WidgetZone };
 
+// Mirrors the backend's UiManifest record (conddo-core registry/UiManifest.java):
+// one nav entry per tool/section, its routes, and any dashboard widgets.
 export type UIManifest = {
   toolId: string;
-  navItems: ManifestNavItem[];
+  navItem: ManifestNavItem | null;
   routes: ManifestRoute[];
-  dashboardWidgets: ManifestWidget[];
-  config?: Record<string, unknown>;
+  widgets: ManifestWidget[];
 };
 
 /** A nav link the sidebar renders (icon already resolved to a component). */

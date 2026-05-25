@@ -9,6 +9,11 @@ import type { UIManifest } from "@/lib/manifest/types";
 // Module-level cache so the manifests are fetched once per session, not per hook use.
 let cache: UIManifest[] | null = null;
 
+/** Clear the cached manifests (call on logout, so the next user doesn't inherit nav). */
+export function resetManifests(): void {
+  cache = null;
+}
+
 /**
  * Fetches the tenant's UI manifests (Architecture v1.0 §16) for the modules in the
  * JWT's `activeModules` claim. Returns `null` (→ caller falls back to the static
