@@ -1,38 +1,52 @@
 "use client";
 
+import { useState } from "react";
 import { Plus, UserPlus } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
+import { AddLeadModal } from "@/components/app/AddLeadModal";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { MarketingTabs } from "@/components/app/MarketingTabs";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
-import { api } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
+import { marketingApi } from "@/lib/api/marketing";
 
-type LeadStage = "New" | "Contacted" | "Interested" | "Converted" | "Lost";
-type Lead = { id: string; name: string; source: string; stage: LeadStage; lastContact: string };
-type FunnelStage = { label: string; value: number };
-
-const stageTone: Record<LeadStage, "info" | "warning" | "primary" | "success" | "neutral"> = {
-  New: "info",
-  Contacted: "warning",
-  Interested: "primary",
-  Converted: "success",
-  Lost: "neutral",
+type Tone = "info" | "warning" | "primary" | "success" | "neutral";
+const stageTone = (stage: string): Tone => {
+  const s = stage.toLowerCase();
+  if (s.includes("convert")) return "success";
+  if (s.includes("interest")) return "primary";
+  if (s.includes("contact")) return "warning";
+  if (s.includes("lost")) return "neutral";
+  return "info";
+};
+const titleCase = (s: string) => (s ? s.charAt(0).toUpperCase() + s.slice(1).toLowerCase() : s);
+const fmtDate = (t: string | null) => {
+  if (!t) return "—";
+  const d = new Date(t);
+  return isNaN(d.getTime()) ? t : d.toLocaleDateString("en-NG", { day: "numeric", month: "short", year: "numeric" });
 };
 
 export default function LeadsPage() {
-  const funnel = useApiQuery<FunnelStage[]>(() => api.get("/marketing/leads/funnel"));
-  const leads = useApiQuery<Lead[]>(() => api.get("/marketing/leads"));
+  const funnel = useApiQuery(marketingApi.funnel);
+  const leads = useApiQuery(() => marketingApi.leads());
+  const [addOpen, setAddOpen] = useState(false);
+
   const rows = leads.data ?? [];
-  const stages = funnel.data ?? [];
+  const stages = funnel.data?.stages ?? [];
+  const conversionRate = funnel.data?.conversionRate;
+
+  function refetchAll() {
+    leads.refetch();
+    funnel.refetch();
+  }
 
   return (
     <AppShell
       title="Marketing"
       actions={
-        <Button variant="primary" size="md">
+        <Button variant="primary" size="md" onClick={() => setAddOpen(true)}>
           <Plus size={17} />
           <span className="hidden sm:inline">Add lead</span>
         </Button>
@@ -49,7 +63,7 @@ export default function LeadsPage() {
             icon={UserPlus}
             title="No leads yet"
             description="Enquiries from your website and social channels land here. Track them from New to Converted."
-            action={<Button variant="primary" size="md"><Plus size={17} /> Add a lead</Button>}
+            action={<Button variant="primary" size="md" onClick={() => setAddOpen(true)}><Plus size={17} /> Add a lead</Button>}
           />
         }
       >
@@ -58,12 +72,17 @@ export default function LeadsPage() {
           {stages.length > 0 && (
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               {stages.map((s) => (
-                <div key={s.label} className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
-                  <p className="mb-2 text-[12px] text-content-secondary">{s.label}</p>
-                  <p className="font-mono text-[24px] font-medium leading-none text-ink">{s.value}</p>
+                <div key={s.stage} className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+                  <p className="mb-2 text-[12px] text-content-secondary">{titleCase(s.stage)}</p>
+                  <p className="font-mono text-[24px] font-medium leading-none text-ink">{s.count}</p>
                 </div>
               ))}
             </div>
+          )}
+          {conversionRate != null && (
+            <p className="text-[13px] text-content-secondary">
+              Conversion rate: <span className="font-mono font-medium text-ink">{conversionRate.toFixed(1)}%</span>
+            </p>
           )}
 
           {/* Leads table */}
@@ -75,16 +94,19 @@ export default function LeadsPage() {
                     <th className="px-5 py-3 font-medium">Lead</th>
                     <th className="px-5 py-3 font-medium">Source</th>
                     <th className="px-5 py-3 font-medium">Stage</th>
-                    <th className="px-5 py-3 font-medium">Last contact</th>
+                    <th className="px-5 py-3 font-medium">Added</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-neutral-border">
                   {rows.map((l) => (
                     <tr key={l.id} className="transition-colors hover:bg-neutral-surface2">
-                      <td className="px-5 py-3.5 text-[14px] text-ink">{l.name}</td>
-                      <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-content-secondary">{l.source}</td>
-                      <td className="px-5 py-3.5"><Chip tone={stageTone[l.stage]}>{l.stage}</Chip></td>
-                      <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-content-secondary">{l.lastContact}</td>
+                      <td className="px-5 py-3.5">
+                        <p className="text-[14px] text-ink">{l.name}</p>
+                        {(l.email || l.phone) && <p className="text-[12px] text-content-muted">{l.phone || l.email}</p>}
+                      </td>
+                      <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-content-secondary">{l.source ?? "—"}</td>
+                      <td className="px-5 py-3.5"><Chip tone={stageTone(l.stage)}>{titleCase(l.stage)}</Chip></td>
+                      <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-content-secondary">{fmtDate(l.createdAt)}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -93,6 +115,8 @@ export default function LeadsPage() {
           </div>
         </div>
       </QueryBoundary>
+
+      <AddLeadModal open={addOpen} onClose={() => setAddOpen(false)} onCreated={refetchAll} />
     </AppShell>
   );
 }
