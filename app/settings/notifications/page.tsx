@@ -1,11 +1,15 @@
 "use client";
 
-import { BellOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import { BellOff, Save, Loader2 } from "lucide-react";
 import { SettingsShell } from "@/components/app/SettingsShell";
+import { Button } from "@/components/ui/Button";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
-import { api } from "@/lib/api/client";
+import { useToast } from "@/components/ui/Toast";
+import { ApiError, api } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
+import { settingsApi } from "@/lib/api/settings";
 
 type NotificationPref = {
   key: string;
@@ -15,18 +19,43 @@ type NotificationPref = {
   sms: boolean;
 };
 
-function Toggle({ on }: { on: boolean }) {
+function Toggle({ on, onChange }: { on: boolean; onChange: (v: boolean) => void }) {
   return (
     <label className="relative inline-flex cursor-pointer items-center">
-      <input type="checkbox" defaultChecked={on} className="peer sr-only" />
+      <input type="checkbox" checked={on} onChange={(e) => onChange(e.target.checked)} className="peer sr-only" />
       <div className="h-6 w-11 rounded-full bg-neutral-strong transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-primary peer-checked:after:translate-x-5" />
     </label>
   );
 }
 
 export default function NotificationSettings() {
-  const { data, loading, error, refetch } = useApiQuery<NotificationPref[]>(() => api.get("/settings/notifications"));
-  const prefs = data ?? [];
+  const toast = useToast();
+  const { data, loading, error, refetch } = useApiQuery<NotificationPref[]>(
+    () => api.get<NotificationPref[]>("/settings/notifications"),
+  );
+  const [prefs, setPrefs] = useState<NotificationPref[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    if (Array.isArray(data)) setPrefs(data);
+  }, [data]);
+
+  function setPref(key: string, channel: "email" | "sms", value: boolean) {
+    setPrefs((prev) => prev.map((p) => (p.key === key ? { ...p, [channel]: value } : p)));
+  }
+
+  async function save() {
+    setSaving(true);
+    try {
+      const body = Object.fromEntries(prefs.map((p) => [p.key, { email: p.email, sms: p.sms }]));
+      await settingsApi.updateNotifications(body);
+      toast.success("Notification preferences saved");
+    } catch (err) {
+      toast.error("Couldn't save preferences", err instanceof ApiError ? err.message : "Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <SettingsShell active="notifications" title="Notifications" description="Choose how you want to be notified about activity in your business.">
@@ -56,11 +85,17 @@ export default function NotificationSettings() {
                   <p className="text-[14px] font-medium text-ink">{p.label}</p>
                   <p className="text-[13px] text-content-muted">{p.description}</p>
                 </div>
-                <div className="flex w-12 justify-center"><Toggle on={p.email} /></div>
-                <div className="flex w-12 justify-center"><Toggle on={p.sms} /></div>
+                <div className="flex w-12 justify-center"><Toggle on={p.email} onChange={(v) => setPref(p.key, "email", v)} /></div>
+                <div className="flex w-12 justify-center"><Toggle on={p.sms} onChange={(v) => setPref(p.key, "sms", v)} /></div>
               </li>
             ))}
           </ul>
+        </div>
+        <div className="mt-6 flex justify-end">
+          <Button variant="primary" size="md" onClick={save} disabled={saving}>
+            {saving ? <Loader2 size={17} className="animate-spin" /> : <Save size={17} />}
+            {saving ? "Saving…" : "Save preferences"}
+          </Button>
         </div>
       </QueryBoundary>
     </SettingsShell>

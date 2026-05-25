@@ -1,26 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Search, Package, AlertTriangle } from "lucide-react";
+import { Plus, Search, Package, AlertTriangle, Pencil, ArrowUpDown } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
+import { ProductModal } from "@/components/app/ProductModal";
+import { AdjustStockModal } from "@/components/app/AdjustStockModal";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
-import { api } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
-
-type StockStatus = "in_stock" | "low" | "out";
-type Product = {
-  id: string;
-  name: string;
-  sku: string;
-  category: string;
-  price: number;
-  stock: number;
-  status: StockStatus;
-};
+import { inventoryApi, stockStatus, type Product, type StockStatus } from "@/lib/api/inventory";
 
 const statusChip: Record<StockStatus, { tone: "success" | "warning" | "danger"; label: string }> = {
   in_stock: { tone: "success", label: "In stock" },
@@ -31,19 +22,33 @@ const statusChip: Record<StockStatus, { tone: "success" | "warning" | "danger"; 
 export default function InventoryPage() {
   const [search, setSearch] = useState("");
   const [lowOnly, setLowOnly] = useState(false);
+  const [productOpen, setProductOpen] = useState(false);
+  const [editing, setEditing] = useState<Product | null>(null);
+  const [adjusting, setAdjusting] = useState<Product | null>(null);
 
-  const { data, loading, error, refetch } = useApiQuery<Product[]>(
-    () => api.get(`/inventory/products?search=${encodeURIComponent(search)}&lowStock=${lowOnly}`),
+  const { data, loading, error, refetch } = useApiQuery(
+    () => inventoryApi.list({ search, lowStock: lowOnly }),
     [search, lowOnly],
   );
+  const categoriesQ = useApiQuery(inventoryApi.categories);
   const products = data ?? [];
+  const categories = categoriesQ.data ?? [];
+
+  function openAdd() {
+    setEditing(null);
+    setProductOpen(true);
+  }
+  function openEdit(p: Product) {
+    setEditing(p);
+    setProductOpen(true);
+  }
 
   return (
     <AppShell
       title="Inventory"
       subtitle="Products and stock levels"
       actions={
-        <Button variant="primary" size="md">
+        <Button variant="primary" size="md" onClick={openAdd}>
           <Plus size={17} />
           <span className="hidden sm:inline">Add Product</span>
         </Button>
@@ -89,7 +94,7 @@ export default function InventoryPage() {
             }
             action={
               !search && !lowOnly ? (
-                <Button variant="primary" size="md">
+                <Button variant="primary" size="md" onClick={openAdd}>
                   <Plus size={17} /> Add your first product
                 </Button>
               ) : undefined
@@ -99,7 +104,7 @@ export default function InventoryPage() {
       >
         <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
           <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left">
+            <table className="w-full min-w-[720px] text-left">
               <thead>
                 <tr className="border-b border-neutral-border bg-neutral-surface2 text-[11px] uppercase tracking-[0.05em] text-content-secondary">
                   <th className="px-5 py-3 font-medium">Product</th>
@@ -107,33 +112,67 @@ export default function InventoryPage() {
                   <th className="px-5 py-3 text-right font-medium">Price</th>
                   <th className="px-5 py-3 text-right font-medium">Stock</th>
                   <th className="px-5 py-3 font-medium">Status</th>
+                  <th className="px-5 py-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-neutral-border">
-                {products.map((p) => (
-                  <tr key={p.id} className="transition-colors hover:bg-neutral-surface2">
-                    <td className="px-5 py-3.5">
-                      <p className="text-[14px] text-ink">{p.name}</p>
-                      <p className="font-mono text-[12px] text-content-muted">{p.sku}</p>
-                    </td>
-                    <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-content-secondary">{p.category}</td>
-                    <td className="whitespace-nowrap px-5 py-3.5 text-right font-mono text-[13px] text-ink">{naira(p.price)}</td>
-                    <td className="whitespace-nowrap px-5 py-3.5 text-right">
-                      <span className={`inline-flex items-center gap-1 font-mono text-[13px] ${p.status === "in_stock" ? "text-ink" : "text-warning"}`}>
-                        {p.status !== "in_stock" && <AlertTriangle size={13} />}
-                        {p.stock}
-                      </span>
-                    </td>
-                    <td className="px-5 py-3.5">
-                      <Chip tone={statusChip[p.status].tone}>{statusChip[p.status].label}</Chip>
-                    </td>
-                  </tr>
-                ))}
+                {products.map((p) => {
+                  const status = stockStatus(p);
+                  return (
+                    <tr key={p.id} className="group transition-colors hover:bg-neutral-surface2">
+                      <td className="px-5 py-3.5">
+                        <p className="text-[14px] text-ink">{p.name}</p>
+                        {p.sku && <p className="font-mono text-[12px] text-content-muted">{p.sku}</p>}
+                      </td>
+                      <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-content-secondary">{p.category ?? "—"}</td>
+                      <td className="whitespace-nowrap px-5 py-3.5 text-right font-mono text-[13px] text-ink">{naira(p.price)}</td>
+                      <td className="whitespace-nowrap px-5 py-3.5 text-right">
+                        <span className={`inline-flex items-center gap-1 font-mono text-[13px] ${status === "in_stock" ? "text-ink" : "text-warning"}`}>
+                          {status !== "in_stock" && <AlertTriangle size={13} />}
+                          {p.stock}
+                        </span>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <Chip tone={statusChip[status].tone}>{statusChip[status].label}</Chip>
+                      </td>
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center justify-end gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+                          <button
+                            onClick={() => setAdjusting(p)}
+                            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium text-content-secondary hover:bg-neutral-surface hover:text-ink"
+                          >
+                            <ArrowUpDown size={14} /> Adjust
+                          </button>
+                          <button
+                            onClick={() => openEdit(p)}
+                            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium text-primary hover:bg-primary-bg"
+                          >
+                            <Pencil size={14} /> Edit
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         </div>
       </QueryBoundary>
+
+      <ProductModal
+        open={productOpen}
+        onClose={() => setProductOpen(false)}
+        product={editing}
+        categories={categories}
+        onSaved={() => { refetch(); categoriesQ.refetch(); }}
+      />
+      <AdjustStockModal
+        open={adjusting !== null}
+        onClose={() => setAdjusting(null)}
+        product={adjusting}
+        onAdjusted={() => refetch()}
+      />
     </AppShell>
   );
 }

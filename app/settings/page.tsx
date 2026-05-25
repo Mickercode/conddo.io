@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Lock, Save, Loader2 } from "lucide-react";
 import { SettingsShell } from "@/components/app/SettingsShell";
 import { Button } from "@/components/ui/Button";
-import { isNotConfigured } from "@/lib/api/client";
+import { useToast } from "@/components/ui/Toast";
+import { ApiError, isNotConfigured } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { settingsApi } from "@/lib/api/settings";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+
+const str = (form: FormData, key: string) => String(form.get(key) ?? "").trim();
+const anyFilled = (...vals: string[]) => vals.some((v) => v.length > 0);
 
 const inputCls =
   "w-full rounded-lg border border-neutral-border bg-neutral-surface2 px-3.5 py-2.5 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
@@ -25,7 +28,9 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 }
 
 export default function BusinessProfileSettings() {
+  const toast = useToast();
   const { data, loading, error } = useApiQuery(settingsApi.businessProfile);
+  const { data: location } = useApiQuery(settingsApi.location);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -33,18 +38,50 @@ export default function BusinessProfileSettings() {
   const hours = WEEKDAYS.map((day) => ({ day, on: false, open: undefined as string | undefined, close: undefined as string | undefined }));
   const hadError = error && !isNotConfigured(error);
 
+  // Saves fan out to the right endpoints (profile / branding / social / location).
+  // Branding & social have no GET, so to avoid blanking we only PUT them when filled.
   async function onSave(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     setSaving(true);
     setSaved(false);
-    try {
-      await settingsApi.updateBusinessProfile(Object.fromEntries(form.entries()));
+
+    const jobs: Promise<unknown>[] = [
+      settingsApi.updateBusinessProfile({
+        name: str(form, "name"),
+        tagline: str(form, "tagline"),
+        description: str(form, "description"),
+        email: str(form, "email"),
+        phone: str(form, "phone"),
+      }),
+    ];
+
+    const primaryColor = str(form, "primaryColor");
+    const logoUrl = str(form, "logoUrl");
+    if (anyFilled(primaryColor, logoUrl)) {
+      jobs.push(settingsApi.updateBranding({ primaryColor: primaryColor || undefined, logoUrl: logoUrl || undefined }));
+    }
+
+    const instagram = str(form, "instagram"), twitter = str(form, "twitter"),
+      facebook = str(form, "facebook"), linkedin = str(form, "linkedin");
+    if (anyFilled(instagram, twitter, facebook, linkedin)) {
+      jobs.push(settingsApi.updateSocialHandles({ instagram, twitter, facebook, linkedin }));
+    }
+
+    const street = str(form, "street"), city = str(form, "city"), state = str(form, "state");
+    if (anyFilled(street, city, state)) {
+      jobs.push(settingsApi.updateLocation({ street, city, state }));
+    }
+
+    const results = await Promise.allSettled(jobs);
+    setSaving(false);
+    const failed = results.find((r) => r.status === "rejected") as PromiseRejectedResult | undefined;
+    if (failed) {
+      const reason = failed.reason;
+      toast.error("Couldn't save all changes", reason instanceof ApiError ? reason.message : "Please try again.");
+    } else {
       setSaved(true);
-    } catch {
-      /* surfaced inline; backend not wired yet */
-    } finally {
-      setSaving(false);
+      toast.success("Settings saved");
     }
   }
 
@@ -55,8 +92,8 @@ export default function BusinessProfileSettings() {
           <Loader2 size={16} className="animate-spin" /> Loading your profile…
         </p>
       ) : (
-        // `key` lets defaultValues populate once data arrives.
-        <form key={p ? "loaded" : "empty"} onSubmit={onSave} className="space-y-6">
+        // `key` lets defaultValues populate once data (profile + location) arrives.
+        <form key={`${p ? "p" : ""}${location ? "l" : ""}`} onSubmit={onSave} className="space-y-6">
           {hadError && (
             <p className="rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[13px] text-danger">
               {error.message}
@@ -106,22 +143,18 @@ export default function BusinessProfileSettings() {
           </Section>
 
           <Section title="Branding">
-            <div className="flex flex-col items-start gap-5 md:flex-row md:items-center">
-              <div className="flex aspect-[3.75] w-48 items-center justify-center rounded-lg border border-neutral-border bg-neutral-surface2 p-3">
-                <Image src="/conddo_logo.png" alt="Business logo" width={1800} height={480} className="h-8 w-auto" />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              <div>
+                <label className={labelCls}>Logo URL</label>
+                <input name="logoUrl" placeholder="https://…/logo.png" className={inputCls} />
+                <p className="mt-1 text-[12px] text-content-muted">Paste a hosted image URL. Direct upload is coming soon.</p>
               </div>
-              <div className="flex flex-col gap-2">
-                <button type="button" className="rounded-lg border border-neutral-border bg-neutral-surface px-4 py-2 text-[14px] font-medium hover:bg-neutral-surface2">
-                  Change logo
-                </button>
-                <p className="text-[12px] text-content-muted">PNG, JPG or SVG. Max 2MB.</p>
-              </div>
-            </div>
-            <div className="mt-6 w-full md:w-64">
-              <label className={labelCls}>Primary Brand Color</label>
-              <div className="flex items-center gap-2.5">
-                <div className="h-10 w-10 shrink-0 rounded-lg border border-neutral-border" style={{ backgroundColor: p?.primaryColor ?? "#7C5CBF" }} />
-                <input name="primaryColor" defaultValue={p?.primaryColor ?? ""} placeholder="#7C5CBF" className={`${inputCls} font-mono uppercase`} />
+              <div>
+                <label className={labelCls}>Primary Brand Color</label>
+                <div className="flex items-center gap-2.5">
+                  <div className="h-10 w-10 shrink-0 rounded-lg border border-neutral-border bg-primary" />
+                  <input name="primaryColor" placeholder="#7C5CBF" className={`${inputCls} font-mono uppercase`} />
+                </div>
               </div>
             </div>
           </Section>
@@ -137,13 +170,13 @@ export default function BusinessProfileSettings() {
                   <label className={labelCls}>{label}</label>
                   <div className="relative">
                     <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-content-muted">{prefix}</span>
-                    <input name={name} defaultValue={p?.social?.[name] ?? ""} placeholder="yourhandle" className={`${inputCls} pl-7`} />
+                    <input name={name} placeholder="yourhandle" className={`${inputCls} pl-7`} />
                   </div>
                 </div>
               ))}
               <div>
                 <label className={labelCls}>LinkedIn</label>
-                <input name="linkedin" defaultValue={p?.social?.linkedin ?? ""} placeholder="Company profile URL" className={inputCls} />
+                <input name="linkedin" placeholder="Company profile URL" className={inputCls} />
               </div>
             </div>
           </Section>
@@ -152,16 +185,16 @@ export default function BusinessProfileSettings() {
             <div className="grid grid-cols-1 gap-4">
               <div>
                 <label className={labelCls}>Street Address</label>
-                <input name="street" defaultValue={p?.location?.street ?? ""} placeholder="Street address" className={inputCls} />
+                <input name="street" defaultValue={(location?.street as string) ?? ""} placeholder="Street address" className={inputCls} />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className={labelCls}>City</label>
-                  <input name="city" defaultValue={p?.location?.city ?? ""} placeholder="City" className={inputCls} />
+                  <input name="city" defaultValue={(location?.city as string) ?? ""} placeholder="City" className={inputCls} />
                 </div>
                 <div>
                   <label className={labelCls}>State</label>
-                  <input name="state" defaultValue={p?.location?.state ?? ""} placeholder="State" className={inputCls} />
+                  <input name="state" defaultValue={(location?.state as string) ?? ""} placeholder="State" className={inputCls} />
                 </div>
               </div>
             </div>
