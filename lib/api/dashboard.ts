@@ -10,6 +10,11 @@ export type Summary = {
   lowStockItems: StatValue;
 };
 
+// Setup checklist (§11.1): onboarding steps + a completed/total tally.
+export type ChecklistStep = { key: string; label: string; done: boolean };
+export type Checklist = { steps: ChecklistStep[]; completed: number; total: number };
+
 export const dashboardApi = {
   summary: () => api.get<Summary>("/dashboard/summary"),
+  setupChecklist: () => api.get<Checklist>("/dashboard/setup-checklist"),
 };

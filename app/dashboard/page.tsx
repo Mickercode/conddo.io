@@ -20,6 +20,10 @@ import { dashboardApi, type Summary, type Tone } from "@/lib/api/dashboard";
 import { ordersApi } from "@/lib/api/orders";
 import { bookingsApi } from "@/lib/api/bookings";
 import { websiteApi } from "@/lib/api/website";
+import { meQuery } from "@/lib/api/account";
+
+const greetingFor = (hour: number) =>
+  hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
 
 // KPI cards: fixed presentation (label/icon/href) + live values from /dashboard/summary.
 type StatKey = keyof Summary;
@@ -57,13 +61,21 @@ export default function DashboardPage() {
   const { data: recentOrders } = useApiQuery(() => ordersApi.listRecent(4));
   const { data: todayBookings } = useApiQuery(bookingsApi.today);
   const { data: website } = useApiQuery(websiteApi.status);
+  const { data: me } = useApiQuery(meQuery);
+  const { data: checklist } = useApiQuery(dashboardApi.setupChecklist);
   const recent = (recentOrders ?? []).slice(0, 4);
   const todays = todayBookings ?? [];
+  const setupDone = checklist ? checklist.completed >= checklist.total : true;
+
+  const now = new Date();
+  const firstName = me?.user.fullName?.trim().split(/\s+/)[0] ?? "";
+  const greeting = `${greetingFor(now.getHours())}${firstName ? `, ${firstName}` : ""}.`;
+  const today = now.toLocaleDateString("en-NG", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
   return (
     <AppShell
-      title="Good morning, Amaka."
-      subtitle="Saturday, 24 May 2026"
+      title={greeting}
+      subtitle={today}
       actions={
         <Button href="/orders" variant="primary" size="md">
           <Plus size={17} />
@@ -71,21 +83,23 @@ export default function DashboardPage() {
         </Button>
       }
     >
-      {/* Setup nudge */}
-      <div className="mb-6 flex flex-col gap-3 rounded-lg bg-warning-bg px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-warning/15 text-warning">
-            <Rocket size={18} />
-          </span>
-          <div>
-            <p className="text-[14px] font-medium text-ink">Finish setting up your business</p>
-            <p className="text-[13px] text-content-secondary">2 of 6 steps complete</p>
+      {/* Setup nudge — only while there are steps left */}
+      {checklist && !setupDone && (
+        <div className="mb-6 flex flex-col gap-3 rounded-lg bg-warning-bg px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-warning/15 text-warning">
+              <Rocket size={18} />
+            </span>
+            <div>
+              <p className="text-[14px] font-medium text-ink">Finish setting up your business</p>
+              <p className="text-[13px] text-content-secondary">{checklist.completed} of {checklist.total} steps complete</p>
+            </div>
           </div>
+          <Link href="/settings" className="text-[14px] font-medium text-warning hover:underline">
+            Continue setup →
+          </Link>
         </div>
-        <Link href="/settings" className="text-[14px] font-medium text-warning hover:underline">
-          Continue setup →
-        </Link>
-      </div>
+      )}
 
       {/* Stat cards */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">

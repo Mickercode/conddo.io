@@ -25,6 +25,25 @@ export default function BusinessProfileStep() {
   const [description, setDescription] = useState("");
   const [address, setAddress] = useState("");
   const [color, setColor] = useState("#7C5CBF");
+  const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [logoError, setLogoError] = useState<string | null>(null);
+
+  function onLogoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLogoError(null);
+    if (!["image/png", "image/jpeg", "image/svg+xml"].includes(file.type)) {
+      setLogoError("Use a PNG, JPG, or SVG image.");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      setLogoError("Image must be under 2MB.");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setLogoPreview(typeof reader.result === "string" ? reader.result : null);
+    reader.readAsDataURL(file);
+  }
 
   const onContinue = () => {
     update({ businessName: name, description, address });
@@ -116,21 +135,39 @@ export default function BusinessProfileStep() {
           {/* Logo upload */}
           <div>
             <label className={labelCls}>Logo</label>
-            <div className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-strong bg-neutral-bg px-6 py-7 text-center transition-colors hover:border-primary hover:bg-primary-bg/30">
-              <Upload size={20} className="text-content-muted" />
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-strong bg-neutral-bg px-6 py-7 text-center transition-colors hover:border-primary hover:bg-primary-bg/30">
+              <input type="file" accept="image/png,image/jpeg,image/svg+xml" className="sr-only" onChange={onLogoChange} />
+              {logoPreview ? (
+                <img src={logoPreview} alt="Logo preview" className="h-16 w-auto max-w-[180px] object-contain" />
+              ) : (
+                <Upload size={20} className="text-content-muted" />
+              )}
               <p className="text-[14px] text-content-secondary">
-                <span className="text-primary">Upload your logo</span>
+                <span className="text-primary">{logoPreview ? "Change logo" : "Upload your logo"}</span>
               </p>
-              <p className="font-mono text-[11px] text-content-muted">
-                PNG or JPG, minimum 200×200px
-              </p>
-            </div>
+              <p className="font-mono text-[11px] text-content-muted">PNG, JPG or SVG · up to 2MB</p>
+            </label>
+            {logoError && <p className="mt-1 text-[12px] text-danger">{logoError}</p>}
           </div>
 
           {/* Brand primary colour */}
           <div>
             <label className={labelCls}>Brand primary colour</label>
             <div className="flex flex-wrap items-center gap-2.5">
+              {/* Full-spectrum picker */}
+              <label
+                className="relative h-8 w-8 cursor-pointer overflow-hidden rounded-full ring-1 ring-neutral-border transition-transform hover:scale-110"
+                style={{ backgroundColor: color }}
+                title="Pick any colour"
+              >
+                <input
+                  type="color"
+                  value={/^#[0-9a-fA-F]{6}$/.test(color) ? color : "#7C5CBF"}
+                  onChange={(e) => setColor(e.target.value)}
+                  className="absolute inset-0 h-[200%] w-[200%] cursor-pointer opacity-0"
+                />
+              </label>
+              <span className="mr-1 h-5 w-px bg-neutral-border" />
               {SWATCHES.map((hex) => (
                 <button
                   key={hex}
@@ -179,10 +216,14 @@ export default function BusinessProfileStep() {
             </div>
             <div className="flex flex-col items-center px-5 py-7 text-center">
               <span
-                className="mb-3 flex h-12 w-12 items-center justify-center rounded-lg"
-                style={{ backgroundColor: color + "22" }}
+                className="mb-3 flex h-12 w-12 items-center justify-center overflow-hidden rounded-lg"
+                style={{ backgroundColor: logoPreview ? "transparent" : color + "22" }}
               >
-                <ImageIcon size={22} style={{ color }} />
+                {logoPreview ? (
+                  <img src={logoPreview} alt="" className="h-full w-full object-contain" />
+                ) : (
+                  <ImageIcon size={22} style={{ color }} />
+                )}
               </span>
               <p className="text-[16px] font-medium text-ink">
                 {name || "Your Business Name"}
