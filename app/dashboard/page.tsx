@@ -15,6 +15,7 @@ import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { useApiQuery } from "@/hooks/useApiQuery";
+import { useActiveModulePaths, isPathAllowed } from "@/hooks/useModuleAccess";
 import { naira } from "@/lib/format";
 import { dashboardApi, type Summary, type Tone } from "@/lib/api/dashboard";
 import { ordersApi } from "@/lib/api/orders";
@@ -67,6 +68,15 @@ export default function DashboardPage() {
   const todays = todayBookings ?? [];
   const setupDone = checklist ? checklist.completed >= checklist.total : true;
 
+  // Tier/plan accuracy: only surface KPIs, widgets, and actions for modules this
+  // tenant's plan includes. `null` (no manifest) → show everything (fallback).
+  const modulePaths = useActiveModulePaths();
+  const has = (path: string) => modulePaths === null || isPathAllowed(path, modulePaths);
+  const showOrders = has("/orders");
+  const showWebsite = has("/website");
+  const showBookings = has("/bookings");
+  const stats = STAT_META.filter((s) => has(s.href));
+
   const now = new Date();
   const firstName = me?.user.fullName?.trim().split(/\s+/)[0] ?? "";
   const greeting = `${greetingFor(now.getHours())}${firstName ? `, ${firstName}` : ""}.`;
@@ -77,10 +87,12 @@ export default function DashboardPage() {
       title={greeting}
       subtitle={today}
       actions={
-        <Button href="/orders" variant="primary" size="md">
-          <Plus size={17} />
-          <span className="hidden sm:inline">New Order</span>
-        </Button>
+        showOrders ? (
+          <Button href="/orders" variant="primary" size="md">
+            <Plus size={17} />
+            <span className="hidden sm:inline">New Order</span>
+          </Button>
+        ) : undefined
       }
     >
       {/* Setup nudge — only while there are steps left */}
@@ -101,9 +113,9 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Stat cards */}
+      {/* Stat cards — only those whose module is in the tenant's plan */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {STAT_META.map(({ key, label, icon: Icon, href, currency }) => {
+        {stats.map(({ key, label, icon: Icon, href, currency }) => {
           const s = summary?.[key];
           const value = s ? (currency ? naira(s.value) : String(s.value)) : "—";
           const tone: Tone = s?.tone ?? "neutral";
@@ -126,9 +138,10 @@ export default function DashboardPage() {
         })}
       </div>
 
-      {/* Two-column: orders + side cards */}
+      {/* Two-column: orders + side cards — each gated by the tenant's plan */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Recent orders */}
+        {showOrders && (
         <div className="rounded-lg border border-neutral-border bg-neutral-surface lg:col-span-2">
           <div className="flex items-center justify-between border-b border-neutral-border px-5 py-4">
             <h2 className="text-[15px] font-medium text-ink">Recent Orders</h2>
@@ -165,10 +178,13 @@ export default function DashboardPage() {
           </table>
           </div>
         </div>
+        )}
 
         {/* Side column */}
-        <div className="space-y-6">
+        {(showWebsite || showBookings) && (
+        <div className={`space-y-6 ${showOrders ? "" : "lg:col-span-3"}`}>
           {/* Website status */}
+          {showWebsite && (
           <div className="rounded-lg border border-neutral-border bg-neutral-surface p-5">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-[15px] font-medium text-ink">Website Status</h2>
@@ -196,8 +212,10 @@ export default function DashboardPage() {
               </p>
             )}
           </div>
+          )}
 
           {/* Today's bookings */}
+          {showBookings && (
           <div className="rounded-lg border border-neutral-border bg-neutral-surface">
             <div className="border-b border-neutral-border px-5 py-4">
               <h2 className="text-[15px] font-medium text-ink">Today&apos;s Bookings</h2>
@@ -226,7 +244,9 @@ export default function DashboardPage() {
               </Button>
             </div>
           </div>
+          )}
         </div>
+        )}
       </div>
     </AppShell>
   );

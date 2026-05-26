@@ -7,6 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft, Bell, LogOut, Menu, Search, X } from "lucide-react";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { useAppNav } from "@/hooks/useAppNav";
+import { useActiveModulePaths, isPathAllowed } from "@/hooks/useModuleAccess";
 import type { NavLink } from "@/lib/manifest/types";
 import { logout, meQuery, type Me } from "@/lib/api/account";
 import { getAccessToken } from "@/lib/api/auth";
@@ -134,6 +135,7 @@ export function AppShell({
   const { data: me } = useApiQuery<Me>(meQuery);
   const identity = deriveIdentity(me);
   const nav = useAppNav();
+  const modulePaths = useActiveModulePaths();
 
   // Client-side auth guard: app screens require an access token. If it's missing
   // (e.g. cleared/expired on reload) we try the refresh cookie once before
@@ -158,6 +160,14 @@ export function AppShell({
       active = false;
     };
   }, [router]);
+
+  // Plan/vertical access guard: when the tenant's manifest is known, a route for
+  // a module they don't have (e.g. /inventory on a plan without it) bounces to
+  // Home. Unguarded when modulePaths is null (no manifest → static-nav fallback).
+  useEffect(() => {
+    if (authed !== true || modulePaths === null) return;
+    if (!isPathAllowed(pathname, modulePaths)) router.replace("/dashboard");
+  }, [authed, modulePaths, pathname, router]);
 
   async function handleLogout() {
     await logout();
