@@ -133,6 +133,50 @@ async function request<T>(method: string, path: string, body?: Body, opts: Opts 
   return { data: json.data, meta: json.meta };
 }
 
+/** Multipart file upload (e.g. logo/media → MinIO). Sends FormData (no JSON
+ *  Content-Type — the browser sets the multipart boundary), with the Bearer
+ *  token + the same silent-refresh-on-401 + retry as request(). */
+export async function uploadFile<T>(path: string, form: FormData, retried = false): Promise<Result<T>> {
+  if (!BASE) throw new ApiError("api_not_configured", "Backend API URL is not configured.");
+  const token = getAccessToken();
+  let res: Response;
+  try {
+    res = await fetch(`${BASE}/api/v1${path}`, {
+      method: "POST",
+      headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      body: form,
+      credentials: "include",
+    });
+  } catch {
+    throw new ApiError("network_error", "Could not reach the server. Check your connection.");
+  }
+
+  if (res.status === 401 && !retried && token) {
+    const next = await refreshAccessToken();
+    if (next) return uploadFile<T>(path, form, true);
+    if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login")) {
+      window.location.href = "/login";
+    }
+    throw new ApiError("unauthorized", "Your session has expired. Please sign in again.", 401);
+  }
+
+  let json: ApiResponse<T> | null = null;
+  try {
+    json = (await res.json()) as ApiResponse<T>;
+  } catch {
+    /* non-JSON */
+  }
+  if (!res.ok || !json || json.success === false) {
+    throw new ApiError(
+      json?.error?.code ?? "request_failed",
+      json?.error?.message ?? res.statusText ?? "Upload failed.",
+      res.status,
+      json?.error?.details,
+    );
+  }
+  return { data: json.data, meta: json.meta };
+}
+
 export const api = {
   get: <T>(path: string) => request<T>("GET", path),
   post: <T>(path: string, body?: Body) => request<T>("POST", path, body),

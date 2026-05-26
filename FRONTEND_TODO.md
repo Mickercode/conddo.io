@@ -60,6 +60,7 @@ Full backend at `/api/jobs/*`; zero frontend. Its own login + portal:
 ## Backend dependencies
 - [x] **Deploy landed (2026-05-25)** — new build live; payments/website/registry/customer-history all 200.
 - [x] **Login emits `activeModules`** → manifest flip active.
+- [ ] **Media upload endpoint (MinIO, §11.12)** — `POST /api/v1/media` multipart (`file`, optional `purpose`), JWT/tenant-scoped, → `{ url, id?, contentType?, size? }` with a public URL. Frontend uploader (`lib/api/media.ts` + Settings logo) is built and waiting on this; full contract in that file's header.
 - [ ] Wire the HTML **email templates** into `NotificationService` (send as Resend `html`).
 - [ ] Set Resend/Brevo env vars on Render (file: `../conddo-backend-render.env`) + rotate the keys.
 - [ ] Dashboard **widgets** in manifests (catalogue returns `widgets: []`) → unlocks the §16.2 widget-zone renderer.

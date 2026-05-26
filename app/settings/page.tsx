@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/Toast";
 import { ApiError, isNotConfigured } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { settingsApi } from "@/lib/api/settings";
+import { mediaApi } from "@/lib/api/media";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -33,6 +34,31 @@ export default function BusinessProfileSettings() {
   const { data: location } = useApiQuery(settingsApi.location);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [logoUrl, setLogoUrl] = useState("");
+  const [uploadingLogo, setUploadingLogo] = useState(false);
+
+  async function onLogoUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (!["image/png", "image/jpeg", "image/svg+xml"].includes(file.type)) {
+      toast.error("Unsupported file", "Use a PNG, JPG, or SVG.");
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error("Image too large", "Keep it under 2MB.");
+      return;
+    }
+    setUploadingLogo(true);
+    try {
+      const { data: media } = await mediaApi.upload(file, "logo");
+      setLogoUrl(media.url);
+      toast.success("Logo uploaded", "Save to apply it to your branding.");
+    } catch (err) {
+      toast.error("Upload failed", err instanceof ApiError ? err.message : "Image uploads aren't available yet.");
+    } finally {
+      setUploadingLogo(false);
+    }
+  }
 
   const p = data; // null when not loaded / no backend
   const hours = WEEKDAYS.map((day) => ({ day, on: false, open: undefined as string | undefined, close: undefined as string | undefined }));
@@ -145,9 +171,18 @@ export default function BusinessProfileSettings() {
           <Section title="Branding">
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <div>
-                <label className={labelCls}>Logo URL</label>
-                <input name="logoUrl" placeholder="https://…/logo.png" className={inputCls} />
-                <p className="mt-1 text-[12px] text-content-muted">Paste a hosted image URL. Direct upload is coming soon.</p>
+                <label className={labelCls}>Logo</label>
+                <input type="hidden" name="logoUrl" value={logoUrl} />
+                <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-neutral-strong bg-neutral-surface2 px-3.5 py-3 transition-colors hover:border-primary">
+                  <input type="file" accept="image/png,image/jpeg,image/svg+xml" className="sr-only" onChange={onLogoUpload} disabled={uploadingLogo} />
+                  {logoUrl ? (
+                    <img src={logoUrl} alt="Logo" className="h-9 w-auto max-w-[120px] object-contain" />
+                  ) : (
+                    <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary-bg text-primary"><Save size={16} /></span>
+                  )}
+                  <span className="text-[14px] text-primary">{uploadingLogo ? "Uploading…" : logoUrl ? "Change logo" : "Upload a logo"}</span>
+                </label>
+                <p className="mt-1 text-[12px] text-content-muted">PNG, JPG or SVG · up to 2MB</p>
               </div>
               <div>
                 <label className={labelCls}>Primary Brand Color</label>
