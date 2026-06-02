@@ -52,6 +52,9 @@ export default function CreateAccountStep() {
       if (next) router.push(hrefFor(next.slug));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Couldn't create your account. Please try again.");
+    } finally {
+      // Always reset so a failed transition can't leave the button locked in
+      // "Creating account…" — the success path navigates away anyway.
       setSubmitting(false);
     }
   };

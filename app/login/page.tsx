@@ -28,8 +28,11 @@ export default function LoginPage() {
     try {
       await login({ email, password, tenantSlug: slugify(workspace) });
       router.push("/dashboard");
+      // Note: navigation will unmount this page, but we still clear submitting
+      // in `finally` below so a failed transition can't leave the button stuck.
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign in failed. Check your details and try again.");
+    } finally {
       setSubmitting(false);
     }
   }

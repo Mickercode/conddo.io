@@ -23,11 +23,16 @@ let refreshing: Promise<string | null> | null = null;
 export async function refreshAccessToken(): Promise<string | null> {
   if (!refreshing) {
     refreshing = (async () => {
+      const controller = new AbortController();
+      // Short-lived guard: a hung refresh would otherwise keep silent-retry
+      // requests blocked forever. 20s is more than enough for a healthy /auth/refresh.
+      const timer = setTimeout(() => controller.abort(), 20_000);
       try {
         const res = await fetch(`${BASE}/auth/refresh`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
+          signal: controller.signal,
         });
         if (!res.ok) {
           clearAccessToken();
@@ -45,6 +50,7 @@ export async function refreshAccessToken(): Promise<string | null> {
         clearAccessToken();
         return null;
       } finally {
+        clearTimeout(timer);
         refreshing = null;
       }
     })();
@@ -78,6 +84,11 @@ export const isServerError = (e: unknown): boolean =>
 type Body = Record<string, unknown> | undefined;
 type Opts = { versioned?: boolean };
 
+// Hard ceiling on a single request. Long enough to ride out Render's free-tier
+// cold start (~30s observed), short enough to surface as a real error instead
+// of an infinite spinner. Auth endpoints get the same budget.
+const REQUEST_TIMEOUT_MS = 45_000;
+
 async function request<T>(method: string, path: string, body?: Body, opts: Opts = {}, retried = false): Promise<Result<T>> {
   if (!BASE) {
     throw new ApiError("api_not_configured", "Backend API URL is not configured.");
@@ -85,6 +96,8 @@ async function request<T>(method: string, path: string, body?: Body, opts: Opts 
 
   const prefix = opts.versioned === false ? "" : "/api/v1";
   const token = getAccessToken();
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   let res: Response;
   try {
     res = await fetch(`${BASE}${prefix}${path}`, {
@@ -95,9 +108,21 @@ async function request<T>(method: string, path: string, body?: Body, opts: Opts 
       },
       body: body ? JSON.stringify(body) : undefined,
       credentials: "include",
+      signal: controller.signal,
     });
-  } catch {
-    throw new ApiError("network_error", "Could not reach the server. Check your connection.");
+  } catch (err) {
+    // AbortError → timeout (our own). TypeError → CORS / DNS / offline. Both
+    // surface as "network" failures from the user's view, but we give the
+    // timeout case its own message so a stuck request is recognisable.
+    const aborted = err instanceof DOMException && err.name === "AbortError";
+    throw new ApiError(
+      aborted ? "request_timeout" : "network_error",
+      aborted
+        ? "The server didn't respond in time. Please try again."
+        : "Could not reach the server. Check your connection.",
+    );
+  } finally {
+    clearTimeout(timer);
   }
 
   // Access token expired → refresh once (via the httpOnly cookie) and retry.
@@ -139,6 +164,10 @@ async function request<T>(method: string, path: string, body?: Body, opts: Opts 
 export async function uploadFile<T>(path: string, form: FormData, retried = false): Promise<Result<T>> {
   if (!BASE) throw new ApiError("api_not_configured", "Backend API URL is not configured.");
   const token = getAccessToken();
+  // Uploads can be large (e.g. logos to MinIO) so we give them more headroom
+  // than a JSON request before bailing.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 120_000);
   let res: Response;
   try {
     res = await fetch(`${BASE}/api/v1${path}`, {
@@ -146,9 +175,16 @@ export async function uploadFile<T>(path: string, form: FormData, retried = fals
       headers: token ? { Authorization: `Bearer ${token}` } : undefined,
       body: form,
       credentials: "include",
+      signal: controller.signal,
     });
-  } catch {
-    throw new ApiError("network_error", "Could not reach the server. Check your connection.");
+  } catch (err) {
+    const aborted = err instanceof DOMException && err.name === "AbortError";
+    throw new ApiError(
+      aborted ? "request_timeout" : "network_error",
+      aborted ? "Upload timed out. Please try again." : "Could not reach the server. Check your connection.",
+    );
+  } finally {
+    clearTimeout(timer);
   }
 
   if (res.status === 401 && !retried && token) {

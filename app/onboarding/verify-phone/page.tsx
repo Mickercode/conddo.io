@@ -53,6 +53,7 @@ export default function VerifyPhoneStep() {
       if (next) router.push(hrefFor(next.slug));
     } catch (err) {
       setError(err instanceof Error ? err.message : "That code didn't work. Check it and try again.");
+    } finally {
       setSubmitting(false);
     }
   };
