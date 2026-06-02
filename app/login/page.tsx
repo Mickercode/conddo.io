@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { login, slugify } from "@/lib/api/account";
+import { clearAccessToken } from "@/lib/api/auth";
 
 const inputCls =
   "h-11 w-full rounded-md border border-neutral-strong bg-neutral-surface px-3.5 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none";
@@ -20,6 +21,11 @@ export default function LoginPage() {
   const [show, setShow] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Any token in localStorage when the user lands here is by definition stale
+  // (they're trying to sign in again). Scrub it — otherwise it gets attached
+  // to subsequent /api/v1 calls and 401s anything that depends on /me.
+  useEffect(() => { clearAccessToken(); }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();

@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useOnboarding } from "@/lib/onboarding-store";
 import { hrefFor, nextStep } from "@/lib/onboarding-steps";
 import { registerStart } from "@/lib/api/account";
+import { clearAccessToken } from "@/lib/api/auth";
 
 const inputCls =
   "h-11 w-full rounded-md border border-neutral-strong bg-neutral-surface px-3.5 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none";
@@ -25,6 +26,11 @@ export default function CreateAccountStep() {
   const [showPassword, setShowPassword] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Anyone landing on the signup flow is starting a new session. Strip any
+  // leftover access token so it can't poison the public /auth/register/start
+  // call with a Spring "Authentication is required" 401.
+  useEffect(() => { clearAccessToken(); }, []);
 
   // Normalize the local number to E.164-ish for the backend (min 7 chars).
   const normalizedPhone = () => {

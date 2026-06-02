@@ -95,7 +95,13 @@ async function request<T>(method: string, path: string, body?: Body, opts: Opts 
   }
 
   const prefix = opts.versioned === false ? "" : "/api/v1";
-  const token = getAccessToken();
+  // /auth/* endpoints are pre-auth by design. Never attach a Bearer token to
+  // them — Spring's oauth2ResourceServer validates the token BEFORE the
+  // permitAll check, so a stale/expired token in localStorage turns even
+  // public signup/login into 401 ("Authentication is required to access this
+  // resource"). Auth endpoints carry their own session via body + cookies.
+  const isAuthCall = opts.versioned === false;
+  const token = isAuthCall ? null : getAccessToken();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
   let res: Response;
