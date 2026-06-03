@@ -67,6 +67,28 @@ export function HeroPreview() {
       className="relative"
     >
       <Frame url={active.url} className="shadow-[0_30px_60px_-30px_rgba(0,0,0,0.5)]">
+        {/* Mobile-only tab strip — the desktop sidebar is hidden below sm so
+            without this, a phone user can't see which "tab" they're on or jump
+            between them. Horizontally scrolls if there are more tabs than fit. */}
+        <div className="flex gap-2 overflow-x-auto border-b border-neutral-border bg-neutral-surface2/60 px-3 py-2 sm:hidden">
+          {TABS.map((t, i) => (
+            <button
+              key={t.id}
+              type="button"
+              onClick={() => { setActiveIndex(i); setPaused(true); }}
+              aria-pressed={i === activeIndex}
+              className={`inline-flex shrink-0 items-center gap-1.5 rounded-full px-3 py-1.5 text-[12px] font-medium transition-colors ${
+                i === activeIndex
+                  ? "bg-primary-bg text-primary"
+                  : "text-content-secondary hover:text-ink"
+              }`}
+            >
+              <t.icon size={13} strokeWidth={2} />
+              {t.label}
+            </button>
+          ))}
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-[200px_1fr]">
           {/* Sidebar */}
           <aside className="hidden border-r border-neutral-border bg-neutral-surface2/60 p-4 sm:block">
