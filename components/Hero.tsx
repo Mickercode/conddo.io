@@ -1,12 +1,13 @@
 import { ArrowRight } from "lucide-react";
 import { Button } from "./ui/Button";
 import { RotatingWord } from "./ui/RotatingWord";
-import { DashboardPreview } from "./mocks/DashboardPreview";
+import { HeroPreview } from "./mocks/HeroPreview";
 
 export function Hero() {
   return (
     <section id="top" className="bg-ink">
-      <div className="container-x pb-16 pt-16 md:pb-24 md:pt-24">
+      {/* Copy block — compact, lets the preview do the heavy lifting below. */}
+      <div className="container-x pt-16 md:pt-24">
         <div className="mx-auto max-w-3xl text-center">
           <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-primary-light">
             Sell more · Stress less
@@ -40,11 +41,16 @@ export function Hero() {
             14-day free trial · No credit card required
           </p>
         </div>
+      </div>
 
-        {/* Product preview — the white card lifts off the dark purely through
-            tonal contrast, no shadow (per the brand's flat-plus approach). */}
-        <div className="mx-auto mt-14 max-w-4xl md:mt-16">
-          <DashboardPreview />
+      {/* Product preview — full container width, auto-rotates through 5 tabs so
+          a visitor sees "this is a real working product" before they scroll.
+          The white card sits inside a soft shadow so it reads as foreground
+          floating above the dark hero. Pause-on-hover + reduced-motion handled
+          inside HeroPreview. */}
+      <div className="container-x pb-20 pt-12 md:pb-28 md:pt-16">
+        <div className="mx-auto max-w-5xl">
+          <HeroPreview />
         </div>
       </div>
     </section>
