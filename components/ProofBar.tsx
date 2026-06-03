@@ -9,10 +9,21 @@ const faces = [
   { src: "/people/owner-man-2.jpg", alt: "Service business owner" },
 ];
 
+// Concrete, scannable proof points. We don't have a customer count yet, so the
+// first pill leads on the audience instead of an unsubstantiated "thousands of
+// businesses" claim. The rest are verifiable: cities served, payment rail,
+// launch timing. Swap to real numbers (signups / revenue processed) at scale.
+const proof = [
+  "Built for Nigerian SMEs",
+  "Lagos · Abuja · Port Harcourt",
+  "Naira-native payments",
+  "Launching 2026",
+];
+
 export function ProofBar() {
   return (
     <div className="border-b border-neutral-border bg-neutral-bg">
-      <div className="container-x flex flex-col items-center justify-center gap-3 py-7 sm:flex-row sm:gap-4">
+      <div className="container-x flex flex-col items-center justify-center gap-4 py-7 sm:flex-row sm:gap-5">
         <div className="flex -space-x-3">
           {faces.map((f) => (
             <span
@@ -23,9 +34,14 @@ export function ProofBar() {
             </span>
           ))}
         </div>
-        <p className="text-center font-mono text-[12px] uppercase tracking-[0.12em] text-content-muted">
-          Trusted by thousands of businesses across borders
-        </p>
+        <ul className="flex flex-wrap items-center justify-center gap-x-3 gap-y-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-content-muted">
+          {proof.map((p, i) => (
+            <li key={p} className="inline-flex items-center gap-3">
+              {i > 0 && <span aria-hidden className="text-content-muted/40">·</span>}
+              <span>{p}</span>
+            </li>
+          ))}
+        </ul>
       </div>
     </div>
   );

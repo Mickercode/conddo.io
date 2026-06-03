@@ -1,9 +1,11 @@
+import Image from "next/image";
 import { Section, Eyebrow } from "./ui/Section";
 import { Chip } from "./ui/Chip";
 
 /**
  * Placeholder testimonials standing in for the CMS-driven block in the copy
  * deck ("[CMS — real customer quotes]"). Swap these for real quotes at launch.
+ * Photos are the same free-license stock in /public/people used by ProofBar.
  */
 const testimonials = [
   {
@@ -12,7 +14,7 @@ const testimonials = [
     name: "Amaka E.",
     business: "Amaka Styles",
     vertical: "Fashion",
-    initials: "AE",
+    photo: "/people/owner-phone.jpg",
   },
   {
     quote:
@@ -20,7 +22,7 @@ const testimonials = [
     name: "Tunde A.",
     business: "Wellspring Pharmacy",
     vertical: "Pharmacy",
-    initials: "TA",
+    photo: "/people/owner-shop.jpg",
   },
   {
     quote:
@@ -28,7 +30,7 @@ const testimonials = [
     name: "Biodun K.",
     business: "Beecroft Consulting",
     vertical: "Consulting",
-    initials: "BK",
+    photo: "/people/owner-man-1.jpg",
   },
 ];
 
@@ -53,8 +55,14 @@ export function SocialProof() {
               “{t.quote}”
             </blockquote>
             <figcaption className="mt-6 flex items-center gap-3">
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-bg font-mono text-[13px] font-medium text-primary">
-                {t.initials}
+              <span className="relative h-11 w-11 shrink-0 overflow-hidden rounded-full">
+                <Image
+                  src={t.photo}
+                  alt={`${t.name} — ${t.business}`}
+                  fill
+                  sizes="44px"
+                  className="object-cover"
+                />
               </span>
               <span>
                 <span className="block text-[14px] font-medium text-ink">
