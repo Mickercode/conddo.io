@@ -6,8 +6,11 @@ import Image from "next/image";
 import Link from "next/link";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { ContinueWithGoogle } from "@/components/ui/ContinueWithGoogle";
 import { login, slugify } from "@/lib/api/account";
+import { loginWithGoogle, hasGoogleClient } from "@/lib/api/google";
 import { clearAccessToken } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 
 const inputCls =
   "h-11 w-full rounded-md border border-neutral-strong bg-neutral-surface px-3.5 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none";
@@ -42,6 +45,28 @@ export default function LoginPage() {
       setSubmitting(false);
     }
   }
+
+  // Google sign-in. Workspace must already be entered — Google identifies the
+  // user globally, but the backend still needs to know which tenant to scope
+  // them to. Backend contract: ACTION_LIST.md §1a.
+  async function onGoogleCredential(idToken: string) {
+    setError(null);
+    setSubmitting(true);
+    try {
+      await loginWithGoogle({ idToken, tenantSlug: slugify(workspace) });
+      router.push("/dashboard");
+    } catch (err) {
+      if (err instanceof ApiError && err.code === "USER_NOT_FOUND") {
+        setError("No account in this workspace matches that Google email. Create an account or try a different workspace.");
+      } else {
+        setError(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
+      }
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  const googleReady = hasGoogleClient() && workspace.trim().length > 0;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
@@ -121,6 +146,21 @@ export default function LoginPage() {
               {submitting ? "Signing in…" : "Sign in"}
             </Button>
           </form>
+
+          {hasGoogleClient() && (
+            <>
+              <div className="my-5 flex items-center gap-3">
+                <span className="h-px flex-1 bg-neutral-border" />
+                <span className="text-[12px] uppercase tracking-[0.08em] text-content-muted">or</span>
+                <span className="h-px flex-1 bg-neutral-border" />
+              </div>
+              <ContinueWithGoogle
+                disabled={!googleReady}
+                onCredential={onGoogleCredential}
+                onError={(msg) => setError(msg)}
+              />
+            </>
+          )}
         </div>
 
         <p className="mt-6 text-center text-[14px] text-content-secondary">

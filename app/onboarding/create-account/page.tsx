@@ -4,10 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
+import { ContinueWithGoogle } from "@/components/ui/ContinueWithGoogle";
 import { useOnboarding } from "@/lib/onboarding-store";
 import { hrefFor, nextStep } from "@/lib/onboarding-steps";
 import { registerStart } from "@/lib/api/account";
+import { registerStartWithGoogle, hasGoogleClient } from "@/lib/api/google";
 import { clearAccessToken } from "@/lib/api/auth";
+import { ApiError } from "@/lib/api/client";
 
 const inputCls =
   "h-11 w-full rounded-md border border-neutral-strong bg-neutral-surface px-3.5 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none";
@@ -149,10 +152,40 @@ export default function CreateAccountStep() {
           <span className="h-px flex-1 bg-neutral-border" />
         </div>
 
-        <Button href="#" variant="secondary" size="lg" className="w-full">
-          <span className="font-mono text-[15px] font-medium text-primary">G</span>
-          Continue with Google
-        </Button>
+        {hasGoogleClient() && (
+          <ContinueWithGoogle
+            disabled={submitting || normalizedPhone().length < 7}
+            onCredential={async (idToken) => {
+              setError(null);
+              if (normalizedPhone().length < 7) {
+                setError("Enter your phone number first — we still need it to verify your account.");
+                return;
+              }
+              setSubmitting(true);
+              try {
+                const { registrationId, resendCooldownSeconds } = await registerStartWithGoogle({
+                  idToken,
+                  phone: normalizedPhone(),
+                });
+                // We pre-fill fullName/email from Google in the next step's view
+                // by reading the ID token's claims client-side. Backend already
+                // has the canonical copies on the registration row.
+                update({ phone, registrationId, resendCooldownSeconds });
+                const next = nextStep("create-account");
+                if (next) router.push(hrefFor(next.slug));
+              } catch (err) {
+                if (err instanceof ApiError && err.code === "USER_ALREADY_EXISTS") {
+                  setError("That Google email already has a Conddo account. Sign in instead.");
+                } else {
+                  setError(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
+                }
+              } finally {
+                setSubmitting(false);
+              }
+            }}
+            onError={(msg) => setError(msg)}
+          />
+        )}
 
         <p className="text-center text-[14px] text-content-secondary">
           Already have an account?{" "}
