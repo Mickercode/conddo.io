@@ -27,36 +27,36 @@ const features: Feature[] = [
   {
     eyebrow: "Website",
     icon: Globe,
-    title: "Get a professional business website.",
-    body: "Your business goes live with a website built for how you sell — whether you take bookings, sell products, or offer services. Accept payments directly. Share your link. Start selling.",
+    title: "A professional business website.",
+    body: "Goes live with payments built in. Bookings, products, or services — whichever way you sell, share one link and start.",
     Mock: WebsiteMock,
   },
   {
     eyebrow: "Operations",
     icon: ClipboardList,
-    title: "Manage your orders, inventory, and customers — cleanly.",
-    body: "Track every order from placement to delivery. Know your stock levels in real time. Keep every customer's details, purchase history, and preferences in one place. No more lost information.",
+    title: "Orders, inventory, and customers — clean.",
+    body: "Every order tracked from placement to delivery. Live stock counts. Every customer's history in one place. No more lost notes.",
     Mock: OperationsMock,
   },
   {
     eyebrow: "Payments",
     icon: Wallet,
     title: "Get paid faster. Track every naira.",
-    body: "Accept payments online and in-person. Generate invoices and receipts automatically. See exactly what has come in, what is outstanding, and what is overdue — without touching a spreadsheet.",
+    body: "Online and in-person. Automatic invoices and receipts. See what's paid, what's outstanding, what's overdue — no spreadsheet.",
     Mock: PaymentsMock,
   },
   {
     eyebrow: "Marketing",
     icon: Megaphone,
-    title: "Reach more customers without switching apps.",
-    body: "Schedule your social media posts, run Facebook and Instagram ads, send SMS and email campaigns — all from inside Conddo.io. Top up your ad budget in Naira. No dollar card needed.",
+    title: "More customers, fewer apps.",
+    body: "Schedule social posts, run Facebook + Instagram ads, send SMS and email — all inside Conddo.io. Top up ad budget in Naira. No dollar card.",
     Mock: MarketingMock,
   },
   {
     eyebrow: "Analytics",
     icon: BarChart3,
-    title: "See how your business is actually performing.",
-    body: "Revenue, best-selling products, customer activity, ad performance — all in one dashboard. Make decisions based on numbers, not guesswork.",
+    title: "See how the business is actually doing.",
+    body: "Revenue, best-sellers, customer activity, ad performance — one dashboard. Decisions on numbers, not guesswork.",
     Mock: AnalyticsMock,
   },
 ];
@@ -72,13 +72,17 @@ export function Features() {
         </h2>
       </div>
 
-      <div className="space-y-20 md:space-y-28">
+      <div className="space-y-24 md:space-y-32">
         {features.map(({ eyebrow, icon: Icon, title, body, Mock }, i) => {
           const reverse = i % 2 === 1;
           return (
             <div
               key={eyebrow}
-              className="grid grid-cols-1 items-center gap-10 lg:grid-cols-2 lg:gap-16"
+              // Mock column is wider than the copy column (3:5 on desktop) so
+              // the product does most of the explaining. Copy now sits in a
+              // tight column — title + one short paragraph + a CTA — and the
+              // mock fills the remaining space at near-full reading width.
+              className="grid grid-cols-1 items-center gap-10 lg:grid-cols-[minmax(0,3fr)_minmax(0,5fr)] lg:gap-14"
             >
               {/* Copy column */}
               <div className={reverse ? "lg:order-2" : ""}>
@@ -86,10 +90,10 @@ export function Features() {
                   <Icon size={20} className="text-primary" strokeWidth={2} />
                 </div>
                 <Eyebrow>{eyebrow}</Eyebrow>
-                <h3 className="max-w-md text-[26px] leading-snug tracking-[-0.01em] md:text-[30px]">
+                <h3 className="max-w-md text-[28px] leading-snug tracking-[-0.01em] md:text-[34px]">
                   {title}
                 </h3>
-                <p className="mt-4 max-w-md text-[16px] leading-[1.7] text-content-secondary">
+                <p className="mt-4 max-w-md text-[16px] leading-[1.65] text-content-secondary">
                   {body}
                 </p>
                 <a
@@ -101,7 +105,8 @@ export function Features() {
                 </a>
               </div>
 
-              {/* Mock column */}
+              {/* Mock column — let it use the full lg width without padding so
+                  the product UI reads at a usable scale. */}
               <div className={reverse ? "lg:order-1" : ""}>
                 <Mock />
               </div>
