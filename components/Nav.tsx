@@ -54,6 +54,15 @@ export function Nav() {
               {l.label}
             </Link>
           ))}
+          {/* Sign in — for returning users. Sits to the left of Get Started so
+              the visual weight reads as "new users go right, existing users
+              go left" (matches Stripe/Linear/Vercel convention). */}
+          <Link
+            href="/login"
+            className="text-[15px] font-medium text-content-secondary transition-colors hover:text-ink"
+          >
+            Sign in
+          </Link>
           <Button href="/onboarding/create-account" variant="primary" size="md">
             Get Started
           </Button>
@@ -85,6 +94,13 @@ export function Nav() {
                 {l.label}
               </Link>
             ))}
+            <Link
+              href="/login"
+              onClick={() => setOpen(false)}
+              className="rounded-md px-2 py-3 text-[15px] font-medium text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+            >
+              Sign in
+            </Link>
             <Button
               href="/onboarding/create-account"
               variant="primary"
