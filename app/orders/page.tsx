@@ -5,7 +5,6 @@ import Link from "next/link";
 import {
   Plus,
   Search,
-  SlidersHorizontal,
   CalendarDays,
   CalendarX,
   Clock,
@@ -57,9 +56,40 @@ function OrderCard({ card }: { card: Order }) {
   );
 }
 
+// Local client-side filter — runs over the board we already have rather than
+// re-fetching per keystroke. Backend dates come as ISO 8601 (OffsetDateTime).
+function matchesFilter(card: Order, filter: string, search: string): boolean {
+  if (search) {
+    const hay = `${card.customer ?? ""} ${card.reference ?? ""} ${card.service ?? ""}`.toLowerCase();
+    if (!hay.includes(search)) return false;
+  }
+  if (filter === "Overdue") return card.flag === "OVERDUE";
+  if (filter === "Today") {
+    if (!card.date) return false;
+    const d = new Date(card.date);
+    if (isNaN(d.getTime())) return false;
+    const now = new Date();
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
+  }
+  if (filter === "This week") {
+    if (!card.date) return false;
+    const d = new Date(card.date);
+    if (isNaN(d.getTime())) return false;
+    const now = new Date();
+    const monday = new Date(now);
+    monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+    monday.setHours(0, 0, 0, 0);
+    const nextMonday = new Date(monday);
+    nextMonday.setDate(monday.getDate() + 7);
+    return d >= monday && d < nextMonday;
+  }
+  return true; // "All"
+}
+
 export default function OrdersPage() {
   const router = useRouter();
   const [activeFilter, setActiveFilter] = useState("All");
+  const [search, setSearch] = useState("");
   const [newOpen, setNewOpen] = useState(false);
   const { data, loading, error, refetch } = useApiQuery(ordersApi.board);
   // The board is grouped by stage name; the stages endpoint returns the
@@ -67,9 +97,20 @@ export default function OrdersPage() {
   // Refetched alongside the board on every mutation.
   const stagesQuery = useApiQuery(ordersApi.stages);
 
-  const stages = data?.stages ?? [];
+  const rawStages = data?.stages ?? [];
+  const trimmedSearch = search.trim().toLowerCase();
+  const filtering = activeFilter !== "All" || trimmedSearch.length > 0;
+  // Re-shape stages with filtered orders + recomputed counts so the column
+  // badge reflects what the user actually sees, not the unfiltered total.
+  const stages = filtering
+    ? rawStages.map((s) => {
+        const orders = s.orders.filter((o) => matchesFilter(o, activeFilter, trimmedSearch));
+        return { ...s, orders, count: orders.length };
+      })
+    : rawStages;
   const columns = stages.filter((s) => s.name !== "Delivered");
   const delivered = stages.find((s) => s.name === "Delivered");
+  const totalMatches = columns.reduce((n, s) => n + s.count, 0) + (delivered?.count ?? 0);
 
   const stageList: Stage[] = stagesQuery.data ?? [];
   const stageByName = new Map(stageList.map((s) => [s.name, s]));
@@ -82,18 +123,10 @@ export default function OrdersPage() {
     <AppShell
       title="Orders"
       actions={
-        <>
-          <button
-            aria-label="Filter orders"
-            className="hidden h-9 w-9 items-center justify-center rounded-md text-content-secondary hover:bg-neutral-surface2 hover:text-ink sm:inline-flex"
-          >
-            <SlidersHorizontal size={18} />
-          </button>
-          <Button variant="primary" size="md" onClick={() => setNewOpen(true)}>
-            <Plus size={17} />
-            <span className="hidden sm:inline">New Order</span>
-          </Button>
-        </>
+        <Button variant="primary" size="md" onClick={() => setNewOpen(true)}>
+          <Plus size={17} />
+          <span className="hidden sm:inline">New Order</span>
+        </Button>
       }
     >
       {/* Toolbar: segmented filter + search */}
@@ -119,11 +152,29 @@ export default function OrdersPage() {
           <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-content-muted" />
           <input
             type="text"
-            placeholder="Search orders..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by customer, ref, service…"
             className="w-full rounded-lg border border-neutral-border bg-neutral-surface py-2 pl-10 pr-4 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
       </div>
+
+      {filtering && !loading && !error && (
+        <p className="mb-3 text-[12px] text-content-muted">
+          {totalMatches === 0
+            ? "No orders match your filter."
+            : `${totalMatches} ${totalMatches === 1 ? "order" : "orders"} match.`}
+          {" "}
+          <button
+            type="button"
+            onClick={() => { setSearch(""); setActiveFilter("All"); }}
+            className="font-medium text-primary hover:underline"
+          >
+            Clear
+          </button>
+        </p>
+      )}
 
       <QueryBoundary
         loading={loading}

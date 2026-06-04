@@ -39,18 +39,26 @@ const fmtTime = (t: string) => {
   return m ? `${m[1]}:${m[2]}` : t;
 };
 
-// Current week (Mon–Sun) computed live.
-function thisWeek(): { dates: Date[]; monthLabel: string } {
+// Week (Mon–Sun) at `offset` from the current week. offset=0 → this week,
+// -1 → previous, +1 → next. The "Today" button resets to 0.
+function weekFromOffset(offset: number): { dates: Date[]; monthLabel: string } {
   const today = new Date();
   const monday = new Date(today);
-  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7));
+  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7) + offset * 7);
   monday.setHours(0, 0, 0, 0);
   const dates = Array.from({ length: 7 }, (_, i) => {
     const d = new Date(monday);
     d.setDate(monday.getDate() + i);
     return d;
   });
-  return { dates, monthLabel: monday.toLocaleString("en-US", { month: "long", year: "numeric" }) };
+  const sunday = dates[6];
+  // Show "Month — Month Year" when the week straddles a month boundary; one
+  // label otherwise.
+  const sameMonth = monday.getMonth() === sunday.getMonth() && monday.getFullYear() === sunday.getFullYear();
+  const monthLabel = sameMonth
+    ? monday.toLocaleString("en-US", { month: "long", year: "numeric" })
+    : `${monday.toLocaleString("en-US", { month: "short" })}–${sunday.toLocaleString("en-US", { month: "short", year: "numeric" })}`;
+  return { dates, monthLabel };
 }
 
 function placeEvent(ev: BookingEvent, dates: Date[]) {
@@ -67,8 +75,9 @@ function placeEvent(ev: BookingEvent, dates: Date[]) {
 
 export default function BookingsPage() {
   const toast = useToast();
-  const { dates, monthLabel } = thisWeek();
   const today = new Date();
+  const [weekOffset, setWeekOffset] = useState(0);
+  const { dates, monthLabel } = weekFromOffset(weekOffset);
   const [bookingOpen, setBookingOpen] = useState(false);
   const [availOpen, setAvailOpen] = useState(false);
 
@@ -122,25 +131,33 @@ export default function BookingsPage() {
           {/* Toolbar */}
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-border bg-neutral-surface p-3">
             <div className="flex flex-wrap items-center gap-4">
-              <div className="inline-flex rounded-lg bg-neutral-surface2 p-1">
-                {["Day", "Week", "Month"].map((v) => (
-                  <button
-                    key={v}
-                    className={`rounded-md px-4 py-1.5 text-[13px] transition-colors ${
-                      v === "Week" ? "bg-neutral-surface font-bold text-primary" : "text-content-secondary hover:text-ink"
-                    }`}
-                  >
-                    {v}
-                  </button>
-                ))}
-              </div>
+              <span className="rounded-md bg-neutral-surface2 px-3 py-1.5 text-[13px] font-bold text-primary">Week</span>
               <div className="flex items-center gap-2">
-                <button className="rounded-full p-1 text-content-secondary hover:bg-neutral-surface2"><ChevronLeft size={20} /></button>
+                <button
+                  type="button"
+                  aria-label="Previous week"
+                  onClick={() => setWeekOffset((n) => n - 1)}
+                  className="rounded-full p-1 text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+                >
+                  <ChevronLeft size={20} />
+                </button>
                 <span className="px-1 text-[15px] font-medium text-ink">{monthLabel}</span>
-                <button className="rounded-full p-1 text-content-secondary hover:bg-neutral-surface2"><ChevronRight size={20} /></button>
+                <button
+                  type="button"
+                  aria-label="Next week"
+                  onClick={() => setWeekOffset((n) => n + 1)}
+                  className="rounded-full p-1 text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+                >
+                  <ChevronRight size={20} />
+                </button>
               </div>
             </div>
-            <button className="rounded-lg border border-neutral-border px-4 py-1.5 text-[13px] font-medium text-ink hover:bg-neutral-surface2">
+            <button
+              type="button"
+              onClick={() => setWeekOffset(0)}
+              disabled={weekOffset === 0}
+              className="rounded-lg border border-neutral-border px-4 py-1.5 text-[13px] font-medium text-ink hover:bg-neutral-surface2 disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent"
+            >
               Today
             </button>
           </div>

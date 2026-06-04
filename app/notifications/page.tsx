@@ -14,6 +14,7 @@ import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
+import { useToast } from "@/components/ui/Toast";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { notificationsApi, type NotificationType } from "@/lib/api/notifications";
 
@@ -33,16 +34,19 @@ const fmtTime = (n: { time?: string; createdAt?: string }) => {
 };
 
 export default function NotificationsPage() {
+  const toast = useToast();
   const { data, loading, error, refetch } = useApiQuery(notificationsApi.list);
   const items = data?.items ?? [];
-  const hasUnread = (data?.unread ?? 0) > 0;
+  const unread = data?.unread ?? 0;
+  const hasUnread = unread > 0;
 
   async function markAllRead() {
     try {
       await notificationsApi.markAllRead();
+      toast.success(unread === 1 ? "1 notification marked as read" : `${unread} notifications marked as read`);
       refetch();
-    } catch {
-      /* best effort */
+    } catch (e) {
+      toast.error("Couldn't mark all as read", e instanceof Error ? e.message : undefined);
     }
   }
 
