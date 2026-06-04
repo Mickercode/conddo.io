@@ -17,8 +17,15 @@ type Identity = { businessName: string; userName: string; roleLabel: string; ini
 
 const FALLBACK_IDENTITY: Identity = { businessName: "Your workspace", userName: "Account", roleLabel: "", initials: "?" };
 
+// Sidebar role label — visible under the user's name. TENANT_ADMIN reads as
+// "Owner" to make it clear it's THIS workspace's owner, not a platform admin
+// (matches Stripe / Linear / Notion / Slack convention). STAFF is plain "Staff
+// member" so it doesn't read like internal Conddo staff.
 const roleLabel = (role?: string) =>
-  role === "TENANT_ADMIN" ? "Admin" : role === "STAFF" ? "Staff" : role ?? "";
+  role === "TENANT_ADMIN" ? "Owner" :
+  role === "STAFF" ? "Staff member" :
+  role === "CUSTOMER" ? "Customer" :
+  role ?? "";
 
 function deriveIdentity(me: Me | null): Identity {
   if (!me) return FALLBACK_IDENTITY;
@@ -93,7 +100,7 @@ function SidebarBody({
           </span>
           <div className="min-w-0 flex-1">
             <p className="truncate text-[13px] font-medium text-ink">{identity.userName}</p>
-            <p className="text-[11px] text-content-muted">{identity.roleLabel ? `${identity.roleLabel} Profile` : "Member"}</p>
+            <p className="text-[11px] text-content-muted">{identity.roleLabel || "Member"}</p>
           </div>
           <button
             type="button"
