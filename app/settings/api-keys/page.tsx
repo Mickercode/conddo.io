@@ -1,8 +1,7 @@
 "use client";
 
-import { KeyRound, Plus, Trash2 } from "lucide-react";
+import { KeyRound, Trash2 } from "lucide-react";
 import { SettingsShell } from "@/components/app/SettingsShell";
-import { Button } from "@/components/ui/Button";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { api } from "@/lib/api/client";
@@ -16,12 +15,6 @@ export default function ApiKeysSettings() {
 
   return (
     <SettingsShell active="api-keys" title="API Keys" description="Create keys to integrate Conddo with your other tools. Keep them secret.">
-      <div className="mb-5 flex justify-end">
-        <Button variant="primary" size="md">
-          <Plus size={17} /> Create key
-        </Button>
-      </div>
-
       <QueryBoundary
         loading={loading}
         error={error}
@@ -30,13 +23,8 @@ export default function ApiKeysSettings() {
         empty={
           <EmptyState
             icon={KeyRound}
-            title="No API keys yet"
-            description="Create an API key to connect Conddo to external systems. You'll see the full key once at creation."
-            action={
-              <Button variant="primary" size="md">
-                <Plus size={17} /> Create your first key
-              </Button>
-            }
+            title="API keys coming soon"
+            description="You'll be able to issue and revoke keys from here once the integrations module lands."
           />
         }
       >

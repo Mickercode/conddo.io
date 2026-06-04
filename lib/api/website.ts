@@ -8,6 +8,17 @@ export type WebsiteStatus = {
   enquiries?: number;
 };
 
+export type WebsiteChangeRequestInput = { area?: string; details: string };
+export type WebsiteChangeRequest = {
+  id: string;
+  area: string | null;
+  details: string;
+  status: string;
+  createdAt: string;
+};
+
 export const websiteApi = {
   status: () => api.get<WebsiteStatus>("/website"),
+  requestChange: (body: WebsiteChangeRequestInput) =>
+    api.post<WebsiteChangeRequest>("/website/change-requests", body),
 };

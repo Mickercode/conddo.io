@@ -5,16 +5,8 @@ import Link from "next/link";
 import {
   Search,
   Plus,
-  Upload,
-  ListFilter,
   ChevronLeft,
   ChevronRight,
-  ChevronDown,
-  MessageSquare,
-  Mail,
-  Tag,
-  Download,
-  X,
   Users,
 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
@@ -41,7 +33,6 @@ export default function CustomersPage() {
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
-  const [selected, setSelected] = useState<Set<string>>(new Set());
   const [addOpen, setAddOpen] = useState(false);
 
   const { data, meta, loading, error, refetch } = useApiQuery(
@@ -53,31 +44,15 @@ export default function CustomersPage() {
   const from = total === 0 ? 0 : page * PAGE_SIZE + 1;
   const to = Math.min(total, (page + 1) * PAGE_SIZE);
 
-  const allChecked = customers.length > 0 && selected.size === customers.length;
-  const toggleAll = () =>
-    setSelected(allChecked ? new Set() : new Set(customers.map((c) => c.id)));
-  const toggle = (id: string) =>
-    setSelected((prev) => {
-      const next = new Set(prev);
-      next.has(id) ? next.delete(id) : next.add(id);
-      return next;
-    });
-
   return (
     <AppShell
       title="Customers"
       subtitle={total > 0 ? `${total} customers` : undefined}
       actions={
-        <>
-          <Button variant="secondary" size="md" className="hidden sm:inline-flex">
-            <Upload size={16} />
-            Import CSV
-          </Button>
-          <Button variant="primary" size="md" onClick={() => setAddOpen(true)}>
-            <Plus size={17} />
-            <span className="hidden sm:inline">Add Customer</span>
-          </Button>
-        </>
+        <Button variant="primary" size="md" onClick={() => setAddOpen(true)}>
+          <Plus size={17} />
+          <span className="hidden sm:inline">Add Customer</span>
+        </Button>
       }
     >
       {/* Filters + search */}
@@ -105,15 +80,6 @@ export default function CustomersPage() {
               );
             })}
           </nav>
-          <div className="hidden h-6 w-px bg-neutral-border sm:block" />
-          <button
-            type="button"
-            className="flex items-center gap-1.5 text-[13px] text-content-secondary transition-colors hover:text-primary"
-          >
-            <ListFilter size={17} />
-            Segments
-            <ChevronDown size={15} />
-          </button>
         </div>
 
         <form
@@ -169,16 +135,7 @@ export default function CustomersPage() {
             <table className="w-full min-w-[760px] text-left">
               <thead>
                 <tr className="border-b border-neutral-border text-[11px] uppercase tracking-[0.05em] text-content-muted">
-                  <th className="w-12 px-5 py-3">
-                    <input
-                      type="checkbox"
-                      checked={allChecked}
-                      onChange={toggleAll}
-                      aria-label="Select all"
-                      className="h-4 w-4 rounded border-neutral-border text-primary focus:ring-primary"
-                    />
-                  </th>
-                  <th className="py-3 pr-5 font-medium">Customer</th>
+                  <th className="py-3 pl-5 pr-5 font-medium">Customer</th>
                   <th className="py-3 pr-5 font-medium">Phone</th>
                   <th className="py-3 pr-5 font-medium">Total Spent</th>
                   <th className="py-3 pr-5 text-center font-medium">Orders</th>
@@ -190,16 +147,7 @@ export default function CustomersPage() {
               <tbody className="divide-y divide-neutral-border">
                 {customers.map((c) => (
                   <tr key={c.id} className="group transition-colors hover:bg-neutral-surface2">
-                    <td className="px-5 py-3">
-                      <input
-                        type="checkbox"
-                        checked={selected.has(c.id)}
-                        onChange={() => toggle(c.id)}
-                        aria-label={`Select ${c.name}`}
-                        className="h-4 w-4 rounded border-neutral-border text-primary focus:ring-primary"
-                      />
-                    </td>
-                    <td className="py-3 pr-5">
+                    <td className="py-3 pl-5 pr-5">
                       <div className="flex items-center gap-3">
                         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-bg font-mono text-[12px] font-medium text-primary">
                           {c.initials}
@@ -252,38 +200,6 @@ export default function CustomersPage() {
           </div>
         </div>
       </QueryBoundary>
-
-      {/* Bulk action bar */}
-      {selected.size > 0 && (
-        <div className="fixed bottom-6 left-1/2 z-50 flex max-w-[calc(100vw-2rem)] -translate-x-1/2 items-center gap-4 overflow-x-auto rounded-xl bg-ink px-5 py-3 text-white sm:gap-6">
-          <div className="flex items-center gap-2 whitespace-nowrap">
-            <span className="text-[16px] font-semibold">{selected.size}</span>
-            <span className="text-[13px] text-white/70">selected</span>
-          </div>
-          <div className="h-7 w-px bg-white/20" />
-          <div className="flex items-center gap-4 sm:gap-5">
-            <button className="flex items-center gap-1.5 whitespace-nowrap text-[13px] transition-colors hover:text-primary-light">
-              <MessageSquare size={16} /> Send SMS
-            </button>
-            <button className="flex items-center gap-1.5 whitespace-nowrap text-[13px] transition-colors hover:text-primary-light">
-              <Mail size={16} /> Send Email
-            </button>
-            <button className="flex items-center gap-1.5 whitespace-nowrap text-[13px] transition-colors hover:text-primary-light">
-              <Tag size={16} /> Add tag
-            </button>
-            <button className="flex items-center gap-1.5 whitespace-nowrap text-[13px] transition-colors hover:text-primary-light">
-              <Download size={16} /> Export
-            </button>
-          </div>
-          <button
-            onClick={() => setSelected(new Set())}
-            aria-label="Clear selection"
-            className="ml-1 rounded p-1 transition-colors hover:bg-white/10"
-          >
-            <X size={18} />
-          </button>
-        </div>
-      )}
 
       <AddCustomerModal
         open={addOpen}

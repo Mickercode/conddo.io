@@ -1,11 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import { Globe, MessageSquarePlus, Eye, MailQuestion, Lock, LayoutTemplate } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
+import { RequestChangesModal } from "@/components/app/RequestChangesModal";
 import { api } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import type { Result } from "@/lib/api/types";
@@ -78,6 +80,7 @@ async function fetchWebsite(): Promise<Result<Website>> {
 }
 
 function WebsiteContent({ site }: { site: Website }) {
+  const [requestOpen, setRequestOpen] = useState(false);
   const domain = site.customDomain ?? `${site.subdomain}.conddo.io`;
   const chip = statusChip[site.status] ?? statusChip.draft;
 
@@ -96,11 +99,12 @@ function WebsiteContent({ site }: { site: Website }) {
           <Button href={`https://${domain}`} variant="secondary" size="md">
             <Eye size={16} /> View site
           </Button>
-          <Button variant="primary" size="md">
+          <Button variant="primary" size="md" onClick={() => setRequestOpen(true)}>
             <MessageSquarePlus size={16} /> Request changes
           </Button>
         </div>
       </div>
+      <RequestChangesModal open={requestOpen} onClose={() => setRequestOpen(false)} />
 
       {/* Traffic */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -151,8 +155,8 @@ function WebsiteContent({ site }: { site: Website }) {
         <p className="mb-4 text-[14px] text-content-secondary">
           Point your own domain (e.g. yourbusiness.com) at your conddo.io website.
         </p>
-        <Button variant="secondary" size="md">
-          <Lock size={16} /> Connect a domain
+        <Button variant="secondary" size="md" disabled className="opacity-60">
+          <Lock size={16} /> Available on Pro
         </Button>
       </div>
     </div>

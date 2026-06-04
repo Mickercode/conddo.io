@@ -1,9 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Download, BarChart3, Wallet, ShoppingCart, UserPlus, Receipt, type LucideIcon } from "lucide-react";
+import { BarChart3, Wallet, ShoppingCart, UserPlus, Receipt, type LucideIcon } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
-import { Button } from "@/components/ui/Button";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
@@ -28,15 +27,7 @@ export default function AnalyticsPage() {
   const { data, loading, error, refetch } = useApiQuery(() => analyticsApi.overview(range), [range]);
 
   return (
-    <AppShell
-      title="Analytics"
-      subtitle="Insights and reports"
-      actions={
-        <Button variant="secondary" size="md" className="hidden sm:inline-flex">
-          <Download size={16} /> Export
-        </Button>
-      }
-    >
+    <AppShell title="Analytics" subtitle="Insights and reports">
       {/* Range selector */}
       <div className="mb-5 inline-flex rounded-lg border border-neutral-border bg-neutral-surface2 p-0.5">
         {RANGES.map((r) => (
