@@ -46,23 +46,18 @@ export default function LoginPage() {
     }
   }
 
-  // Google sign-in. We don't gate the button on the workspace field — Google
-  // identifies the user globally, and the backend resolves the tenant from
-  // the Google email when tenantSlug is omitted. If the workspace IS filled
-  // in, we still send it as a scope hint (useful when one Google account
-  // owns several workspaces). Backend contract: ACTION_LIST.md §1a.
+  // Google sign-in. Workspace must already be entered — Google identifies the
+  // user globally, but the backend still needs to know which tenant to scope
+  // them to. Backend contract: ACTION_LIST.md §1a.
   async function onGoogleCredential(idToken: string) {
     setError(null);
     setSubmitting(true);
     try {
-      const trimmed = workspace.trim();
-      await loginWithGoogle(trimmed ? { idToken, tenantSlug: slugify(trimmed) } : { idToken });
+      await loginWithGoogle({ idToken, tenantSlug: slugify(workspace) });
       router.push("/dashboard");
     } catch (err) {
       if (err instanceof ApiError && err.code === "USER_NOT_FOUND") {
-        setError("No account matches that Google email. Create an account first, or sign in with email + password.");
-      } else if (err instanceof ApiError && err.code === "AMBIGUOUS_TENANT") {
-        setError("This Google account is on multiple workspaces. Enter the workspace name above to pick one.");
+        setError("No account in this workspace matches that Google email. Create an account or try a different workspace.");
       } else {
         setError(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
       }
@@ -70,6 +65,8 @@ export default function LoginPage() {
       setSubmitting(false);
     }
   }
+
+  const googleReady = hasGoogleClient() && workspace.trim().length > 0;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
@@ -158,6 +155,7 @@ export default function LoginPage() {
                 <span className="h-px flex-1 bg-neutral-border" />
               </div>
               <ContinueWithGoogle
+                disabled={!googleReady}
                 onCredential={onGoogleCredential}
                 onError={(msg) => setError(msg)}
               />

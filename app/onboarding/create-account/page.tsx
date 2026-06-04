@@ -154,28 +154,28 @@ export default function CreateAccountStep() {
 
         {hasGoogleClient() && (
           <ContinueWithGoogle
+            disabled={submitting || normalizedPhone().length < 7}
             onCredential={async (idToken) => {
               setError(null);
+              if (normalizedPhone().length < 7) {
+                setError("Enter your phone number first — we still need it to verify your account.");
+                return;
+              }
               setSubmitting(true);
               try {
-                // Phone is optional here — if filled, send it; if not, the
-                // backend creates a registration record from Google's email +
-                // name and the FE walks the user through phone OTP on the
-                // next step (verify-phone). Either way, we need to follow up
-                // with phone verification before /complete fires.
-                const phoneE164 = normalizedPhone();
-                const { registrationId, resendCooldownSeconds } = await registerStartWithGoogle(
-                  phoneE164.length >= 7 ? { idToken, phone: phoneE164 } : { idToken },
-                );
-                // Persist what we have so the next step can read it.
+                const { registrationId, resendCooldownSeconds } = await registerStartWithGoogle({
+                  idToken,
+                  phone: normalizedPhone(),
+                });
+                // We pre-fill fullName/email from Google in the next step's view
+                // by reading the ID token's claims client-side. Backend already
+                // has the canonical copies on the registration row.
                 update({ phone, registrationId, resendCooldownSeconds });
                 const next = nextStep("create-account");
                 if (next) router.push(hrefFor(next.slug));
               } catch (err) {
                 if (err instanceof ApiError && err.code === "USER_ALREADY_EXISTS") {
                   setError("That Google email already has a Conddo account. Sign in instead.");
-                } else if (err instanceof ApiError && err.code === "PHONE_REQUIRED") {
-                  setError("We still need your phone number to verify your account.");
                 } else {
                   setError(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
                 }
