@@ -1,6 +1,6 @@
 "use client";
 
-import { Globe, ExternalLink, MessageSquarePlus, Eye, MailQuestion, Lock, LayoutTemplate } from "lucide-react";
+import { Globe, MessageSquarePlus, Eye, MailQuestion, Lock, LayoutTemplate } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -8,9 +8,23 @@ import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { api } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
+import type { Result } from "@/lib/api/types";
 
+// FE-side normalized status — keep this stable; backend casing/values get
+// mapped to these.
 type WebsiteStatus = "live" | "in_progress" | "draft";
-type WebsiteSection = { id: string; name: string; status: string };
+
+// Wire shapes — match WebsiteService.java records.
+type WireSite = {
+  subdomain: string;
+  customDomain: string | null;
+  status: string;              // "NOT_STARTED" | "IN_PROGRESS" | "LIVE" (backend casing)
+  publishedAt: string | null;
+};
+type WireStatus = { state: string; domain: string; visitsToday: number; enquiries: number };
+type WireSection = { type: string; label: string; configured: boolean };
+
+type WebsiteSection = { id: string; name: string; configured: boolean };
 type Website = {
   subdomain: string;
   customDomain: string | null;
@@ -27,9 +41,45 @@ const statusChip: Record<WebsiteStatus, { tone: "success" | "warning" | "neutral
   draft: { tone: "neutral", label: "Draft" },
 };
 
+function normalizeStatus(s: string | null | undefined): WebsiteStatus {
+  const v = (s ?? "").toUpperCase();
+  if (v === "LIVE") return "live";
+  if (v === "IN_PROGRESS") return "in_progress";
+  return "draft"; // covers NOT_STARTED + anything unexpected
+}
+
+// Combine /website + /website/status + /website/sections into one screen-shaped
+// payload. Tolerant: if /status or /sections fail (e.g. a 500 during early
+// build-out), we still render the page with sensible defaults instead of
+// crashing the whole tab.
+async function fetchWebsite(): Promise<Result<Website>> {
+  const siteRes = await api.get<WireSite>("/website");
+  const [statusRes, sectionsRes] = await Promise.all([
+    api.get<WireStatus>("/website/status").catch(() => null),
+    api.get<WireSection[]>("/website/sections").catch(() => null),
+  ]);
+  const sections: WebsiteSection[] = (sectionsRes?.data ?? []).map((s) => ({
+    id: s.type,
+    name: s.label,
+    configured: s.configured,
+  }));
+  return {
+    data: {
+      subdomain: siteRes.data.subdomain,
+      customDomain: siteRes.data.customDomain,
+      status: normalizeStatus(siteRes.data.status),
+      publishedAt: siteRes.data.publishedAt,
+      visitsToday: statusRes?.data.visitsToday ?? 0,
+      enquiries: statusRes?.data.enquiries ?? 0,
+      sections,
+    },
+    meta: siteRes.meta,
+  };
+}
+
 function WebsiteContent({ site }: { site: Website }) {
   const domain = site.customDomain ?? `${site.subdomain}.conddo.io`;
-  const chip = statusChip[site.status];
+  const chip = statusChip[site.status] ?? statusChip.draft;
 
   return (
     <div className="space-y-6">
@@ -83,7 +133,7 @@ function WebsiteContent({ site }: { site: Website }) {
                   <LayoutTemplate size={16} className="text-content-muted" />
                   {s.name}
                 </span>
-                <Chip tone="neutral">{s.status}</Chip>
+                <Chip tone={s.configured ? "success" : "neutral"}>{s.configured ? "Configured" : "Default"}</Chip>
               </li>
             ))}
           </ul>
@@ -110,7 +160,7 @@ function WebsiteContent({ site }: { site: Website }) {
 }
 
 export default function WebsitePage() {
-  const { data, loading, error, refetch } = useApiQuery<Website>(() => api.get("/website"));
+  const { data, loading, error, refetch } = useApiQuery<Website>(fetchWebsite);
 
   return (
     <AppShell title="Website" subtitle="Your online storefront">
