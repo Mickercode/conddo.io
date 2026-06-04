@@ -6,23 +6,22 @@ import {
   Plus,
   Search,
   SlidersHorizontal,
-  MoreHorizontal,
   CalendarDays,
   CalendarX,
   Clock,
   ChevronRight,
-  PlusCircle,
   ShoppingCart,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/app/AppShell";
 import { NewOrderModal } from "@/components/app/NewOrderModal";
+import { AddStageButton, StageActionsMenu } from "@/components/app/StageManager";
 import { Button } from "@/components/ui/Button";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
-import { ordersApi, type Order } from "@/lib/api/orders";
+import { ordersApi, type Order, type Stage } from "@/lib/api/orders";
 
 const FILTERS = ["All", "Today", "This week", "Overdue"];
 
@@ -63,10 +62,21 @@ export default function OrdersPage() {
   const [activeFilter, setActiveFilter] = useState("All");
   const [newOpen, setNewOpen] = useState(false);
   const { data, loading, error, refetch } = useApiQuery(ordersApi.board);
+  // The board is grouped by stage name; the stages endpoint returns the
+  // ids + positions we need for the 3-dot menu's rename / move / delete.
+  // Refetched alongside the board on every mutation.
+  const stagesQuery = useApiQuery(ordersApi.stages);
 
   const stages = data?.stages ?? [];
   const columns = stages.filter((s) => s.name !== "Delivered");
   const delivered = stages.find((s) => s.name === "Delivered");
+
+  const stageList: Stage[] = stagesQuery.data ?? [];
+  const stageByName = new Map(stageList.map((s) => [s.name, s]));
+
+  // Reload board + stages together — any mutation (add/rename/move/delete)
+  // affects both responses.
+  const reloadAll = () => { refetch(); stagesQuery.refetch(); };
 
   return (
     <AppShell
@@ -133,27 +143,35 @@ export default function OrdersPage() {
         {/* Kanban board */}
         <div className="-mx-4 overflow-x-auto px-4 pb-4 md:-mx-8 md:px-8">
           <div className="flex items-start gap-4">
-            {columns.map((stage) => (
-              <div
-                key={stage.name}
-                className="flex min-h-[460px] w-72 shrink-0 flex-col rounded-xl border border-neutral-border bg-neutral-surface2 p-3"
-              >
-                <div className="mb-4 flex items-center justify-between px-1">
-                  <div className="flex items-center gap-2">
-                    <h2 className="text-[13px] font-bold text-ink">{stage.name}</h2>
-                    <span className="rounded bg-neutral-surface px-1.5 py-0.5 text-[10px] font-bold text-content-muted">
-                      {stage.count}
-                    </span>
+            {columns.map((stage) => {
+              const stageMeta = stageByName.get(stage.name) ?? { id: null, name: stage.name, position: 0 };
+              return (
+                <div
+                  key={stage.name}
+                  className="flex min-h-[460px] w-72 shrink-0 flex-col rounded-xl border border-neutral-border bg-neutral-surface2 p-3"
+                >
+                  <div className="mb-4 flex items-center justify-between px-1">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-[13px] font-bold text-ink">{stage.name}</h2>
+                      <span className="rounded bg-neutral-surface px-1.5 py-0.5 text-[10px] font-bold text-content-muted">
+                        {stage.count}
+                      </span>
+                    </div>
+                    <StageActionsMenu
+                      stage={stageMeta}
+                      allStages={stageList}
+                      hasOrders={stage.count > 0}
+                      onChanged={reloadAll}
+                    />
                   </div>
-                  <MoreHorizontal size={18} className="cursor-pointer text-content-muted" />
+                  <div className="flex flex-col gap-3">
+                    {stage.orders.map((card) => (
+                      <OrderCard key={card.id} card={card} />
+                    ))}
+                  </div>
                 </div>
-                <div className="flex flex-col gap-3">
-                  {stage.orders.map((card) => (
-                    <OrderCard key={card.id} card={card} />
-                  ))}
-                </div>
-              </div>
-            ))}
+              );
+            })}
 
             {/* Delivered — collapsed */}
             {delivered && (
@@ -167,10 +185,7 @@ export default function OrdersPage() {
             )}
 
             {/* Add stage */}
-            <button className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl border-2 border-dashed border-neutral-strong px-5 text-content-muted transition-colors hover:border-primary hover:text-primary">
-              <PlusCircle size={18} />
-              <span className="text-[13px] font-medium">Add Stage</span>
-            </button>
+            <AddStageButton onAdded={reloadAll} />
           </div>
         </div>
       </QueryBoundary>

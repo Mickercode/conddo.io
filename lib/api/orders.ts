@@ -66,12 +66,24 @@ export type UpdateOrderInput = {
   notes?: string;
 };
 
+export type StageWriteInput = { name?: string; position?: number };
+
 export const ordersApi = {
   board: () => api.get<Board>("/orders/board"),
   listRecent: (size = 4) => api.get<Order[]>(`/orders?size=${size}`),
   list: (qs = "") => api.get<Order[]>(`/orders${qs ? `?${qs}` : ""}`),
   get: (id: string) => api.get<OrderDetail>(`/orders/${id}`),
+
+  // Pipeline stage management (backend OrderStageController, §11.4).
+  // A tenant with no overrides sees its vertical's default stages; the first
+  // create/update materialises those defaults so they can be renamed / reordered
+  // / deleted — invisible to the FE, which always reads from /orders/stages.
   stages: () => api.get<Stage[]>("/orders/stages"),
+  createStage: (body: StageWriteInput & { name: string }) =>
+    api.post<Stage>("/orders/stages", body),
+  updateStage: (id: string, body: StageWriteInput) =>
+    api.patch<Stage>(`/orders/stages/${id}`, body),
+  deleteStage: (id: string) => api.del<void>(`/orders/stages/${id}`),
 
   create: (body: CreateOrderInput) => api.post<OrderDetail>("/orders", body),
   update: (id: string, body: UpdateOrderInput) => api.patch<OrderDetail>(`/orders/${id}`, body),
