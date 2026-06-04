@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { CheckCircle2, XCircle, Clock, ArrowRight, Loader2, AlertCircle } from "lucide-react";
@@ -20,8 +20,36 @@ import { naira } from "@/lib/format";
  * Lives at /payments/return — works on the tenant subdomain (the FE is
  * deployed once and tenant subdomains share the same Vercel deployment, so
  * the slug context comes from the host header on the backend side).
+ *
+ * Suspense wrapper: useSearchParams() opts the page out of static
+ * pre-rendering by default. Next 14 requires the consumer to be inside a
+ * <Suspense> so the build can keep pre-rendering the shell. The inner
+ * `PaymentsReturnInner` reads the hook; the page export renders the shell.
  */
 export default function PaymentsReturnPage() {
+  return (
+    <Suspense fallback={<ReturnShell />}>
+      <PaymentsReturnInner />
+    </Suspense>
+  );
+}
+
+function ReturnShell() {
+  return (
+    <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-neutral-border bg-neutral-surface p-8">
+        <div className="mb-5 flex justify-center">
+          <Loader2 className="animate-spin text-primary" size={36} />
+        </div>
+        <h1 className="text-center text-[22px] font-medium leading-tight tracking-[-0.01em] text-ink">
+          Loading your payment…
+        </h1>
+      </div>
+    </main>
+  );
+}
+
+function PaymentsReturnInner() {
   const params = useSearchParams();
   const router = useRouter();
   const reference = params.get("ref");
