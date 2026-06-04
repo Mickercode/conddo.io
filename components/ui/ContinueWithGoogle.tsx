@@ -5,7 +5,9 @@ import { hasGoogleClient } from "@/lib/api/google";
 
 /**
  * The "Continue with Google" button. Returns null when NEXT_PUBLIC_GOOGLE_CLIENT_ID
- * is unset (so the auth pages don't render a dead button on a fresh local clone).
+ * is unset (so the auth pages don't render a dead button on a fresh local clone);
+ * otherwise always renders — workspace/phone validation happens on the click
+ * handler in the parent, not by hiding the button.
  *
  * Renders Google's branded button — accessible, recognised, and matches what
  * users expect on SaaS sign-in pages. The parent gets the raw ID token via
@@ -18,21 +20,11 @@ import { hasGoogleClient } from "@/lib/api/google";
 export function ContinueWithGoogle({
   onCredential,
   onError,
-  disabled = false,
 }: {
   onCredential: (idToken: string) => void | Promise<void>;
   onError?: (message: string) => void;
-  disabled?: boolean;
 }) {
   if (!hasGoogleClient()) return null;
-
-  if (disabled) {
-    return (
-      <div className="flex h-11 w-full items-center justify-center rounded-md border border-neutral-strong bg-neutral-surface2 text-[14px] text-content-muted">
-        Enter your workspace first
-      </div>
-    );
-  }
 
   return (
     <div className="flex w-full justify-center">
