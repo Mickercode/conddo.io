@@ -8,6 +8,7 @@ import { Chip } from "@/components/ui/Chip";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { RequestChangesModal } from "@/components/app/RequestChangesModal";
+import { SiteIntegrationPanel } from "@/components/app/SiteIntegrationPanel";
 import { api } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import type { Result } from "@/lib/api/types";
@@ -146,17 +147,22 @@ function WebsiteContent({ site }: { site: Website }) {
         )}
       </div>
 
+      {/* Developer integration — API key + QA status + quick start. Renders
+          a "your site isn't registered yet" hint when the BE has no
+          tenant_sites row for this tenant. */}
+      <SiteIntegrationPanel slug={site.subdomain} />
+
       {/* Custom domain */}
       <div className="rounded-xl border border-neutral-border bg-neutral-surface p-6">
         <div className="mb-3 flex items-center gap-2">
           <h2 className="text-[15px] font-medium text-ink">Custom domain</h2>
-          <span className="rounded bg-primary-bg px-1.5 py-0.5 text-[10px] font-bold text-primary">PRO</span>
+          <span className="rounded bg-primary-bg px-1.5 py-0.5 text-[10px] font-bold text-primary">SCALER</span>
         </div>
         <p className="mb-4 text-[14px] text-content-secondary">
-          Point your own domain (e.g. yourbusiness.com) at your conddo.io website.
+          Point your own domain (e.g. yourbusiness.com) at your conddo.io website. Growth tenants get a free .com.ng via 9stacks; Scaler unlocks any custom domain.
         </p>
         <Button variant="secondary" size="md" disabled className="opacity-60">
-          <Lock size={16} /> Available on Pro
+          <Lock size={16} /> Available on Scaler
         </Button>
       </div>
     </div>
