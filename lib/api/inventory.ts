@@ -2,6 +2,8 @@
 import { api } from "./client";
 
 // GET /inventory/products — row/detail. `lowStock` is derived server-side.
+// `expiryDate` is optional (pharmacy uses it; other verticals leave it null).
+// Spec: backend/specs/PHARMACY_DEEP_DIVE_SPEC.md §2.
 export type Product = {
   id: string;
   name: string;
@@ -13,7 +15,22 @@ export type Product = {
   reorderThreshold: number;
   lowStock: boolean;
   active: boolean;
+  expiryDate?: string | null;  // YYYY-MM-DD; pharmacy-only, optional
+  batchNumber?: string | null; // pharmacy-only, optional (Phase 2)
 };
+
+// FE-derived expiry status. Same banding the dashboard widget uses.
+export type ExpiryStatus = "none" | "fresh" | "expiring_soon" | "expired";
+
+export function expiryStatusOf(p: Product, now: Date = new Date()): ExpiryStatus {
+  if (!p.expiryDate) return "none";
+  const expiry = new Date(p.expiryDate);
+  if (Number.isNaN(expiry.getTime())) return "none";
+  const diffDays = Math.floor((expiry.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
+  if (diffDays < 0) return "expired";
+  if (diffDays <= 30) return "expiring_soon";
+  return "fresh";
+}
 
 export type Category = { id: string; name: string };
 
@@ -21,7 +38,14 @@ export type StockStatus = "in_stock" | "low" | "out";
 export const stockStatus = (p: Product): StockStatus =>
   p.stock <= 0 ? "out" : p.lowStock ? "low" : "in_stock";
 
-export type ProductListParams = { search?: string; category?: string; lowStock?: boolean; page?: number; size?: number };
+export type ProductListParams = {
+  search?: string;
+  category?: string;
+  lowStock?: boolean;
+  expiringWithinDays?: number; // pharmacy filter: "expiring in next N days"
+  page?: number;
+  size?: number;
+};
 
 // Write payloads (backend CreateProductRequest / UpdateProductRequest, §11.6).
 export type CreateProductInput = {
@@ -32,6 +56,8 @@ export type CreateProductInput = {
   stock?: number;
   reorderThreshold?: number;
   active?: boolean;
+  expiryDate?: string | null;  // YYYY-MM-DD; pharmacy-only
+  batchNumber?: string | null; // pharmacy-only (Phase 2)
 };
 export type UpdateProductInput = Partial<CreateProductInput>;
 
@@ -41,6 +67,7 @@ export const inventoryApi = {
     if (p.search) qs.set("search", p.search);
     if (p.category) qs.set("category", p.category);
     if (p.lowStock) qs.set("lowStock", "true");
+    if (p.expiringWithinDays != null) qs.set("expiringWithinDays", String(p.expiringWithinDays));
     qs.set("page", String(p.page ?? 0));
     qs.set("size", String(p.size ?? 20));
     return api.get<Product[]>(`/inventory/products?${qs.toString()}`);

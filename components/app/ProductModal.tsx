@@ -35,6 +35,7 @@ export function ProductModal({
   const [price, setPrice] = useState("");
   const [stock, setStock] = useState("");
   const [reorder, setReorder] = useState("");
+  const [expiryDate, setExpiryDate] = useState("");
   const [active, setActive] = useState(true);
   const [errors, setErrors] = useState<Errors>({});
   const [saving, setSaving] = useState(false);
@@ -47,6 +48,7 @@ export function ProductModal({
     setPrice(product?.price != null ? String(product.price) : "");
     setStock(product?.stock != null ? String(product.stock) : "");
     setReorder(product?.reorderThreshold != null ? String(product.reorderThreshold) : "");
+    setExpiryDate(product?.expiryDate ?? "");
     setActive(product?.active ?? true);
     setErrors({});
   }, [open, product]);
@@ -77,6 +79,10 @@ export function ProductModal({
       price: price ? Number(price) : undefined,
       stock: stock ? Number(stock) : undefined,
       reorderThreshold: reorder ? Number(reorder) : undefined,
+      // Send null on edit when the user cleared a previously-set date so the
+      // server clears it; omit on create so it stays unset for non-pharmacy
+      // tenants that never touch this field.
+      expiryDate: expiryDate ? expiryDate : (editing ? null : undefined),
       active,
     };
     setSaving(true);
@@ -136,6 +142,9 @@ export function ProductModal({
             <TextInput id="pr-reorder" inputMode="numeric" value={reorder} error={errors.reorder} onChange={(e) => setReorder(e.target.value)} placeholder="0" />
           </Field>
         </div>
+        <Field label="Expiry date" htmlFor="pr-expiry" hint="Optional — used by pharmacies to flag stock that's about to expire.">
+          <TextInput id="pr-expiry" type="date" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} />
+        </Field>
         <label className="flex items-center gap-2.5">
           <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} className="h-4 w-4 rounded border-neutral-border text-primary focus:ring-primary" />
           <span className="text-[14px] text-content-secondary">Active (visible & sellable)</span>
