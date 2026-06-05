@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/Button";
 import { useOnboarding } from "@/lib/onboarding-store";
 import { hrefFor, nextStep } from "@/lib/onboarding-steps";
 
-// Built from the Stitch "Plan Selection" screen. Pricing ₦25k/45k/80k is the
-// design's canonical (matches the landing page).
+// Plan IDs match the canonical catalog in conddo-pricing-tiers.md /
+// backend/BILLING_TIERS_SPEC.md. Self-serve onboarding only offers Launcher
+// + Growth — Scaler is booked via sales, no self-serve trial.
 type Plan = {
-  id: string;
+  id: "launcher" | "growth";
   name: string;
   blurb: string;
   price: string;
@@ -21,34 +22,28 @@ type Plan = {
 
 const plans: Plan[] = [
   {
-    id: "starter",
-    name: "Starter",
-    blurb: "For businesses getting properly set up.",
-    price: "₦25,000",
-    features: ["Website", "CRM", "Payment processing", "Business analytics"],
+    id: "launcher",
+    name: "Launcher",
+    blurb: "For businesses going digital for the first time.",
+    price: "₦20,000",
+    features: ["Custom website", "Payment collection", "CRM", "Inventory", "Basic analytics", "2 staff accounts"],
   },
   {
-    id: "business",
-    name: "Business",
-    blurb: "For businesses ready to grow.",
+    id: "growth",
+    name: "Growth",
+    blurb: "For businesses actively selling every day.",
     price: "₦45,000",
-    inherits: "Everything in Starter",
+    inherits: "Everything in Launcher",
     features: [
-      "Booking & Orders",
-      "Inventory",
-      "Social media scheduler",
-      "Email/SMS campaigns",
-      "Marketing dashboard",
+      "Custom .com.ng domain + business email",
+      "Order management",
+      "Bookings",
+      "Email & SMS campaigns",
+      "Social scheduler",
+      "Ad management",
+      "5 staff accounts",
     ],
     popular: true,
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    blurb: "For businesses running serious operations.",
-    price: "₦80,000",
-    inherits: "Everything in Business",
-    features: ["Ad management", "API access", "Advanced analytics", "Priority support"],
   },
 ];
 
@@ -58,8 +53,9 @@ export default function ChoosePlanStep() {
   const [submitting, setSubmitting] = useState<string | null>(null);
   const [error] = useState<string | null>(null);
 
-  // Just record the plan and advance — the tenant is created at the final step
-  // (POST /auth/register/complete on the "ready" page), which issues the JWT.
+  // Record the plan + advance — the tenant is created at the final step
+  // (POST /auth/register/complete on the "ready" page), which issues the JWT
+  // carrying the plan in activeModules.
   const select = (planId: string) => {
     update({ planId });
     setSubmitting(planId);
@@ -79,12 +75,12 @@ export default function ChoosePlanStep() {
       </header>
 
       {error && (
-        <div className="mb-6 flex w-full max-w-5xl items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
+        <div className="mb-6 flex w-full max-w-3xl items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
           <AlertCircle size={18} className="shrink-0" /> {error}
         </div>
       )}
 
-      <div className="grid w-full max-w-5xl grid-cols-1 items-start gap-6 md:grid-cols-3">
+      <div className="grid w-full max-w-3xl grid-cols-1 items-start gap-6 md:grid-cols-2">
         {plans.map((plan) => (
           <div
             key={plan.id}
@@ -149,13 +145,16 @@ export default function ChoosePlanStep() {
         ))}
       </div>
 
-      <div className="mt-8 flex flex-col items-center gap-1.5 text-center">
-        <a href="#" className="text-[14px] font-medium text-primary hover:underline">
-          Save 2 months with an annual plan
-        </a>
+      <div className="mt-8 flex flex-col items-center gap-2 text-center">
         <p className="text-[13px] text-content-muted">
-          No credit card required. Cancel anytime.
+          Running 3+ locations or a team that needs custom workflows?
         </p>
+        <a
+          href="mailto:hello@conddo.io?subject=Scaler%20consultation"
+          className="text-[14px] font-medium text-primary hover:underline"
+        >
+          Book a Scaler consultation →
+        </a>
       </div>
     </>
   );

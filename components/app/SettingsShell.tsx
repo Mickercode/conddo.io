@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import {
   Building2,
   Bell,
+  CreditCard,
   IdCard,
   TriangleAlert,
   type LucideIcon,
@@ -12,11 +13,14 @@ import { AppShell } from "@/components/app/AppShell";
 type SettingsKey = "profile" | "billing" | "notifications" | "connections" | "staff" | "api-keys" | "danger";
 
 // Settings entries are only listed once the backend endpoints behind them
-// exist. Billing / Connected Accounts / API Keys are hidden from this nav
-// until those modules ship — the page files still exist for direct-link
-// access but show empty / disabled states.
+// exist. Connected Accounts / API Keys stay hidden until those modules ship
+// (page files still exist for direct-link access but show empty/disabled
+// states). Billing now ships with the pricing-tiers work so it's back in
+// the nav; the page degrades to "Billing is being set up" via QueryBoundary
+// when the BE hasn't deployed.
 const NAV: { key: SettingsKey; label: string; icon: LucideIcon; href: string }[] = [
   { key: "profile", label: "Business Profile", icon: Building2, href: "/settings" },
+  { key: "billing", label: "Subscription and Billing", icon: CreditCard, href: "/settings/billing" },
   { key: "notifications", label: "Notifications", icon: Bell, href: "/settings/notifications" },
   { key: "staff", label: "Staff and Permissions", icon: IdCard, href: "/staff" },
 ];
