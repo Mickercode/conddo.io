@@ -182,6 +182,7 @@ export default function OrdersPage() {
         isEmpty={stages.length === 0}
         onRetry={refetch}
         loadingLabel="Loading your pipeline…"
+        gatedFeatureTitle="Order management"
         empty={
           <EmptyState
             icon={ShoppingCart}

@@ -26,7 +26,14 @@ const plans: Plan[] = [
     name: "Launcher",
     blurb: "For businesses going digital for the first time.",
     price: "₦20,000",
-    features: ["Custom website", "Payment collection", "CRM", "Inventory", "Basic analytics", "2 staff accounts"],
+    features: [
+      "Custom website",
+      "Payment collection",
+      "CRM + Orders + Bookings",
+      "Inventory management",
+      "Basic analytics",
+      "2 staff accounts",
+    ],
   },
   {
     id: "growth",
@@ -36,8 +43,7 @@ const plans: Plan[] = [
     inherits: "Everything in Launcher",
     features: [
       "Custom .com.ng domain + business email",
-      "Order management",
-      "Bookings",
+      "Customer self-booking on your website",
       "Email & SMS campaigns",
       "Social scheduler",
       "Ad management",

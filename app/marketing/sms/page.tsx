@@ -47,6 +47,7 @@ export default function SmsCampaignsPage() {
         error={error}
         isEmpty={campaigns.length === 0}
         onRetry={refetch}
+        gatedFeatureTitle="SMS campaigns"
         empty={
           <EmptyState
             icon={MessageSquare}

@@ -33,6 +33,8 @@ const plans: Plan[] = [
       "Custom website (conddo.io subdomain)",
       "Payment collection",
       "CRM & customer records",
+      "Order management",
+      "Bookings",
       "Inventory management",
       "Basic analytics",
       "2 staff accounts",
@@ -50,8 +52,7 @@ const plans: Plan[] = [
     inherits: "Everything in Launcher, plus",
     features: [
       "Custom .com.ng domain + business email",
-      "Order management",
-      "Bookings",
+      "Customer self-booking on your website",
       "Email & SMS campaigns",
       "Social scheduler",
       "Ad management",

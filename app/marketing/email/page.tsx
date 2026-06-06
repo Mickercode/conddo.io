@@ -47,6 +47,7 @@ export default function EmailCampaignsPage() {
         error={error}
         isEmpty={campaigns.length === 0}
         onRetry={refetch}
+        gatedFeatureTitle="Email campaigns"
         empty={
           <EmptyState
             icon={Mail}

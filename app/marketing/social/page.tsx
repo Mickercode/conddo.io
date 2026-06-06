@@ -117,7 +117,7 @@ export default function SocialCalendarPage() {
         ))}
       </div>
 
-      <QueryBoundary loading={loading} error={error} onRetry={refetch} isEmpty={false} empty={null} loadingLabel="Loading your calendar…">
+      <QueryBoundary loading={loading} error={error} onRetry={refetch} isEmpty={false} empty={null} loadingLabel="Loading your calendar…" gatedFeatureTitle="Social scheduler">
         <div className="overflow-x-auto rounded-xl border border-neutral-border bg-neutral-surface">
           <div className="min-w-[760px]">
             <div className="grid grid-cols-7 border-b border-neutral-border bg-neutral-surface2">

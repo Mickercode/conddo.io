@@ -168,6 +168,7 @@ export default function FittingsPage() {
         isEmpty={events.length === 0}
         onRetry={refetch}
         loadingLabel="Loading fittings…"
+        gatedFeatureTitle="Fittings"
         empty={
           <EmptyState
             icon={Scissors}

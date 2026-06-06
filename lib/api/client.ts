@@ -81,6 +81,22 @@ export const isNotConfigured = (e: unknown): boolean =>
 export const isServerError = (e: unknown): boolean =>
   e instanceof ApiError && e.status >= 500;
 
+/** 403 PLAN_UPGRADE_REQUIRED — the tenant's plan doesn't unlock this module.
+ *  Pages render <PlanGate> instead of a generic error. The hint object lives
+ *  in error.details and carries the BE's message, the required plan name +
+ *  price, and the upgrade URL. */
+export type PlanUpgradeDetails = {
+  upgradeUrl?: string;
+  requiredPlan?: string;
+  requiredPlanPrice?: number;
+};
+export const isPlanUpgradeRequired = (e: unknown): boolean =>
+  e instanceof ApiError && e.code === "PLAN_UPGRADE_REQUIRED";
+export const planUpgradeDetails = (e: unknown): PlanUpgradeDetails | null =>
+  isPlanUpgradeRequired(e) && e instanceof ApiError
+    ? ((e.details as PlanUpgradeDetails | undefined) ?? null)
+    : null;
+
 type Body = Record<string, unknown> | undefined;
 type Opts = { versioned?: boolean };
 
@@ -153,15 +169,50 @@ async function request<T>(method: string, path: string, body?: Body, opts: Opts 
   }
 
   if (!res.ok || !json || json.success === false) {
-    throw new ApiError(
-      json?.error?.code ?? "request_failed",
-      json?.error?.message ?? res.statusText ?? "Request failed.",
-      res.status,
-      json?.error?.details,
-    );
+    throw makeApiError(res, json);
   }
 
   return { data: json.data, meta: json.meta };
+}
+
+// Two error shapes ship from the BE:
+//   1. Standard envelope: {success:false, error:{code, message, details}}
+//   2. Plan-gate flat:    {error:"PLAN_UPGRADE_REQUIRED", message,
+//                          upgrade_url, requiredPlan, requiredPlanPrice}
+// We normalize both into a single ApiError so callers / QueryBoundary /
+// PlanGate don't need to know which one fired. For the flat plan-gate
+// shape, the upgrade hint is stashed in `details` (PlanUpgradeDetails).
+function makeApiError<T>(res: Response, json: ApiResponse<T> | null): ApiError {
+  const rawError: unknown = json?.error;
+  const flatPlanGate =
+    typeof rawError === "string"
+      ? { code: rawError, message: (json as Record<string, unknown> | null)?.message as string | undefined }
+      : null;
+
+  if (flatPlanGate?.code === "PLAN_UPGRADE_REQUIRED") {
+    const j = json as Record<string, unknown>;
+    const details: PlanUpgradeDetails = {
+      upgradeUrl: typeof j["upgrade_url"] === "string" ? (j["upgrade_url"] as string) : undefined,
+      requiredPlan: typeof j["requiredPlan"] === "string" ? (j["requiredPlan"] as string) : undefined,
+      requiredPlanPrice:
+        typeof j["requiredPlanPrice"] === "number" ? (j["requiredPlanPrice"] as number) : undefined,
+    };
+    return new ApiError(
+      "PLAN_UPGRADE_REQUIRED",
+      flatPlanGate.message ?? "This feature requires a higher plan.",
+      res.status,
+      details,
+    );
+  }
+
+  // Standard envelope (or anything else — fall through to a generic message).
+  const enveloped = rawError as { code?: string; message?: string; details?: unknown } | undefined;
+  return new ApiError(
+    enveloped?.code ?? (typeof rawError === "string" ? rawError : "request_failed"),
+    enveloped?.message ?? res.statusText ?? "Request failed.",
+    res.status,
+    enveloped?.details,
+  );
 }
 
 /** Multipart file upload (e.g. logo/media → MinIO). Sends FormData (no JSON
@@ -209,12 +260,7 @@ export async function uploadFile<T>(path: string, form: FormData, retried = fals
     /* non-JSON */
   }
   if (!res.ok || !json || json.success === false) {
-    throw new ApiError(
-      json?.error?.code ?? "request_failed",
-      json?.error?.message ?? res.statusText ?? "Upload failed.",
-      res.status,
-      json?.error?.details,
-    );
+    throw makeApiError(res, json);
   }
   return { data: json.data, meta: json.meta };
 }
