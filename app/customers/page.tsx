@@ -8,6 +8,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Users,
+  Download,
 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { AddCustomerModal } from "@/components/app/AddCustomerModal";
@@ -18,6 +19,7 @@ import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
 import { customersApi, tagTone } from "@/lib/api/customers";
+import { downloadCsv } from "@/lib/csv";
 
 const FILTERS = ["All", "New this month", "High value", "Inactive"];
 const FILTER_PARAM: Record<string, string> = {
@@ -49,10 +51,32 @@ export default function CustomersPage() {
       title="Customers"
       subtitle={total > 0 ? `${total} customers` : undefined}
       actions={
-        <Button variant="primary" size="md" onClick={() => setAddOpen(true)}>
-          <Plus size={17} />
-          <span className="hidden sm:inline">Add Customer</span>
-        </Button>
+        <>
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={() =>
+              downloadCsv("customers", customers, [
+                { header: "Name", accessor: (c) => c.name },
+                { header: "Phone", accessor: (c) => c.phone ?? "" },
+                { header: "Email", accessor: (c) => c.email ?? "" },
+                { header: "Total spent (NGN)", accessor: (c) => c.totalSpent },
+                { header: "Orders", accessor: (c) => c.orders },
+                { header: "Last active", accessor: (c) => c.lastActive ?? "" },
+                { header: "Tag", accessor: (c) => c.tag ?? "" },
+              ])
+            }
+            disabled={customers.length === 0}
+            className="hidden sm:inline-flex"
+          >
+            <Download size={16} />
+            Export CSV
+          </Button>
+          <Button variant="primary" size="md" onClick={() => setAddOpen(true)}>
+            <Plus size={17} />
+            <span className="hidden sm:inline">Add Customer</span>
+          </Button>
+        </>
       }
     >
       {/* Filters + search */}

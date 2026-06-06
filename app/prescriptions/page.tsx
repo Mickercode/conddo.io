@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Search, Pill, AlertCircle, Clock, CheckCircle2, BellRing, User } from "lucide-react";
+import { Plus, Search, Pill, AlertCircle, Clock, CheckCircle2, BellRing, User, Download } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { NewPrescriptionModal } from "@/components/app/NewPrescriptionModal";
 import { Button } from "@/components/ui/Button";
@@ -19,6 +19,7 @@ import {
   type RefillStatus,
 } from "@/lib/api/prescriptions";
 import { ApiError } from "@/lib/api/client";
+import { downloadCsv } from "@/lib/csv";
 
 const FILTERS: { key: NonNullable<PrescriptionListParams["status"]> | "all"; label: string }[] = [
   { key: "all", label: "All" },
@@ -179,10 +180,35 @@ export default function PrescriptionsPage() {
       title="Prescriptions"
       subtitle="Dispensing log and refill reminders"
       actions={
-        <Button variant="primary" size="md" onClick={() => setOpen(true)}>
-          <Plus size={17} />
-          <span className="hidden sm:inline">New prescription</span>
-        </Button>
+        <>
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={() =>
+              downloadCsv("prescriptions", rxs, [
+                { header: "Customer", accessor: (r) => r.customerName },
+                { header: "Phone", accessor: (r) => r.customerPhone ?? "" },
+                { header: "Medication", accessor: (r) => r.medication },
+                { header: "Dosage", accessor: (r) => r.dosage ?? "" },
+                { header: "Quantity", accessor: (r) => r.quantity ?? "" },
+                { header: "Issued", accessor: (r) => r.issuedAt },
+                { header: "Last filled", accessor: (r) => r.lastFilledAt ?? "" },
+                { header: "Refill interval (days)", accessor: (r) => r.refillIntervalDays ?? "" },
+                { header: "Next refill due", accessor: (r) => r.nextRefillDue ?? "" },
+                { header: "Notes", accessor: (r) => r.notes ?? "" },
+              ])
+            }
+            disabled={rxs.length === 0}
+            className="hidden sm:inline-flex"
+          >
+            <Download size={16} />
+            Export CSV
+          </Button>
+          <Button variant="primary" size="md" onClick={() => setOpen(true)}>
+            <Plus size={17} />
+            <span className="hidden sm:inline">New prescription</span>
+          </Button>
+        </>
       }
     >
       {/* Summary KPIs — render whenever we have summary data, including zeros,

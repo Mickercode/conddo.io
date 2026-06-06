@@ -10,6 +10,7 @@ import {
   Clock,
   ChevronRight,
   ShoppingCart,
+  Download,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { AppShell } from "@/components/app/AppShell";
@@ -21,6 +22,7 @@ import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
 import { ordersApi, type Order, type Stage } from "@/lib/api/orders";
+import { downloadCsv } from "@/lib/csv";
 
 const FILTERS = ["All", "Today", "This week", "Overdue"];
 
@@ -123,10 +125,37 @@ export default function OrdersPage() {
     <AppShell
       title="Orders"
       actions={
-        <Button variant="primary" size="md" onClick={() => setNewOpen(true)}>
-          <Plus size={17} />
-          <span className="hidden sm:inline">New Order</span>
-        </Button>
+        <>
+          <Button
+            variant="secondary"
+            size="md"
+            onClick={() => {
+              // Flatten the kanban (all stages, including Delivered) into one
+              // row per order — exporting the full pipeline snapshot.
+              const allOrders = stages.flatMap((s) =>
+                s.orders.map((o) => ({ ...o, stage: s.name })),
+              );
+              downloadCsv("orders", allOrders, [
+                { header: "Reference", accessor: (o) => o.reference ?? o.id },
+                { header: "Customer", accessor: (o) => o.customer ?? "" },
+                { header: "Service", accessor: (o) => o.service ?? "" },
+                { header: "Stage", accessor: (o) => o.stage ?? "" },
+                { header: "Amount (NGN)", accessor: (o) => o.amount },
+                { header: "Date", accessor: (o) => o.date ?? "" },
+                { header: "Flag", accessor: (o) => o.flag ?? "" },
+              ]);
+            }}
+            disabled={stages.length === 0}
+            className="hidden sm:inline-flex"
+          >
+            <Download size={16} />
+            Export CSV
+          </Button>
+          <Button variant="primary" size="md" onClick={() => setNewOpen(true)}>
+            <Plus size={17} />
+            <span className="hidden sm:inline">New Order</span>
+          </Button>
+        </>
       }
     >
       {/* Toolbar: segmented filter + search */}

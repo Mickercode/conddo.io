@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import {
-  Plus, Check, Inbox, Ruler, Scissors, Cog, Shirt, Truck, Phone, Mail, ShoppingCart, Circle, ArrowRight, type LucideIcon,
+  Plus, Check, Inbox, Ruler, Scissors, Cog, Shirt, Truck, Phone, Mail, ShoppingCart, Circle, ArrowRight, FileText, type LucideIcon,
 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
@@ -16,6 +16,7 @@ import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
 import { ordersApi, type OrderDetail } from "@/lib/api/orders";
 import { ApiError } from "@/lib/api/client";
+import { InvoiceModal } from "@/components/app/InvoiceModal";
 
 const PAYMENT_METHODS = ["Cash", "Bank Transfer", "Card", "POS", "Other"];
 
@@ -138,6 +139,7 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
   const [advancing, setAdvancing] = useState(false);
   const [reminding, setReminding] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
+  const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [notes, setNotes] = useState(o.notes ?? "");
   const [savingNotes, setSavingNotes] = useState(false);
   const notesDirty = notes !== (o.notes ?? "");
@@ -192,7 +194,12 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
               <h2 className="font-mono text-[20px] font-bold text-ink">{o.reference}</h2>
               <p className="mt-1 text-[14px] text-content-secondary">{o.service ?? "—"}</p>
             </div>
-            <Chip tone={stageTone(o.stage)}>{o.stage}</Chip>
+            <div className="flex items-center gap-2">
+              <Chip tone={stageTone(o.stage)}>{o.stage}</Chip>
+              <Button variant="secondary" size="md" onClick={() => setInvoiceOpen(true)}>
+                <FileText size={15} /> Invoice
+              </Button>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4 border-t border-neutral-border pt-4 sm:grid-cols-3">
             <div>
@@ -375,6 +382,7 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
         onClose={() => setPayOpen(false)}
         onRecorded={onChanged}
       />
+      <InvoiceModal order={o} open={invoiceOpen} onClose={() => setInvoiceOpen(false)} />
     </div>
   );
 }

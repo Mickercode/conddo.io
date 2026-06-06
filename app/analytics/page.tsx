@@ -1,13 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart3, Wallet, ShoppingCart, UserPlus, Receipt, type LucideIcon } from "lucide-react";
+import { BarChart3, Wallet, ShoppingCart, UserPlus, Receipt, Download, type LucideIcon } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
+import { Button } from "@/components/ui/Button";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
 import { analyticsApi, type Overview } from "@/lib/api/analytics";
+import { downloadCsv } from "@/lib/csv";
 
 const RANGES = [
   { key: "7d", label: "7 days" },
@@ -27,7 +29,37 @@ export default function AnalyticsPage() {
   const { data, loading, error, refetch } = useApiQuery(() => analyticsApi.overview(range), [range]);
 
   return (
-    <AppShell title="Analytics" subtitle="Insights and reports">
+    <AppShell
+      title="Analytics"
+      subtitle="Insights and reports"
+      actions={
+        <Button
+          variant="secondary"
+          size="md"
+          disabled={!data}
+          onClick={() => {
+            if (!data) return;
+            const row = {
+              range,
+              revenue: data.revenue,
+              orders: data.orders,
+              newCustomers: data.newCustomers,
+              avgOrderValue: data.avgOrderValue,
+            };
+            downloadCsv(`analytics-${range}`, [row], [
+              { header: "Range", accessor: (r) => r.range },
+              { header: "Revenue (NGN)", accessor: (r) => r.revenue },
+              { header: "Orders", accessor: (r) => r.orders },
+              { header: "New customers", accessor: (r) => r.newCustomers },
+              { header: "Avg order value (NGN)", accessor: (r) => r.avgOrderValue },
+            ]);
+          }}
+          className="hidden sm:inline-flex"
+        >
+          <Download size={16} /> Export CSV
+        </Button>
+      }
+    >
       {/* Range selector */}
       <div className="mb-5 inline-flex rounded-lg border border-neutral-border bg-neutral-surface2 p-0.5">
         {RANGES.map((r) => (

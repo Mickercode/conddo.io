@@ -5,6 +5,7 @@ import {
   Bell,
   CreditCard,
   IdCard,
+  Link2,
   TriangleAlert,
   type LucideIcon,
 } from "lucide-react";
@@ -21,6 +22,7 @@ type SettingsKey = "profile" | "billing" | "notifications" | "connections" | "st
 const NAV: { key: SettingsKey; label: string; icon: LucideIcon; href: string }[] = [
   { key: "profile", label: "Business Profile", icon: Building2, href: "/settings" },
   { key: "billing", label: "Subscription and Billing", icon: CreditCard, href: "/settings/billing" },
+  { key: "connections", label: "Connected Accounts", icon: Link2, href: "/settings/connections" },
   { key: "notifications", label: "Notifications", icon: Bell, href: "/settings/notifications" },
   { key: "staff", label: "Staff and Permissions", icon: IdCard, href: "/staff" },
 ];
