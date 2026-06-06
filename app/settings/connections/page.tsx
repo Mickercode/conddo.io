@@ -45,7 +45,7 @@ const PROVIDERS: Provider[] = [
     desc: "Schedule posts to your Facebook Page and sync enquiries.",
     group: "social",
     status: "pending_approval",
-    note: "Awaiting Meta App Review",
+    note: "Connecting via API gateway — ready soon",
   },
   {
     key: "instagram",
@@ -54,7 +54,7 @@ const PROVIDERS: Provider[] = [
     desc: "Publish photos, carousels, and Reels to your Business account.",
     group: "social",
     status: "pending_approval",
-    note: "Awaiting Meta App Review",
+    note: "Connecting via API gateway — ready soon",
   },
   {
     key: "linkedin",
@@ -63,16 +63,16 @@ const PROVIDERS: Provider[] = [
     desc: "Share updates to your company page.",
     group: "social",
     status: "pending_approval",
-    note: "Awaiting LinkedIn Marketing Developer approval",
+    note: "Connecting via API gateway — ready soon",
   },
-  // Phase 4
   {
     key: "twitter",
     name: "X (Twitter)",
     icon: Twitter,
     desc: "Schedule tweets and threads.",
     group: "social",
-    status: "coming_soon",
+    status: "pending_approval",
+    note: "Connecting via API gateway — ready soon",
   },
   {
     key: "tiktok",
@@ -80,7 +80,8 @@ const PROVIDERS: Provider[] = [
     icon: Music2,
     desc: "Direct-post short videos to your TikTok account.",
     group: "social",
-    status: "coming_soon",
+    status: "pending_approval",
+    note: "Connecting via API gateway — ready soon",
   },
   // Messaging
   {
@@ -193,8 +194,8 @@ export default function ConnectionSettings() {
   return (
     <SettingsShell active="connections" title="Connected Accounts" description="Connect the tools you already use — your dashboard scheduling, marketing, and customer messaging will pull through them.">
       <div className="mb-5 rounded-xl border border-warning/20 bg-warning-bg px-4 py-3 text-[13px] text-warning">
-        <strong className="font-medium text-ink">Connect flow is being reviewed by each platform.</strong>{" "}
-        Meta (Facebook + Instagram) and LinkedIn require formal app approval before we can post on a tenant's behalf — usually 2-3 weeks. We'll notify you the moment connect goes live.
+        <strong className="font-medium text-ink">Connect flow is being set up.</strong>{" "}
+        We're integrating via a single API gateway that covers Facebook, Instagram, LinkedIn, X, TikTok, YouTube, and more — much faster to ship than per-platform integrations. We'll notify you the moment connect goes live.
       </div>
 
       <div className="space-y-6">
