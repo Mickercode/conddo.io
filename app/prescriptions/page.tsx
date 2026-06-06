@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Search, Pill, AlertCircle, Clock, CheckCircle2, BellRing, User, Download } from "lucide-react";
+import { Plus, Search, Pill, AlertCircle, Clock, CheckCircle2, BellRing, User, Download, FileText, ChevronRight } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { NewPrescriptionModal } from "@/components/app/NewPrescriptionModal";
 import { Button } from "@/components/ui/Button";
@@ -221,6 +221,27 @@ export default function PrescriptionsPage() {
           <SummaryCard label="One-off" value={summaryData.oneOff} icon={CheckCircle2} tone="neutral" />
         </div>
       )}
+
+      {/* Customer-uploaded Rx review queue — separate flow from the
+          internal dispensing log below. Surfaces here so pharmacists land
+          on it without hunting through the sidebar. */}
+      <Link
+        href="/prescriptions/review"
+        className="mb-5 flex items-center justify-between rounded-xl border border-neutral-border bg-neutral-surface p-4 transition-colors hover:border-primary-light"
+      >
+        <div className="flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-bg text-primary">
+            <FileText size={18} />
+          </span>
+          <div>
+            <p className="text-[14px] font-medium text-ink">Customer-uploaded prescriptions</p>
+            <p className="text-[12px] text-content-secondary">
+              Review prescriptions customers submit through your website
+            </p>
+          </div>
+        </div>
+        <ChevronRight size={18} className="text-content-muted" />
+      </Link>
 
       {/* Filters + search */}
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
