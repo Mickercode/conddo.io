@@ -7,6 +7,9 @@ import { Field, TextInput, Select } from "@/components/ui/Field";
 import { useToast } from "@/components/ui/Toast";
 import { inventoryApi, type Product, type Category } from "@/lib/api/inventory";
 import { ApiError } from "@/lib/api/client";
+import { useApiQuery } from "@/hooks/useApiQuery";
+import { meQuery } from "@/lib/api/account";
+import { productNamePlaceholder, verticalOf } from "@/lib/verticalCopy";
 
 type Errors = Partial<Record<"name" | "price" | "stock" | "reorder", string>>;
 
@@ -28,6 +31,8 @@ export function ProductModal({
   onSaved?: (p: Product) => void;
 }) {
   const toast = useToast();
+  const { data: me } = useApiQuery(meQuery);
+  const namePlaceholder = productNamePlaceholder(verticalOf(me));
   const editing = Boolean(product);
   const [name, setName] = useState("");
   const [sku, setSku] = useState("");
@@ -118,7 +123,7 @@ export function ProductModal({
     >
       <form id="product-form" onSubmit={submit} className="space-y-4">
         <Field label="Product name" htmlFor="pr-name" required error={errors.name}>
-          <TextInput id="pr-name" value={name} error={errors.name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Ankara fabric (2yds)" autoFocus />
+          <TextInput id="pr-name" value={name} error={errors.name} onChange={(e) => setName(e.target.value)} placeholder={namePlaceholder} autoFocus />
         </Field>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <Field label="SKU" htmlFor="pr-sku">

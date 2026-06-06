@@ -6,6 +6,7 @@ import { Upload, ImageIcon } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useOnboarding } from "@/lib/onboarding-store";
 import { hrefFor, nextStep } from "@/lib/onboarding-steps";
+import { businessNamePlaceholder, type VerticalId } from "@/lib/verticalCopy";
 
 const NIGERIAN_STATES = ["Lagos", "Abuja (FCT)", "Rivers", "Oyo", "Kano"];
 const SWATCHES = ["#7C5CBF", "#111111", "#1A6B4A", "#C0392B", "#2980B9", "#C17F3A", "#E84393", "#00CEC9"];
@@ -19,7 +20,8 @@ const labelCls =
 // consistent onboarding chrome (form + live preview; setup-sidebar dropped).
 export default function BusinessProfileStep() {
   const router = useRouter();
-  const { update } = useOnboarding();
+  const { update, verticalId } = useOnboarding();
+  const namePlaceholder = businessNamePlaceholder((verticalId as VerticalId | null) ?? undefined);
   const [name, setName] = useState("");
   const [tagline, setTagline] = useState("");
   const [description, setDescription] = useState("");
@@ -69,7 +71,7 @@ export default function BusinessProfileStep() {
             <label className={labelCls}>Business name</label>
             <input
               className={inputCls}
-              placeholder="e.g. Heritage Tailors"
+              placeholder={namePlaceholder}
               value={name}
               onChange={(e) => setName(e.target.value)}
             />

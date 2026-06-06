@@ -7,6 +7,9 @@ import { Field, TextArea, Select } from "@/components/ui/Field";
 import { useToast } from "@/components/ui/Toast";
 import { websiteApi } from "@/lib/api/website";
 import { ApiError } from "@/lib/api/client";
+import { useApiQuery } from "@/hooks/useApiQuery";
+import { meQuery } from "@/lib/api/account";
+import { websiteChangeExample, verticalOf } from "@/lib/verticalCopy";
 
 // Common areas — the backend accepts any string (area is optional + not
 // validated against an enum), but offering a list keeps requests skim-able
@@ -24,6 +27,8 @@ export function RequestChangesModal({
   onSubmitted?: () => void;
 }) {
   const toast = useToast();
+  const { data: me } = useApiQuery(meQuery);
+  const detailsPlaceholder = websiteChangeExample(verticalOf(me));
   const [area, setArea] = useState("Homepage");
   const [details, setDetails] = useState("");
   const [error, setError] = useState<string>();
@@ -79,7 +84,7 @@ export function RequestChangesModal({
             error={error}
             onChange={(e) => setDetails(e.target.value)}
             rows={5}
-            placeholder="e.g. Replace the homepage hero image with the new brand shot, and update the headline to 'Tailored to fit.'"
+            placeholder={detailsPlaceholder}
           />
         </Field>
       </form>
