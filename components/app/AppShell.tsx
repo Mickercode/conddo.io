@@ -12,6 +12,7 @@ import type { NavLink } from "@/lib/manifest/types";
 import { logout, meQuery, type Me } from "@/lib/api/account";
 import { getAccessToken } from "@/lib/api/auth";
 import { refreshAccessToken } from "@/lib/api/client";
+import { InstallAppButton } from "@/components/app/InstallAppButton";
 
 type Identity = { businessName: string; userName: string; roleLabel: string; initials: string };
 
@@ -94,6 +95,11 @@ function SidebarBody({
 
       {/* User */}
       <div className="border-t border-neutral-border px-4 py-4">
+        {/* Install-app CTA — hidden when already installed or when the
+            platform doesn't support installable webapps. */}
+        <div className="mb-3 [&:empty]:hidden">
+          <InstallAppButton variant="compact" />
+        </div>
         <div className="flex items-center gap-3">
           <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-bg font-mono text-[12px] font-medium text-primary">
             {identity.initials}
