@@ -8,23 +8,30 @@
 
 import { api } from "./client";
 
+// Offering codes seen in the live BE catalog (verified 2026-06-07). New
+// codes can be added without an FE change — the code field is typed as a
+// permissive string so we render whatever the BE returns.
 export type OfferingCode =
   | "design_static"
-  | "design_carousel"
   | "design_reels"
-  | "video_edit_short"
-  | "video_edit_long"
   | "ad_creative_static"
-  | "ad_creative_video";
+  | "ad_creative_video"
+  | "brand_kit_starter"
+  | (string & {});  // permissive — future codes don't break the type
 
 export type CreativeOffering = {
-  id: string;
+  /** Optional — BE doesn't currently return an id (code is the unique key). */
+  id?: string;
   code: OfferingCode;
   name: string;
   description: string;
-  priceKobo: number;        // in kobo
+  priceKobo: number;
   turnaroundHours: number;
-  active: boolean;
+  /** Routes the resulting Studio job to the right team. BE returns this on
+   *  every offering; "CREATIVE_DESIGN" | "CREATIVE_AD" | "CREATIVE_VIDEO". */
+  jobType?: string;
+  /** BE doesn't return this — assume any offering in the response is active. */
+  active?: boolean;
 };
 
 export type CreativeRequestStatus =
@@ -74,45 +81,49 @@ export const creativeApi = {
     api.post<CreateCreativeRequestResult>(`${PREFIX}/requests`, body),
 };
 
-// FE-side fallback catalog used when the BE catalog endpoint isn't ready yet
-// (returns 5xx → QueryBoundary degrades to empty). Lets the user still see
-// what's coming, with realistic pricing. Replace once BE seeds the live
-// catalog (spec §5 lists the BE seed shape).
+// FE-side fallback catalog mirroring the live BE catalog (verified 2026-06-07
+// against /creative-services/offerings). Used only when the BE call fails;
+// otherwise the modal renders whatever BE sends. Keep this in sync with the
+// BE seed — if the BE adds or repriced an offering, update here too.
 export const FALLBACK_OFFERINGS: CreativeOffering[] = [
   {
-    id: "fb-static",
     code: "design_static",
-    name: "Static post (single image)",
-    description: "One on-brand image, ready to post.",
-    priceKobo: 700_000,           // ₦7,000
-    turnaroundHours: 48,
-    active: true,
+    name: "Static Design",
+    description: "A single static graphic for one platform (1080×1080 IG, 1200×630 FB, etc.)",
+    priceKobo: 500_000,             // ₦5,000
+    turnaroundHours: 24,
+    jobType: "CREATIVE_DESIGN",
   },
   {
-    id: "fb-carousel",
-    code: "design_carousel",
-    name: "Carousel (3–5 slides)",
-    description: "Sequenced visuals for swipeable Instagram + LinkedIn posts.",
-    priceKobo: 1_800_000,          // ₦18,000
-    turnaroundHours: 72,
-    active: true,
-  },
-  {
-    id: "fb-reels",
-    code: "design_reels",
-    name: "Reel / Short video graphic",
-    description: "Vertical video graphic optimised for IG Reels + TikTok.",
-    priceKobo: 2_500_000,          // ₦25,000
-    turnaroundHours: 96,
-    active: true,
-  },
-  {
-    id: "fb-ad",
     code: "ad_creative_static",
-    name: "Ad creative (static)",
-    description: "Conversion-tuned ad image with CTA — ready for Meta Ads Manager.",
-    priceKobo: 1_500_000,          // ₦15,000
+    name: "Ad Creative (Static)",
+    description: "A static ad creative tuned for paid Meta / Google placements, multiple aspect ratios",
+    priceKobo: 800_000,              // ₦8,000
+    turnaroundHours: 36,
+    jobType: "CREATIVE_AD",
+  },
+  {
+    code: "design_reels",
+    name: "Reels / Vertical Video Edit",
+    description: "A 15–60s vertical-format video edit from your raw footage, captions included",
+    priceKobo: 1_500_000,             // ₦15,000
+    turnaroundHours: 48,
+    jobType: "CREATIVE_VIDEO",
+  },
+  {
+    code: "ad_creative_video",
+    name: "Ad Creative (Video)",
+    description: "A short video ad creative for paid Meta / TikTok placements",
+    priceKobo: 2_000_000,             // ₦20,000
+    turnaroundHours: 60,
+    jobType: "CREATIVE_AD",
+  },
+  {
+    code: "brand_kit_starter",
+    name: "Brand Starter Kit",
+    description: "Logo refresh + colour palette + 5 templated post designs",
+    priceKobo: 5_000_000,             // ₦50,000
     turnaroundHours: 72,
-    active: true,
+    jobType: "CREATIVE_DESIGN",
   },
 ];

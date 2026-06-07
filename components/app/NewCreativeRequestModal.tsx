@@ -131,7 +131,7 @@ export function NewCreativeRequestModal({
               const on = o.code === code;
               return (
                 <button
-                  key={o.id}
+                  key={o.code}
                   type="button"
                   onClick={() => setCode(o.code)}
                   className={`flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-colors ${

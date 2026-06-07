@@ -27,7 +27,9 @@ export type FeatureKey =
   | "multi_location"
   | "api_access"
   | "advanced_analytics"
-  | "staff_accounts";
+  | "staff_accounts"
+  | "brand_package_subscription"   // BE live 2026-06-07
+  | "media_storage_mb";              // numeric quota (e.g. "500", "5120", "unlimited")
 
 export type Plan = {
   id: PlanId;
