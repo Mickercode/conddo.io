@@ -29,6 +29,7 @@ import {
   ShoppingBag,
   Scissors,
   Layers,
+  Headphones,
   type LucideIcon,
 } from "lucide-react";
 
@@ -86,6 +87,8 @@ const ICONS: Record<string, LucideIcon> = {
   fittings: Scissors,
   layers: Layers,
   fabric: Layers,
+  headphones: Headphones,
+  sessions: Headphones,
 };
 
 export const iconFor = (name?: string): LucideIcon =>
