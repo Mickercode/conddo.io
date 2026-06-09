@@ -12,11 +12,12 @@ const HOME: NavLink = { label: "Home", href: "/dashboard", icon: Home };
 const SETTINGS: NavLink = { label: "Settings", href: "/settings", icon: Settings };
 
 /**
- * The sidebar's nav (Architecture v1.0 §16). When the backend serves manifests for
- * the tenant's active tools (JWT `activeModules` → GET /registry/manifests), the
- * tool sections are built from them — sorted by `navItem.order` — and bracketed by
- * Home and Settings. Until then (e.g. a login token without `activeModules`, or a
- * failed/empty fetch) it falls back to the canonical APP_NAV, so the UI is unchanged.
+ * The sidebar's nav (Architecture v1.0 §16). The backend serves a list of
+ * UIManifests for the tenant's active tools (JWT `activeModules` →
+ * GET /registry/manifests); we sort by `navItem.order` and bracket the result
+ * with Home and Settings. The static APP_NAV is used only when the manifest
+ * endpoint returns empty / the JWT pre-dates the `activeModules` claim — i.e.
+ * the cold-cache or legacy-token fallback.
  */
 export function useAppNav(): NavLink[] {
   const { manifests } = useManifests();
@@ -27,8 +28,8 @@ export function useAppNav(): NavLink[] {
     .sort((a, b) => a.order - b.order)
     .map((n) => ({ label: n.label, href: n.path, icon: iconFor(n.icon) }));
 
-  // No manifests, or none mapped to a nav section → use the static nav.
-  if (!manifests || sections.length === 0) return APP_NAV;
-
-  return [HOME, ...sections, SETTINGS];
+  if (manifests && sections.length > 0) {
+    return [HOME, ...sections, SETTINGS];
+  }
+  return APP_NAV;
 }

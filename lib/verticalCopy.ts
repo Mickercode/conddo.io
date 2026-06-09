@@ -66,6 +66,45 @@ export function businessNamePlaceholder(v?: VerticalId): string {
   }
 }
 
+/** Suggested inventory categories — shown as quick-add chips on the empty
+ *  state of the Manage Categories page. Tenants click any chip to add that
+ *  category in one tap; the list is curated for the vertical so a pharmacy
+ *  doesn't see "Wedding Dresses" and a tailor doesn't see "Antibiotics". */
+export function inventoryCategorySuggestions(v?: VerticalId): string[] {
+  switch (v) {
+    case "pharmacy":
+      return [
+        "Analgesics",
+        "Anti-Malaria",
+        "Antibiotics",
+        "Antihypertensives",
+        "Vitamins & Supplements",
+        "Personal Care",
+        "First Aid",
+        "Baby Care",
+        "Antidiabetics",
+        "Oncology",
+        "Respiratory",
+      ];
+    case "fashion":
+      return ["Fabrics", "Garments", "Accessories", "Wedding", "Casual wear", "Formal wear", "Footwear"];
+    case "retail":
+      return ["Clothing", "Electronics", "Home", "Beauty", "Food & beverage", "Other"];
+    case "food-and-beverage":
+      return ["Mains", "Sides", "Drinks", "Desserts", "Snacks", "Specials"];
+    case "beauty-and-wellness":
+      return ["Hair care", "Skin care", "Nail care", "Massage", "Treatments", "Retail products"];
+    case "music-studio":
+      return ["Studio rooms", "Vocal booths", "Lesson rooms", "Equipment hire", "Mixing services"];
+    case "logistics":
+      return ["Domestic delivery", "Same-day", "Next-day", "Heavy goods", "International"];
+    case "professional-services":
+      return ["Consultations", "Retainer", "Project work", "Workshops", "Audits"];
+    default:
+      return ["General", "Featured", "Best sellers", "New arrivals", "On sale"];
+  }
+}
+
 /** Sample website-change request body so the textarea hint matches the vertical. */
 export function websiteChangeExample(v?: VerticalId): string {
   switch (v) {

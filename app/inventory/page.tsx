@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { Plus, Search, Package, AlertTriangle, Pencil, ArrowUpDown, CalendarClock } from "lucide-react";
+import Link from "next/link";
+import { Plus, Search, Package, AlertTriangle, Pencil, ArrowUpDown, CalendarClock, Tag } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { ProductModal } from "@/components/app/ProductModal";
 import { AdjustStockModal } from "@/components/app/AdjustStockModal";
@@ -83,10 +84,20 @@ export default function InventoryPage() {
       title="Inventory"
       subtitle="Products and stock levels"
       actions={
-        <Button variant="primary" size="md" onClick={openAdd}>
-          <Plus size={17} />
-          <span className="hidden sm:inline">Add Product</span>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Link
+            href="/inventory/categories"
+            className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-neutral-border bg-neutral-surface px-3 text-[13px] font-medium text-content-secondary transition-colors hover:border-primary hover:text-primary"
+          >
+            <Tag size={15} />
+            <span className="hidden sm:inline">Manage categories</span>
+            <span className="sm:hidden">Categories</span>
+          </Link>
+          <Button variant="primary" size="md" onClick={openAdd}>
+            <Plus size={17} />
+            <span className="hidden sm:inline">Add Product</span>
+          </Button>
+        </div>
       }
     >
       {/* Toolbar */}

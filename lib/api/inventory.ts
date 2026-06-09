@@ -32,7 +32,13 @@ export function expiryStatusOf(p: Product, now: Date = new Date()): ExpiryStatus
   return "fresh";
 }
 
-export type Category = { id: string; name: string };
+export type Category = {
+  id: string;
+  name: string;
+  productCount?: number;
+};
+
+export type UpdateCategoryInput = { name?: string };
 
 export type StockStatus = "in_stock" | "low" | "out";
 export const stockStatus = (p: Product): StockStatus =>
@@ -82,4 +88,7 @@ export const inventoryApi = {
   adjustStock: (id: string, delta: number, reason?: string) =>
     api.post<Product>(`/inventory/products/${id}/adjust`, { delta, reason }),
   createCategory: (name: string) => api.post<Category>("/inventory/categories", { name }),
+  updateCategory: (id: string, body: UpdateCategoryInput) =>
+    api.patch<Category>(`/inventory/categories/${id}`, body),
+  removeCategory: (id: string) => api.del<void>(`/inventory/categories/${id}`),
 };

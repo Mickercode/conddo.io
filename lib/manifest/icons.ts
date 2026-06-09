@@ -30,6 +30,8 @@ import {
   Scissors,
   Layers,
   Headphones,
+  MessageCircle,
+  Stethoscope,
   type LucideIcon,
 } from "lucide-react";
 
@@ -89,6 +91,9 @@ const ICONS: Record<string, LucideIcon> = {
   fabric: Layers,
   headphones: Headphones,
   sessions: Headphones,
+  "message-circle": MessageCircle,
+  consultations: MessageCircle,
+  stethoscope: Stethoscope,
 };
 
 export const iconFor = (name?: string): LucideIcon =>
