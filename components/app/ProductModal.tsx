@@ -1,11 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Camera, Loader2, Sparkles, AlertCircle, X, ChevronDown, ChevronUp } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
+import { Chip } from "@/components/ui/Chip";
 import { Field, TextInput, Select } from "@/components/ui/Field";
 import { useToast } from "@/components/ui/Toast";
 import { inventoryApi, type Product, type Category } from "@/lib/api/inventory";
+import { mediaApi } from "@/lib/api/media";
+import {
+  pharmacyAiApi,
+  type AiConfidence,
+  type AiSuggestFromImageResult,
+} from "@/lib/api/pharmacyAi";
 import { ApiError } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { meQuery } from "@/lib/api/account";
@@ -15,8 +23,41 @@ type Errors = Partial<Record<"name" | "price" | "stock" | "reorder", string>>;
 
 const numErr = (v: string) => (v && (Number.isNaN(Number(v)) || Number(v) < 0) ? "Enter a valid number." : undefined);
 
+const CONFIDENCE_TONE: Record<AiConfidence, "success" | "warning" | "neutral"> = {
+  high: "success",
+  medium: "warning",
+  low: "neutral",
+};
+
+/** Compact preview row inside the AI suggestion panel — label on the left,
+ *  body on the right, with an optional "Apply" CTA when the value can be
+ *  copied into a form field. */
+function AiRow({ label, value, onApply }: { label: string; value?: string | boolean | null; onApply?: () => void }) {
+  if (value === undefined || value === null || value === "") return null;
+  const text = typeof value === "boolean" ? (value ? "Yes" : "No") : value;
+  return (
+    <div className="flex items-start justify-between gap-3 border-t border-neutral-border py-2 first:border-t-0">
+      <div className="min-w-0">
+        <p className="text-[11px] font-medium uppercase tracking-[0.04em] text-content-muted">{label}</p>
+        <p className="mt-0.5 text-[13px] text-content-secondary">{text}</p>
+      </div>
+      {onApply && (
+        <button
+          type="button"
+          onClick={onApply}
+          className="shrink-0 rounded-md border border-primary/30 bg-primary-bg px-2 py-1 text-[11px] font-medium text-primary hover:bg-primary hover:text-white"
+        >
+          Apply →
+        </button>
+      )}
+    </div>
+  );
+}
+
 /** Create or edit an inventory product (POST/PATCH /inventory/products).
- *  Pass `product` to edit; omit to create. */
+ *  Pass `product` to edit; omit to create. For pharmacy tenants the modal
+ *  also offers an AI assistant (Spec v2 §12C): scan packaging → Claude
+ *  extracts name / NAFDAC / indications / etc → pharmacist confirms. */
 export function ProductModal({
   open,
   onClose,
@@ -32,7 +73,10 @@ export function ProductModal({
 }) {
   const toast = useToast();
   const { data: me } = useApiQuery(meQuery);
-  const namePlaceholder = productNamePlaceholder(verticalOf(me));
+  const vertical = verticalOf(me);
+  const isPharmacy = vertical === "pharmacy";
+  const tenantSlug = me?.tenant?.slug;
+  const namePlaceholder = productNamePlaceholder(vertical);
   const editing = Boolean(product);
   const [name, setName] = useState("");
   const [sku, setSku] = useState("");
@@ -45,6 +89,12 @@ export function ProductModal({
   const [errors, setErrors] = useState<Errors>({});
   const [saving, setSaving] = useState(false);
 
+  // AI assistant state — pharmacy only.
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const [aiBusy, setAiBusy] = useState<"upload" | "analyse" | null>(null);
+  const [aiResult, setAiResult] = useState<AiSuggestFromImageResult | null>(null);
+  const [aiCollapsed, setAiCollapsed] = useState(false);
+
   useEffect(() => {
     if (!open) return;
     setName(product?.name ?? "");
@@ -56,6 +106,9 @@ export function ProductModal({
     setExpiryDate(product?.expiryDate ?? "");
     setActive(product?.active ?? true);
     setErrors({});
+    setAiResult(null);
+    setAiCollapsed(false);
+    setAiBusy(null);
   }, [open, product]);
 
   function close() {
@@ -106,6 +159,65 @@ export function ProductModal({
     }
   }
 
+  async function onPickAiImage(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = ""; // allow re-picking the same file
+    if (!file) return;
+    if (!tenantSlug) {
+      toast.error("Couldn't start AI scan", "Account info still loading — try again in a moment.");
+      return;
+    }
+    setAiResult(null);
+    setAiBusy("upload");
+    try {
+      const up = await mediaApi.upload(file, "pharmacy-ai-scan");
+      setAiBusy("analyse");
+      const { data } = await pharmacyAiApi.suggestFromImage(tenantSlug, up.data.url);
+      setAiResult(data);
+      setAiCollapsed(false);
+      const conf = data.confidence === "high" ? "high" : data.confidence === "medium" ? "medium" : "low";
+      toast.success("Packaging scanned", `AI confidence: ${conf}. Review and apply what looks right.`);
+    } catch (err) {
+      toast.error(
+        "Couldn't scan packaging",
+        err instanceof ApiError ? err.message : "Please try a clearer photo.",
+      );
+    } finally {
+      setAiBusy(null);
+    }
+  }
+
+  function applyAiName() {
+    const s = aiResult?.suggestion;
+    if (!s) return;
+    const brand = s.nameBrand?.trim();
+    const generic = s.nameGeneric?.trim();
+    const next = brand && generic ? `${brand} (${generic})` : (brand || generic || "");
+    if (!next) return;
+    setName(next);
+    setErrors((prev) => ({ ...prev, name: undefined }));
+  }
+
+  function applyAiCategory() {
+    const hint = aiResult?.suggestion.suggestedCategory?.trim().toLowerCase();
+    if (!hint) return;
+    // Best-effort fuzzy match — accept exact slug, name includes, or vice versa.
+    const match = categories.find((c) => {
+      const n = c.name.trim().toLowerCase();
+      return n === hint || n.includes(hint) || hint.includes(n);
+    });
+    if (match) {
+      setCategoryId(match.id);
+      toast.success("Category applied", match.name);
+    } else {
+      toast.toast({
+        tone: "info",
+        title: "No matching category",
+        description: `AI suggested "${aiResult?.suggestion.suggestedCategory}" — create it on Manage categories, then re-apply.`,
+      });
+    }
+  }
+
   return (
     <Modal
       open={open}
@@ -122,6 +234,121 @@ export function ProductModal({
       }
     >
       <form id="product-form" onSubmit={submit} className="space-y-4">
+        {isPharmacy && (
+          <div className="rounded-lg border border-primary/20 bg-primary-bg/40 p-3">
+            {!aiResult ? (
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex items-start gap-2.5">
+                  <Sparkles size={16} className="mt-0.5 shrink-0 text-primary" />
+                  <div>
+                    <p className="text-[13px] font-medium text-ink">Scan packaging with AI</p>
+                    <p className="mt-0.5 text-[12px] text-content-muted">
+                      Take a photo and we'll extract the drug name, NAFDAC number, indications, and warnings for you to review.
+                    </p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={aiBusy !== null}
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-primary/30 bg-neutral-surface px-3 py-1.5 text-[12px] font-medium text-primary hover:bg-primary hover:text-white disabled:opacity-60"
+                >
+                  {aiBusy === "upload" ? (
+                    <><Loader2 size={13} className="animate-spin" /> Uploading…</>
+                  ) : aiBusy === "analyse" ? (
+                    <><Loader2 size={13} className="animate-spin" /> Analysing…</>
+                  ) : (
+                    <><Camera size={13} /> Scan packaging</>
+                  )}
+                </button>
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={onPickAiImage}
+                  className="hidden"
+                />
+              </div>
+            ) : (
+              <div>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="flex items-center gap-2">
+                    <Sparkles size={14} className="text-primary" />
+                    <p className="text-[13px] font-medium text-ink">AI suggestions</p>
+                    <Chip tone={CONFIDENCE_TONE[aiResult.confidence]}>{aiResult.confidence} confidence</Chip>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => setAiCollapsed((v) => !v)}
+                      className="inline-flex h-7 items-center gap-1 rounded-md px-2 text-[11px] text-content-secondary hover:bg-neutral-surface hover:text-ink"
+                    >
+                      {aiCollapsed ? (<><ChevronDown size={12} /> Show</>) : (<><ChevronUp size={12} /> Hide</>)}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAiResult(null)}
+                      aria-label="Dismiss AI suggestions"
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-content-muted hover:bg-neutral-surface hover:text-ink"
+                    >
+                      <X size={13} />
+                    </button>
+                  </div>
+                </div>
+                {!aiCollapsed && (
+                  <>
+                    <div className="mt-2 rounded-md border border-neutral-border bg-neutral-surface px-3 py-2">
+                      <AiRow
+                        label="Name"
+                        value={
+                          aiResult.suggestion.nameBrand && aiResult.suggestion.nameGeneric
+                            ? `${aiResult.suggestion.nameBrand} (${aiResult.suggestion.nameGeneric})`
+                            : (aiResult.suggestion.nameBrand || aiResult.suggestion.nameGeneric)
+                        }
+                        onApply={applyAiName}
+                      />
+                      <AiRow
+                        label="Suggested category"
+                        value={aiResult.suggestion.suggestedCategory}
+                        onApply={applyAiCategory}
+                      />
+                      <AiRow label="NAFDAC number" value={aiResult.suggestion.nafdacNumber} />
+                      <AiRow label="Brand / manufacturer" value={aiResult.suggestion.brand} />
+                      <AiRow label="Requires prescription" value={aiResult.suggestion.requiresPrescription} />
+                      <AiRow label="Indications" value={aiResult.suggestion.indications} />
+                      <AiRow label="Dosage guidance" value={aiResult.suggestion.dosageGuidance} />
+                      <AiRow label="Warnings" value={aiResult.suggestion.warnings} />
+                      <AiRow label="Storage" value={aiResult.suggestion.storage} />
+                      <AiRow label="Description" value={aiResult.suggestion.description} />
+                    </div>
+                    <p className="mt-2 flex items-start gap-1.5 text-[11px] text-content-muted">
+                      <AlertCircle size={11} className="mt-0.5 shrink-0" />
+                      {aiResult.note}
+                    </p>
+                    <button
+                      type="button"
+                      onClick={() => fileRef.current?.click()}
+                      disabled={aiBusy !== null}
+                      className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-neutral-border bg-neutral-surface px-2.5 py-1 text-[11px] font-medium text-content-secondary hover:border-primary hover:text-primary disabled:opacity-60"
+                    >
+                      {aiBusy ? <Loader2 size={11} className="animate-spin" /> : <Camera size={11} />} Try another photo
+                    </button>
+                    <input
+                      ref={fileRef}
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={onPickAiImage}
+                      className="hidden"
+                    />
+                  </>
+                )}
+              </div>
+            )}
+          </div>
+        )}
+
         <Field label="Product name" htmlFor="pr-name" required error={errors.name}>
           <TextInput id="pr-name" value={name} error={errors.name} onChange={(e) => setName(e.target.value)} placeholder={namePlaceholder} autoFocus />
         </Field>
