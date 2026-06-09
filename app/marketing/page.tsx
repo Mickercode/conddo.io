@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Plus, CalendarDays, FilePlus2, Mail, MessageSquare, Megaphone, Tag, ChevronRight, type LucideIcon } from "lucide-react";
+import { Plus, CalendarDays, FilePlus2, Mail, MessageSquare, Megaphone, Tag, Bell, Gift, ChevronRight, type LucideIcon } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { MarketingTabs } from "@/components/app/MarketingTabs";
 import { CreateCampaignModal } from "@/components/app/CreateCampaignModal";
@@ -29,6 +29,8 @@ const QUICK: { label: string; icon: LucideIcon; href: string }[] = [
   { label: "Create email campaign", icon: Mail, href: "/marketing/email" },
   { label: "Send SMS blast", icon: MessageSquare, href: "/marketing/sms" },
   { label: "Discounts", icon: Tag, href: "/marketing/discounts" },
+  { label: "Reminders", icon: Bell, href: "/marketing/reminders" },
+  { label: "Refill offers", icon: Gift, href: "/marketing/refill-offers" },
   { label: "Manage leads", icon: Megaphone, href: "/marketing/leads" },
 ];
 
