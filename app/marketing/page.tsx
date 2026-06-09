@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Plus, CalendarDays, FilePlus2, Mail, MessageSquare, Megaphone, Tag, Bell, Gift, ChevronRight, type LucideIcon } from "lucide-react";
+import { Plus, CalendarDays, FilePlus2, Mail, MessageSquare, Megaphone, Tag, Bell, Gift, Compass, ChevronRight, type LucideIcon } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { MarketingTabs } from "@/components/app/MarketingTabs";
 import { CreateCampaignModal } from "@/components/app/CreateCampaignModal";
@@ -31,6 +31,7 @@ const QUICK: { label: string; icon: LucideIcon; href: string }[] = [
   { label: "Discounts", icon: Tag, href: "/marketing/discounts" },
   { label: "Reminders", icon: Bell, href: "/marketing/reminders" },
   { label: "Refill offers", icon: Gift, href: "/marketing/refill-offers" },
+  { label: "What's coming next", icon: Compass, href: "/features" },
   { label: "Manage leads", icon: Megaphone, href: "/marketing/leads" },
 ];
 
