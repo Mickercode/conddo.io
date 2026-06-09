@@ -2,13 +2,13 @@
 
 import { useState } from "react";
 import {
-  Plus, Check, Inbox, Ruler, Scissors, Cog, Shirt, Truck, Phone, Mail, ShoppingCart, Circle, ArrowRight, FileText, type LucideIcon,
+  Plus, Check, Inbox, Ruler, Scissors, Cog, Shirt, Truck, Phone, Mail, ShoppingCart, Circle, ArrowRight, FileText, Gift, type LucideIcon,
 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { Modal } from "@/components/ui/Modal";
-import { Field, TextInput, TextArea, Select } from "@/components/ui/Field";
+import { Field, TextInput, Select } from "@/components/ui/Field";
 import { useToast } from "@/components/ui/Toast";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
@@ -17,6 +17,9 @@ import { naira } from "@/lib/format";
 import { ordersApi, type OrderDetail } from "@/lib/api/orders";
 import { ApiError } from "@/lib/api/client";
 import { InvoiceModal } from "@/components/app/InvoiceModal";
+import { IssueRefillOfferModal } from "@/components/app/IssueRefillOfferModal";
+import { meQuery } from "@/lib/api/account";
+import { verticalOf } from "@/lib/verticalCopy";
 
 const PAYMENT_METHODS = ["Cash", "Bank Transfer", "Card", "POS", "Other"];
 
@@ -130,9 +133,15 @@ const fmtDateTime = (t: string) => {
 
 function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
   const toast = useToast();
+  const { data: me } = useApiQuery(meQuery);
+  const tenantSlug = me?.tenant?.slug;
+  const isPharmacy = verticalOf(me) === "pharmacy";
   const stages = o.stages?.length ? o.stages : ["Received"];
   const currentIdx = Math.max(0, stages.indexOf(o.stage));
   const customer = typeof o.customer === "string" ? { name: o.customer } : o.customer ?? {};
+  // Only pharmacy orders with a real customer id can be issued an offer —
+  // walk-in orders capture name-only and don't qualify.
+  const canIssueOffer = isPharmacy && Boolean(tenantSlug) && Boolean(customer.id);
   const measurements = o.measurements ? Object.entries(o.measurements) : [];
 
   const nextStage = currentIdx < stages.length - 1 ? stages[currentIdx + 1] : null;
@@ -140,6 +149,7 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
   const [reminding, setReminding] = useState(false);
   const [payOpen, setPayOpen] = useState(false);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
+  const [issueOpen, setIssueOpen] = useState(false);
   const [notes, setNotes] = useState(o.notes ?? "");
   const [savingNotes, setSavingNotes] = useState(false);
   const notesDirty = notes !== (o.notes ?? "");
@@ -319,6 +329,15 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
             <div className="flex items-center gap-3 text-content-secondary"><Phone size={16} className="shrink-0 text-content-muted" /><span className="font-mono text-[13px]">{customer.phone ?? "—"}</span></div>
             <div className="flex items-center gap-3 text-content-secondary"><Mail size={16} className="shrink-0 text-content-muted" /><span className="truncate text-[13px]">{customer.email ?? "—"}</span></div>
           </div>
+          {canIssueOffer && (
+            <button
+              type="button"
+              onClick={() => setIssueOpen(true)}
+              className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-primary/30 bg-primary-bg px-3 py-2 text-[13px] font-medium text-primary transition-colors hover:bg-primary hover:text-white"
+            >
+              <Gift size={14} /> Issue refill offer
+            </button>
+          )}
         </div>
 
         <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-6">
@@ -383,6 +402,15 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
         onRecorded={onChanged}
       />
       <InvoiceModal order={o} open={invoiceOpen} onClose={() => setInvoiceOpen(false)} />
+      {canIssueOffer && tenantSlug && customer.id && (
+        <IssueRefillOfferModal
+          open={issueOpen}
+          onClose={() => setIssueOpen(false)}
+          tenantSlug={tenantSlug}
+          customerId={customer.id}
+          customerName={customer.name}
+        />
+      )}
     </div>
   );
 }
