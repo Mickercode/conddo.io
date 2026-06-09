@@ -14,6 +14,7 @@ import {
   Sparkles,
   GraduationCap,
   Stethoscope,
+  Headphones,
   MoreHorizontal,
   CircleCheck,
   type LucideIcon,
@@ -24,17 +25,22 @@ import { hrefFor, nextStep } from "@/lib/onboarding-steps";
 
 type Vertical = { id: string; label: string; desc: string; icon: LucideIcon };
 
-// Built from the Stitch "Business Type Selection" screen.
+// IDs must match the canonical vertical slugs the BE Module Registry keys
+// manifests by — see lib/verticalCopy.ts → VerticalId and the registry
+// returns from /api/v1/registry/manifests. Anything else here is sent to BE
+// as a verticalId but won't have a vertical-specific manifest; the sidebar
+// falls back to the generic APP_NAV.
 const verticals: Vertical[] = [
   { id: "fashion", label: "Fashion and Tailoring", desc: "Custom outfits, measurements, orders", icon: Shirt },
   { id: "pharmacy", label: "Pharmacy and Health", desc: "Inventory, prescriptions, walk-in customers", icon: Pill },
-  { id: "food", label: "Food and Beverage", desc: "Menu, orders, table management", icon: UtensilsCrossed },
+  { id: "music-studio", label: "Music Studio", desc: "Sessions, bookings, deposits", icon: Headphones },
+  { id: "food-and-beverage", label: "Food and Beverage", desc: "Menu, orders, table management", icon: UtensilsCrossed },
   { id: "logistics", label: "Logistics and Delivery", desc: "Dispatch, tracking, deliveries", icon: Truck },
-  { id: "professional", label: "Professional Services", desc: "Consultations, bookings, documents", icon: Briefcase },
+  { id: "professional-services", label: "Professional Services", desc: "Consultations, bookings, documents", icon: Briefcase },
   { id: "retail", label: "Retail and Shop", desc: "Products, inventory, walk-in sales", icon: Store },
+  { id: "beauty-and-wellness", label: "Beauty and Wellness", desc: "Appointments, staff, services", icon: Sparkles },
   { id: "events", label: "Events and Entertainment", desc: "Ticketing, registrations, planning", icon: Ticket },
   { id: "realestate", label: "Real Estate", desc: "Listings, viewings, buyer management", icon: Building2 },
-  { id: "beauty", label: "Beauty and Wellness", desc: "Appointments, staff, services", icon: Sparkles },
   { id: "education", label: "Education and Training", desc: "Courses, enrolment, scheduling", icon: GraduationCap },
   { id: "healthcare", label: "Healthcare and Clinic", desc: "Patients, appointments, records", icon: Stethoscope },
   { id: "other", label: "Other Business", desc: "We will set you up manually", icon: MoreHorizontal },
