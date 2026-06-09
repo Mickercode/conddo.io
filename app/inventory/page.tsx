@@ -2,10 +2,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Search, Package, AlertTriangle, Pencil, ArrowUpDown, CalendarClock, Tag } from "lucide-react";
+import { Plus, Search, Package, AlertTriangle, Pencil, ArrowUpDown, CalendarClock, Tag, Truck, History, ClipboardCheck } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { ProductModal } from "@/components/app/ProductModal";
 import { AdjustStockModal } from "@/components/app/AdjustStockModal";
+import { PharmacyAdjustModal } from "@/components/app/PharmacyAdjustModal";
+import { RestockModal } from "@/components/app/RestockModal";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
@@ -20,6 +22,8 @@ import {
   type StockStatus,
   type ExpiryStatus,
 } from "@/lib/api/inventory";
+import { meQuery } from "@/lib/api/account";
+import { verticalOf } from "@/lib/verticalCopy";
 
 const statusChip: Record<StockStatus, { tone: "success" | "warning" | "danger"; label: string }> = {
   in_stock: { tone: "success", label: "In stock" },
@@ -42,12 +46,16 @@ function fmtDate(s?: string | null): string {
 }
 
 export default function InventoryPage() {
+  const { data: me } = useApiQuery(meQuery);
+  const isPharmacy = verticalOf(me) === "pharmacy";
+
   const [search, setSearch] = useState("");
   const [lowOnly, setLowOnly] = useState(false);
   const [expiringWithinDays, setExpiringWithinDays] = useState<number | null>(null);
   const [productOpen, setProductOpen] = useState(false);
   const [editing, setEditing] = useState<Product | null>(null);
   const [adjusting, setAdjusting] = useState<Product | null>(null);
+  const [restockOpen, setRestockOpen] = useState(false);
 
   const { data, loading, error, refetch } = useApiQuery(
     () => inventoryApi.list({
@@ -84,14 +92,41 @@ export default function InventoryPage() {
       title="Inventory"
       subtitle="Products and stock levels"
       actions={
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
+          {isPharmacy && (
+            <>
+              <Link
+                href="/inventory/movements"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-neutral-border bg-neutral-surface px-3 text-[13px] font-medium text-content-secondary transition-colors hover:border-primary hover:text-primary"
+                title="Stock movement log"
+              >
+                <History size={15} />
+                <span className="hidden lg:inline">Movements</span>
+              </Link>
+              <Link
+                href="/inventory/reconciliation"
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-neutral-border bg-neutral-surface px-3 text-[13px] font-medium text-content-secondary transition-colors hover:border-primary hover:text-primary"
+                title="Run a stock reconciliation"
+              >
+                <ClipboardCheck size={15} />
+                <span className="hidden lg:inline">Reconcile</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => setRestockOpen(true)}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-primary/30 bg-primary-bg px-3 text-[13px] font-medium text-primary transition-colors hover:bg-primary hover:text-white"
+              >
+                <Truck size={15} />
+                <span className="hidden sm:inline">Restock</span>
+              </button>
+            </>
+          )}
           <Link
             href="/inventory/categories"
             className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-neutral-border bg-neutral-surface px-3 text-[13px] font-medium text-content-secondary transition-colors hover:border-primary hover:text-primary"
           >
             <Tag size={15} />
-            <span className="hidden sm:inline">Manage categories</span>
-            <span className="sm:hidden">Categories</span>
+            <span className="hidden sm:inline">Categories</span>
           </Link>
           <Button variant="primary" size="md" onClick={openAdd}>
             <Plus size={17} />
@@ -271,11 +306,25 @@ export default function InventoryPage() {
         categories={categories}
         onSaved={() => { refetch(); categoriesQ.refetch(); }}
       />
-      <AdjustStockModal
-        open={adjusting !== null}
-        onClose={() => setAdjusting(null)}
-        product={adjusting}
-        onAdjusted={() => refetch()}
+      {isPharmacy ? (
+        <PharmacyAdjustModal
+          open={adjusting !== null}
+          onClose={() => setAdjusting(null)}
+          product={adjusting}
+          onAdjusted={() => refetch()}
+        />
+      ) : (
+        <AdjustStockModal
+          open={adjusting !== null}
+          onClose={() => setAdjusting(null)}
+          product={adjusting}
+          onAdjusted={() => refetch()}
+        />
+      )}
+      <RestockModal
+        open={restockOpen}
+        onClose={() => setRestockOpen(false)}
+        onRestocked={() => refetch()}
       />
     </AppShell>
   );
