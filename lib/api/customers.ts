@@ -28,6 +28,11 @@ export const tagTone: Record<NonNullable<CustomerTag>, "primary" | "success" | "
 
 export type CustomerListParams = { search?: string; filter?: string; page?: number; size?: number };
 
+/** BE-defined customer segment for the list-page filter chips. The `key` is
+ *  the value the FE passes back as the `filter` query param (so e.g.
+ *  `?filter=high_value` lists the high-value customers). */
+export type CustomerSegment = { key: string; label: string; count: number };
+
 // GET /customers/{id} — richer than the list row.
 export type CustomerDetail = {
   id: string;
@@ -65,6 +70,12 @@ export const customersApi = {
   update: (id: string, body: UpdateCustomerInput) => api.patch<CustomerDetail>(`/customers/${id}`, body),
   remove: (id: string) => api.del<void>(`/customers/${id}`),
 
+  /** Server-defined buckets the list page filters by — "all", "new",
+   *  "high_value", "inactive" — with live counts. */
+  segments: () => api.get<CustomerSegment[]>("/customers/segments"),
+  /** Light GET for refreshing notes after a save without re-fetching the
+   *  whole customer detail. */
+  getNotes: (id: string) => api.get<{ notes: string | null }>(`/customers/${id}/notes`),
   setNotes: (id: string, notes: string) => api.put<{ notes: string | null }>(`/customers/${id}/notes`, { notes }),
   setMeasurements: (id: string, measurements: Record<string, string | number>) =>
     api.put<{ measurements: Record<string, string | number> | null }>(`/customers/${id}/measurements`, { measurements }),

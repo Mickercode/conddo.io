@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import {
   Plus,
   Rocket,
@@ -9,8 +10,15 @@ import {
   UserPlus,
   Package,
   ChevronRight,
+  ChevronUp,
+  ChevronDown,
+  Check,
+  X,
+  Loader2,
   type LucideIcon,
 } from "lucide-react";
+import { useToast } from "@/components/ui/Toast";
+import { ApiError } from "@/lib/api/client";
 import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -57,13 +65,112 @@ const fmtTime = (t: string) => {
   return m ? `${m[1]}:${m[2]}` : t;
 };
 
+/** Setup checklist banner. Header collapses to "X of Y steps". Click to
+ *  expand: lists each step with a check (done) or a dismiss button
+ *  (incomplete — for steps the tenant doesn't plan to do, e.g. staff). */
+function SetupNudge({
+  checklist,
+  onChanged,
+}: {
+  checklist: import("@/lib/api/dashboard").Checklist;
+  onChanged: () => void;
+}) {
+  const toast = useToast();
+  const [expanded, setExpanded] = useState(false);
+  const [dismissingKey, setDismissingKey] = useState<string | null>(null);
+
+  async function dismiss(stepKey: string, label: string) {
+    if (!window.confirm(`Hide "${label}" from your setup list?`)) return;
+    setDismissingKey(stepKey);
+    try {
+      await dashboardApi.dismissChecklistStep(stepKey);
+      toast.success("Step hidden", "It won't show up on the checklist anymore.");
+      onChanged();
+    } catch (err) {
+      toast.error(
+        "Couldn't hide step",
+        err instanceof ApiError ? err.message : "Please try again.",
+      );
+    } finally {
+      setDismissingKey(null);
+    }
+  }
+
+  return (
+    <div className="mb-6 rounded-lg bg-warning-bg px-5 py-4">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-warning/15 text-warning">
+            <Rocket size={18} />
+          </span>
+          <div>
+            <p className="text-[14px] font-medium text-ink">Finish setting up your business</p>
+            <p className="text-[13px] text-content-secondary">
+              {checklist.completed} of {checklist.total} steps complete
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setExpanded((v) => !v)}
+            className="inline-flex items-center gap-1 text-[13px] text-content-secondary hover:text-ink"
+          >
+            {expanded ? (<><ChevronUp size={14} /> Hide</>) : (<><ChevronDown size={14} /> Show steps</>)}
+          </button>
+          <Link href="/settings" className="text-[14px] font-medium text-warning hover:underline">
+            Continue setup →
+          </Link>
+        </div>
+      </div>
+      {expanded && (
+        <ul className="mt-4 space-y-1 border-t border-warning/20 pt-3">
+          {checklist.steps.map((step) => (
+            <li
+              key={step.key}
+              className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 hover:bg-warning-bg/60"
+            >
+              <span className="flex items-center gap-2 text-[13px]">
+                {step.done ? (
+                  <Check size={13} className="text-success" />
+                ) : (
+                  <span className="block h-3 w-3 rounded-full border border-content-muted" />
+                )}
+                <span className={step.done ? "text-content-muted line-through" : "text-content-secondary"}>
+                  {step.label}
+                </span>
+              </span>
+              {!step.done && (
+                <button
+                  type="button"
+                  onClick={() => dismiss(step.key, step.label)}
+                  disabled={dismissingKey !== null}
+                  aria-label={`Dismiss ${step.label}`}
+                  title="Skip this step"
+                  className="inline-flex h-6 w-6 items-center justify-center rounded-md text-content-muted hover:bg-warning/20 hover:text-warning disabled:opacity-50"
+                >
+                  {dismissingKey === step.key ? (
+                    <Loader2 size={11} className="animate-spin" />
+                  ) : (
+                    <X size={11} />
+                  )}
+                </button>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export default function DashboardPage() {
   const { data: summary } = useApiQuery(dashboardApi.summary);
   const { data: recentOrders } = useApiQuery(() => ordersApi.listRecent(4));
   const { data: todayBookings } = useApiQuery(bookingsApi.today);
   const { data: website } = useApiQuery(websiteApi.status);
   const { data: me } = useApiQuery(meQuery);
-  const { data: checklist } = useApiQuery(dashboardApi.setupChecklist);
+  const { data: checklist, refetch: refetchChecklist } = useApiQuery(dashboardApi.setupChecklist);
   const recent = (recentOrders ?? []).slice(0, 4);
   const todays = todayBookings ?? [];
   const setupDone = checklist ? checklist.completed >= checklist.total : true;
@@ -97,20 +204,7 @@ export default function DashboardPage() {
     >
       {/* Setup nudge — only while there are steps left */}
       {checklist && !setupDone && (
-        <div className="mb-6 flex flex-col gap-3 rounded-lg bg-warning-bg px-5 py-4 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-warning/15 text-warning">
-              <Rocket size={18} />
-            </span>
-            <div>
-              <p className="text-[14px] font-medium text-ink">Finish setting up your business</p>
-              <p className="text-[13px] text-content-secondary">{checklist.completed} of {checklist.total} steps complete</p>
-            </div>
-          </div>
-          <Link href="/settings" className="text-[14px] font-medium text-warning hover:underline">
-            Continue setup →
-          </Link>
-        </div>
+        <SetupNudge checklist={checklist} onChanged={refetchChecklist} />
       )}
 
       {/* Stat cards — only those whose module is in the tenant's plan */}

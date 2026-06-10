@@ -1,20 +1,32 @@
 "use client";
 
 import { useState } from "react";
-import { BarChart3, Wallet, ShoppingCart, UserPlus, Receipt, Download, type LucideIcon } from "lucide-react";
+import {
+  BarChart3, Wallet, ShoppingCart, UserPlus, Receipt, Download, Trophy,
+  Repeat, Eye, Target,
+  type LucideIcon,
+} from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
+import { Chip } from "@/components/ui/Chip";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
+import { Sparkline } from "@/components/ui/Sparkline";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
-import { analyticsApi, type Overview } from "@/lib/api/analytics";
+import { analyticsApi, type Overview, type SeriesPoint } from "@/lib/api/analytics";
 import { downloadCsv } from "@/lib/csv";
 
 const RANGES = [
   { key: "7d", label: "7 days" },
   { key: "30d", label: "30 days" },
   { key: "90d", label: "90 days" },
+];
+
+const TOP_METRICS = [
+  { key: "services", label: "Top services" },
+  { key: "products", label: "Top products" },
+  { key: "categories", label: "Top categories" },
 ];
 
 const CARDS: { key: keyof Overview; label: string; icon: LucideIcon; currency?: boolean }[] = [
@@ -24,9 +36,36 @@ const CARDS: { key: keyof Overview; label: string; icon: LucideIcon; currency?: 
   { key: "avgOrderValue", label: "Avg order value", icon: Receipt, currency: true },
 ];
 
+function lastVal(series?: SeriesPoint[] | null): number {
+  return series?.length ? series[series.length - 1].value : 0;
+}
+
+function fmtPct(n: number, digits = 1): string {
+  return `${(n * 100).toFixed(digits)}%`;
+}
+
 export default function AnalyticsPage() {
   const [range, setRange] = useState("30d");
-  const { data, loading, error, refetch } = useApiQuery(() => analyticsApi.overview(range), [range]);
+  const [topMetric, setTopMetric] = useState("services");
+
+  const overviewQ = useApiQuery(() => analyticsApi.overview(range), [range]);
+  const revenueQ = useApiQuery(() => analyticsApi.revenue(range), [range]);
+  const ordersQ = useApiQuery(() => analyticsApi.orders(range), [range]);
+  const customersQ = useApiQuery(() => analyticsApi.customers(range), [range]);
+  const topQ = useApiQuery(() => analyticsApi.top(topMetric), [topMetric]);
+  const trafficQ = useApiQuery(() => analyticsApi.traffic(range), [range]);
+
+  const overview = overviewQ.data;
+  const revenueValues = (revenueQ.data ?? []).map((p) => p.value);
+  const orderValues = (ordersQ.data ?? []).map((p) => p.value);
+  const cohort = customersQ.data;
+  const topRows = topQ.data ?? [];
+  const traffic = trafficQ.data;
+
+  const customerTotal = (cohort?.newCustomers ?? 0) + (cohort?.returningCustomers ?? 0);
+  const returningPct = customerTotal > 0
+    ? (cohort?.returningCustomers ?? 0) / customerTotal
+    : 0;
 
   return (
     <AppShell
@@ -36,22 +75,30 @@ export default function AnalyticsPage() {
         <Button
           variant="secondary"
           size="md"
-          disabled={!data}
+          disabled={!overview}
           onClick={() => {
-            if (!data) return;
+            if (!overview) return;
             const row = {
               range,
-              revenue: data.revenue,
-              orders: data.orders,
-              newCustomers: data.newCustomers,
-              avgOrderValue: data.avgOrderValue,
+              revenue: overview.revenue,
+              orders: overview.orders,
+              newCustomers: overview.newCustomers,
+              avgOrderValue: overview.avgOrderValue,
+              returningCustomers: cohort?.returningCustomers ?? 0,
+              visits: traffic?.visits ?? 0,
+              enquiries: traffic?.enquiries ?? 0,
+              conversionRate: traffic?.conversionRate ?? 0,
             };
             downloadCsv(`analytics-${range}`, [row], [
               { header: "Range", accessor: (r) => r.range },
               { header: "Revenue (NGN)", accessor: (r) => r.revenue },
               { header: "Orders", accessor: (r) => r.orders },
               { header: "New customers", accessor: (r) => r.newCustomers },
+              { header: "Returning customers", accessor: (r) => r.returningCustomers },
               { header: "Avg order value (NGN)", accessor: (r) => r.avgOrderValue },
+              { header: "Visits", accessor: (r) => r.visits },
+              { header: "Enquiries", accessor: (r) => r.enquiries },
+              { header: "Conversion rate", accessor: (r) => r.conversionRate },
             ]);
           }}
           className="hidden sm:inline-flex"
@@ -76,10 +123,10 @@ export default function AnalyticsPage() {
       </div>
 
       <QueryBoundary
-        loading={loading}
-        error={error}
-        isEmpty={!data}
-        onRetry={refetch}
+        loading={overviewQ.loading}
+        error={overviewQ.error}
+        isEmpty={!overview}
+        onRetry={overviewQ.refetch}
         loadingLabel="Crunching your numbers…"
         empty={
           <EmptyState
@@ -89,19 +136,198 @@ export default function AnalyticsPage() {
           />
         }
       >
-        {data && (
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-            {CARDS.map(({ key, label, icon: Icon, currency }) => (
-              <div key={key} className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
-                <div className="mb-3 flex items-start justify-between">
-                  <p className="text-[13px] text-content-secondary">{label}</p>
-                  <Icon size={18} className="text-content-muted" />
+        {overview && (
+          <div className="space-y-6">
+            {/* Headline KPIs */}
+            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+              {CARDS.map(({ key, label, icon: Icon, currency }) => (
+                <div key={key} className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+                  <div className="mb-3 flex items-start justify-between">
+                    <p className="text-[13px] text-content-secondary">{label}</p>
+                    <Icon size={18} className="text-content-muted" />
+                  </div>
+                  <p className="font-mono text-[24px] font-medium leading-none text-ink">
+                    {currency ? naira(overview[key]) : overview[key]}
+                  </p>
                 </div>
-                <p className="font-mono text-[24px] font-medium leading-none text-ink">
-                  {currency ? naira(data[key]) : data[key]}
-                </p>
+              ))}
+            </div>
+
+            {/* Revenue + Orders series */}
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+                <div className="mb-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Revenue trend</p>
+                    <p className="mt-1 font-mono text-[20px] font-medium leading-none text-ink">
+                      {revenueQ.loading ? "…" : naira(lastVal(revenueQ.data))}
+                    </p>
+                  </div>
+                  <Wallet size={18} className="text-content-muted" />
+                </div>
+                <Sparkline
+                  values={revenueValues}
+                  width={300}
+                  height={56}
+                  className="w-full text-primary"
+                />
               </div>
-            ))}
+
+              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+                <div className="mb-3 flex items-center justify-between">
+                  <div>
+                    <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Orders trend</p>
+                    <p className="mt-1 font-mono text-[20px] font-medium leading-none text-ink">
+                      {ordersQ.loading ? "…" : lastVal(ordersQ.data)}
+                    </p>
+                  </div>
+                  <ShoppingCart size={18} className="text-content-muted" />
+                </div>
+                <Sparkline
+                  values={orderValues}
+                  width={300}
+                  height={56}
+                  className="w-full text-success"
+                />
+              </div>
+            </div>
+
+            {/* Customer cohort + Traffic */}
+            <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
+              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5 lg:col-span-2">
+                <div className="mb-4 flex items-center justify-between">
+                  <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Customer mix</p>
+                  <UserPlus size={18} className="text-content-muted" />
+                </div>
+                {customersQ.loading ? (
+                  <p className="text-[13px] text-content-muted">Loading…</p>
+                ) : (
+                  <>
+                    <div className="mb-4 grid grid-cols-3 gap-4">
+                      <div>
+                        <p className="text-[11px] text-content-muted">New</p>
+                        <p className="mt-1 font-mono text-[20px] font-medium text-success">
+                          {cohort?.newCustomers ?? 0}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[11px] text-content-muted">Returning</p>
+                        <p className="mt-1 font-mono text-[20px] font-medium text-primary">
+                          {cohort?.returningCustomers ?? 0}
+                        </p>
+                      </div>
+                      <div>
+                        <p className="text-[11px] text-content-muted">Returning rate</p>
+                        <p className="mt-1 font-mono text-[20px] font-medium text-ink">
+                          {fmtPct(returningPct, 0)}
+                        </p>
+                      </div>
+                    </div>
+                    {/* Returning rate bar */}
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-surface2">
+                      <div
+                        className="h-full bg-primary"
+                        style={{ width: `${Math.min(100, returningPct * 100).toFixed(1)}%` }}
+                      />
+                    </div>
+                    <Sparkline
+                      values={(cohort?.series ?? []).map((p) => p.value)}
+                      width={300}
+                      height={48}
+                      className="mt-4 w-full text-primary"
+                    />
+                  </>
+                )}
+              </div>
+
+              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+                <div className="mb-4 flex items-center justify-between">
+                  <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Traffic</p>
+                  <Eye size={18} className="text-content-muted" />
+                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 text-[13px] text-content-secondary">
+                      <Eye size={13} /> Visits
+                    </span>
+                    <span className="font-mono text-[14px] text-ink">
+                      {trafficQ.loading ? "…" : traffic?.visits ?? 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <span className="inline-flex items-center gap-1.5 text-[13px] text-content-secondary">
+                      <Repeat size={13} /> Enquiries
+                    </span>
+                    <span className="font-mono text-[14px] text-ink">
+                      {trafficQ.loading ? "…" : traffic?.enquiries ?? 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between border-t border-neutral-border pt-3">
+                    <span className="inline-flex items-center gap-1.5 text-[13px] text-content-secondary">
+                      <Target size={13} /> Conversion
+                    </span>
+                    <span className="font-mono text-[14px] text-primary">
+                      {trafficQ.loading ? "…" : fmtPct(traffic?.conversionRate ?? 0)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Top-N leaderboard */}
+            <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-border px-6 py-4">
+                <div className="flex items-center gap-2">
+                  <Trophy size={16} className="text-warning" />
+                  <h2 className="text-[15px] font-medium text-ink">
+                    {TOP_METRICS.find((m) => m.key === topMetric)?.label ?? "Top"}
+                  </h2>
+                </div>
+                <div className="inline-flex rounded-lg border border-neutral-border bg-neutral-surface2 p-0.5">
+                  {TOP_METRICS.map((m) => (
+                    <button
+                      key={m.key}
+                      onClick={() => setTopMetric(m.key)}
+                      className={`rounded-md px-3 py-1 text-[12px] font-medium transition-colors ${
+                        topMetric === m.key ? "bg-neutral-surface text-primary" : "text-content-secondary hover:text-ink"
+                      }`}
+                    >
+                      {m.label.replace("Top ", "")}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              {topQ.loading ? (
+                <p className="px-6 py-8 text-center text-[13px] text-content-muted">Loading…</p>
+              ) : topRows.length === 0 ? (
+                <p className="px-6 py-8 text-center text-[13px] text-content-muted">
+                  Nothing in this leaderboard yet for the selected range.
+                </p>
+              ) : (
+                <ul className="divide-y divide-neutral-border">
+                  {topRows.slice(0, 10).map((row, i) => {
+                    const max = Math.max(...topRows.map((r) => r.value), 1);
+                    const pct = (row.value / max) * 100;
+                    return (
+                      <li key={`${row.label}-${i}`} className="px-6 py-3">
+                        <div className="mb-1 flex items-center justify-between gap-3">
+                          <span className="flex items-center gap-2 text-[13px] text-ink">
+                            <Chip tone={i === 0 ? "warning" : "neutral"}>#{i + 1}</Chip>
+                            <span className="truncate">{row.label}</span>
+                          </span>
+                          <span className="shrink-0 font-mono text-[12px] text-content-secondary">
+                            {row.value}
+                          </span>
+                        </div>
+                        <div className="h-1 w-full overflow-hidden rounded-full bg-neutral-surface2">
+                          <div className="h-full bg-primary/60" style={{ width: `${pct.toFixed(1)}%` }} />
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              )}
+            </div>
           </div>
         )}
       </QueryBoundary>

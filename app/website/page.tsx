@@ -1,16 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Globe, MessageSquarePlus, Eye, MailQuestion, Lock, LayoutTemplate } from "lucide-react";
+import { Globe, MessageSquarePlus, Eye, MailQuestion, LayoutTemplate, Loader2, AtSign, Clock, BarChart3 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
+import { useToast } from "@/components/ui/Toast";
 import { RequestChangesModal } from "@/components/app/RequestChangesModal";
 import { SiteIntegrationPanel } from "@/components/app/SiteIntegrationPanel";
-import { api } from "@/lib/api/client";
+import { api, ApiError } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
+import { websiteApi } from "@/lib/api/website";
 import type { Result } from "@/lib/api/types";
 
 // FE-side normalized status — keep this stable; backend casing/values get
@@ -80,10 +82,41 @@ async function fetchWebsite(): Promise<Result<Website>> {
   };
 }
 
-function WebsiteContent({ site }: { site: Website }) {
+function WebsiteContent({ site, onChanged }: { site: Website; onChanged: () => void }) {
+  const toast = useToast();
   const [requestOpen, setRequestOpen] = useState(false);
+  const [domainInput, setDomainInput] = useState(site.customDomain ?? "");
+  const [connectingDomain, setConnectingDomain] = useState(false);
+  const changeRequestsQ = useApiQuery(websiteApi.changeRequests);
+  const analyticsQ = useApiQuery(() => websiteApi.analytics("30d"));
   const domain = site.customDomain ?? `${site.subdomain}.conddo.io`;
   const chip = statusChip[site.status] ?? statusChip.draft;
+
+  async function connectDomain(e: React.FormEvent) {
+    e.preventDefault();
+    const value = domainInput.trim();
+    if (!value) {
+      toast.error("Enter a domain", "Use the bare hostname only — no https:// or trailing slash.");
+      return;
+    }
+    if (!/^[a-z0-9.-]+\.[a-z]{2,}$/i.test(value)) {
+      toast.error("That doesn't look like a domain", "Expected format: yourbusiness.com");
+      return;
+    }
+    setConnectingDomain(true);
+    try {
+      await websiteApi.connectDomain(value);
+      toast.success("Domain connected", `${value} is being set up — DNS may take a few minutes.`);
+      onChanged();
+    } catch (err) {
+      toast.error(
+        "Couldn't connect domain",
+        err instanceof ApiError ? err.message : "Please try again.",
+      );
+    } finally {
+      setConnectingDomain(false);
+    }
+  }
 
   return (
     <div className="space-y-6">
@@ -107,8 +140,8 @@ function WebsiteContent({ site }: { site: Website }) {
       </div>
       <RequestChangesModal open={requestOpen} onClose={() => setRequestOpen(false)} />
 
-      {/* Traffic */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {/* Traffic — today (from /website/status) + 30-day rollup (from /website/analytics) */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
           <div className="mb-3 flex items-center justify-between">
             <p className="text-[13px] text-content-secondary">Visits today</p>
@@ -122,6 +155,24 @@ function WebsiteContent({ site }: { site: Website }) {
             <MailQuestion size={18} className="text-content-muted" />
           </div>
           <p className="font-mono text-[24px] font-medium leading-none text-ink">{site.enquiries}</p>
+        </div>
+        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-[13px] text-content-secondary">Visits (30d)</p>
+            <BarChart3 size={18} className="text-content-muted" />
+          </div>
+          <p className="font-mono text-[24px] font-medium leading-none text-ink">
+            {analyticsQ.data?.visits ?? "—"}
+          </p>
+        </div>
+        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+          <div className="mb-3 flex items-center justify-between">
+            <p className="text-[13px] text-content-secondary">Enquiries (30d)</p>
+            <MailQuestion size={18} className="text-content-muted" />
+          </div>
+          <p className="font-mono text-[24px] font-medium leading-none text-ink">
+            {analyticsQ.data?.enquiries ?? "—"}
+          </p>
         </div>
       </div>
 
@@ -147,23 +198,81 @@ function WebsiteContent({ site }: { site: Website }) {
         )}
       </div>
 
+      {/* Recent change requests — from /website/change-requests */}
+      {changeRequestsQ.data && changeRequestsQ.data.length > 0 && (
+        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+          <div className="border-b border-neutral-border px-6 py-4">
+            <h2 className="text-[15px] font-medium text-ink">Recent change requests</h2>
+          </div>
+          <ul className="divide-y divide-neutral-border">
+            {changeRequestsQ.data.slice(0, 8).map((cr) => (
+              <li key={cr.id} className="flex items-start gap-3 px-6 py-3.5">
+                <Clock size={14} className="mt-1 shrink-0 text-content-muted" />
+                <div className="min-w-0 flex-1">
+                  <div className="flex flex-wrap items-center gap-2">
+                    {cr.area && <Chip tone="neutral">{cr.area}</Chip>}
+                    <Chip
+                      tone={
+                        cr.status?.toLowerCase().includes("done") || cr.status?.toLowerCase().includes("closed")
+                          ? "success"
+                          : cr.status?.toLowerCase().includes("progress")
+                          ? "warning"
+                          : "neutral"
+                      }
+                    >
+                      {cr.status}
+                    </Chip>
+                  </div>
+                  <p className="mt-1 text-[13px] text-content-secondary">{cr.details}</p>
+                </div>
+                <span className="shrink-0 font-mono text-[11px] text-content-muted">
+                  {new Date(cr.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       {/* Developer integration — API key + QA status + quick start. Renders
           a "your site isn't registered yet" hint when the BE has no
           tenant_sites row for this tenant. */}
       <SiteIntegrationPanel slug={site.subdomain} />
 
-      {/* Custom domain */}
+      {/* Custom domain — wired to POST /website/domain. BE 403s if the
+          tenant's plan doesn't include custom-domain support (FE catches
+          and surfaces the BE message). */}
       <div className="rounded-xl border border-neutral-border bg-neutral-surface p-6">
         <div className="mb-3 flex items-center gap-2">
           <h2 className="text-[15px] font-medium text-ink">Custom domain</h2>
-          <span className="rounded bg-primary-bg px-1.5 py-0.5 text-[10px] font-bold text-primary">SCALER</span>
+          {site.customDomain ? (
+            <Chip tone="success">{site.customDomain}</Chip>
+          ) : (
+            <span className="rounded bg-primary-bg px-1.5 py-0.5 text-[10px] font-bold text-primary">SCALER</span>
+          )}
         </div>
         <p className="mb-4 text-[14px] text-content-secondary">
           Point your own domain (e.g. yourbusiness.com) at your conddo.io website. Growth tenants get a free .com.ng via 9stacks; Scaler unlocks any custom domain.
         </p>
-        <Button variant="secondary" size="md" disabled className="opacity-60">
-          <Lock size={16} /> Available on Scaler
-        </Button>
+        <form onSubmit={connectDomain} className="flex flex-col gap-2 sm:flex-row">
+          <div className="relative flex-1">
+            <AtSign size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-content-muted" />
+            <input
+              value={domainInput}
+              onChange={(e) => setDomainInput(e.target.value)}
+              placeholder="yourbusiness.com"
+              disabled={connectingDomain}
+              className="h-10 w-full rounded-md border border-neutral-strong bg-neutral-bg pl-9 pr-3 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none"
+            />
+          </div>
+          <Button variant="primary" size="md" type="submit" disabled={connectingDomain || !domainInput.trim()}>
+            {connectingDomain ? (
+              <><Loader2 size={14} className="animate-spin" /> Connecting…</>
+            ) : (
+              site.customDomain ? "Update domain" : "Connect domain"
+            )}
+          </Button>
+        </form>
       </div>
     </div>
   );
@@ -189,7 +298,7 @@ export default function WebsitePage() {
           />
         }
       >
-        {data && <WebsiteContent site={data} />}
+        {data && <WebsiteContent site={data} onChanged={refetch} />}
       </QueryBoundary>
     </AppShell>
   );

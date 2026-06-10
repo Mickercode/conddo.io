@@ -17,4 +17,8 @@ export type Checklist = { steps: ChecklistStep[]; completed: number; total: numb
 export const dashboardApi = {
   summary: () => api.get<Summary>("/dashboard/summary"),
   setupChecklist: () => api.get<Checklist>("/dashboard/setup-checklist"),
+  /** Hide a single setup step the tenant doesn't intend to do (e.g. they
+   *  don't run staff). Returns the updated checklist with the step removed. */
+  dismissChecklistStep: (key: string) =>
+    api.post<Checklist>(`/dashboard/setup-checklist/${encodeURIComponent(key)}/dismiss`),
 };

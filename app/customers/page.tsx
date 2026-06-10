@@ -18,28 +18,36 @@ import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
-import { customersApi, tagTone } from "@/lib/api/customers";
+import { customersApi, tagTone, type CustomerSegment } from "@/lib/api/customers";
 import { downloadCsv } from "@/lib/csv";
 
-const FILTERS = ["All", "New this month", "High value", "Inactive"];
-const FILTER_PARAM: Record<string, string> = {
-  All: "",
-  "New this month": "new",
-  "High value": "high_value",
-  Inactive: "inactive",
-};
+// Fallback segments when /customers/segments isn't yet reachable — same shape
+// the BE returns so the rest of the rendering code doesn't care about the source.
+const FALLBACK_SEGMENTS: CustomerSegment[] = [
+  { key: "all",        label: "All",            count: 0 },
+  { key: "new",        label: "New this month", count: 0 },
+  { key: "high_value", label: "High value",     count: 0 },
+  { key: "inactive",   label: "Inactive",       count: 0 },
+];
 const PAGE_SIZE = 20;
 
 export default function CustomersPage() {
-  const [activeFilter, setActiveFilter] = useState("All");
+  const [activeFilterKey, setActiveFilterKey] = useState("all");
   const [searchInput, setSearchInput] = useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(0);
   const [addOpen, setAddOpen] = useState(false);
 
+  // BE-defined segments — drives the filter chips with live counts. Falls
+  // back to the canonical 4 if the endpoint errors so the page stays usable.
+  const segmentsQ = useApiQuery(customersApi.segments);
+  const segments: CustomerSegment[] = segmentsQ.data ?? FALLBACK_SEGMENTS;
+  // The "all" segment maps to no `filter` query param.
+  const filterParam = activeFilterKey === "all" ? "" : activeFilterKey;
+
   const { data, meta, loading, error, refetch } = useApiQuery(
-    () => customersApi.list({ search, filter: FILTER_PARAM[activeFilter], page, size: PAGE_SIZE }),
-    [search, activeFilter, page],
+    () => customersApi.list({ search, filter: filterParam, page, size: PAGE_SIZE }),
+    [search, activeFilterKey, page],
   );
   const customers = data ?? [];
   const total = meta?.total ?? 0;
@@ -83,23 +91,31 @@ export default function CustomersPage() {
       <div className="mb-5 space-y-4">
         <div className="flex flex-wrap items-center gap-3">
           <nav className="flex flex-wrap gap-2">
-            {FILTERS.map((f) => {
-              const active = f === activeFilter;
+            {segments.map((s) => {
+              const active = s.key === activeFilterKey;
+              const showCount = Boolean(segmentsQ.data) && s.count > 0;
               return (
                 <button
-                  key={f}
+                  key={s.key}
                   type="button"
                   onClick={() => {
-                    setActiveFilter(f);
+                    setActiveFilterKey(s.key);
                     setPage(0);
                   }}
-                  className={`rounded-full px-3.5 py-1.5 text-[13px] transition-colors ${
+                  className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] transition-colors ${
                     active
                       ? "border border-primary bg-neutral-surface font-medium text-primary"
                       : "border border-transparent text-content-secondary hover:text-primary"
                   }`}
                 >
-                  {f}
+                  {s.label}
+                  {showCount && (
+                    <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-mono ${
+                      active ? "bg-primary-bg text-primary" : "bg-neutral-surface2 text-content-muted"
+                    }`}>
+                      {s.count}
+                    </span>
+                  )}
                 </button>
               );
             })}
@@ -137,14 +153,14 @@ export default function CustomersPage() {
         empty={
           <EmptyState
             icon={Users}
-            title={search || activeFilter !== "All" ? "No matching customers" : "No customers yet"}
+            title={search || activeFilterKey !== "all" ? "No matching customers" : "No customers yet"}
             description={
-              search || activeFilter !== "All"
+              search || activeFilterKey !== "all"
                 ? "Try a different search or clear the filter."
                 : "Add customers to start tracking orders, spend, and contact details."
             }
             action={
-              !search && activeFilter === "All" ? (
+              !search && activeFilterKey === "all" ? (
                 <Button variant="primary" size="md" onClick={() => setAddOpen(true)}>
                   <Plus size={17} /> Add your first customer
                 </Button>
@@ -230,10 +246,11 @@ export default function CustomersPage() {
         onClose={() => setAddOpen(false)}
         onCreated={() => {
           setPage(0);
-          setActiveFilter("All");
+          setActiveFilterKey("all");
           setSearch("");
           setSearchInput("");
           refetch();
+          segmentsQ.refetch();
         }}
       />
     </AppShell>

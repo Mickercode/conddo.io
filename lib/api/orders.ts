@@ -68,6 +68,16 @@ export type UpdateOrderInput = {
 
 export type StageWriteInput = { name?: string; position?: number };
 
+// Line-item CRUD payloads — backend OrderController items endpoints.
+// Create requires `description`; quantity defaults to 1, unitPrice defaults
+// to 0 server-side when omitted. PATCH carries only the changed fields.
+export type CreateOrderItemInput = {
+  description: string;
+  quantity?: number;
+  unitPrice?: number;
+};
+export type UpdateOrderItemInput = Partial<CreateOrderItemInput>;
+
 export const ordersApi = {
   board: () => api.get<Board>("/orders/board"),
   listRecent: (size = 4) => api.get<Order[]>(`/orders?size=${size}`),
@@ -93,4 +103,20 @@ export const ordersApi = {
   setMeasurements: (id: string, measurements: Record<string, string | number>) =>
     api.put<{ measurements: Record<string, string | number> | null }>(`/orders/${id}/measurements`, { measurements }),
   remind: (id: string, message?: string) => api.post<void>(`/orders/${id}/reminders`, message ? { message } : undefined),
+
+  // Line items — order detail GET already nests `items`, but the
+  // dedicated CRUD endpoints let the FE add/edit/remove a line without
+  // re-fetching the whole order. PATCH/DELETE return the affected row
+  // (or 204) so the FE only updates that row in state.
+  listItems: (id: string) => api.get<OrderItem[]>(`/orders/${id}/items`),
+  addItem: (id: string, body: CreateOrderItemInput) =>
+    api.post<OrderItem>(`/orders/${id}/items`, body),
+  updateItem: (id: string, itemId: string, body: UpdateOrderItemInput) =>
+    api.patch<OrderItem>(`/orders/${id}/items/${itemId}`, body),
+  removeItem: (id: string, itemId: string) =>
+    api.del<void>(`/orders/${id}/items/${itemId}`),
+
+  /** Paginated activity feed for long-running orders. The detail GET nests
+   *  the first page; this is for explicit "Load more". */
+  activity: (id: string) => api.get<OrderActivity[]>(`/orders/${id}/activity`),
 };

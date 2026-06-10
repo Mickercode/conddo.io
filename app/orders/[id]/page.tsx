@@ -18,6 +18,7 @@ import { ordersApi, type OrderDetail } from "@/lib/api/orders";
 import { ApiError } from "@/lib/api/client";
 import { InvoiceModal } from "@/components/app/InvoiceModal";
 import { IssueRefillOfferModal } from "@/components/app/IssueRefillOfferModal";
+import { OrderItemsCard } from "@/components/app/OrderItemsCard";
 import { meQuery } from "@/lib/api/account";
 import { verticalOf } from "@/lib/verticalCopy";
 
@@ -261,36 +262,8 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
           </div>
         </div>
 
-        {/* Order items */}
-        <div className="overflow-hidden rounded-2xl border border-neutral-border bg-neutral-surface">
-          <div className="border-b border-neutral-border p-6"><h3 className="text-[16px] font-medium text-ink">Order Items</h3></div>
-          {o.items.length > 0 ? (
-            <div className="overflow-x-auto">
-              <table className="w-full min-w-[480px] text-left">
-                <thead>
-                  <tr className="bg-neutral-surface2 text-[11px] uppercase tracking-[0.05em] text-content-muted">
-                    <th className="px-6 py-3 font-medium">Description</th>
-                    <th className="px-6 py-3 text-right font-medium">Qty</th>
-                    <th className="px-6 py-3 text-right font-medium">Unit Price</th>
-                    <th className="px-6 py-3 text-right font-medium">Total</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-border">
-                  {o.items.map((it, i) => (
-                    <tr key={it.id ?? i}>
-                      <td className="px-6 py-4 text-[14px] text-ink">{it.description ?? it.name ?? "—"}</td>
-                      <td className="px-6 py-4 text-right font-mono text-[14px] text-ink">{it.quantity ?? 1}</td>
-                      <td className="px-6 py-4 text-right font-mono text-[14px] text-ink">{naira(it.unitPrice ?? 0)}</td>
-                      <td className="px-6 py-4 text-right font-mono text-[14px] text-ink">{naira(it.total ?? 0)}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          ) : (
-            <p className="px-6 py-8 text-center text-[14px] text-content-secondary">No items on this order yet.</p>
-          )}
-        </div>
+        {/* Order items — inline add/edit/delete via /orders/{id}/items endpoints */}
+        <OrderItemsCard orderId={o.id} items={o.items} onChanged={onChanged} />
 
         {/* Activity log */}
         {o.activity.length > 0 && (
