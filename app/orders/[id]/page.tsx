@@ -135,14 +135,13 @@ const fmtDateTime = (t: string) => {
 function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
   const toast = useToast();
   const { data: me } = useApiQuery(meQuery);
-  const tenantSlug = me?.tenant?.slug;
   const isPharmacy = verticalOf(me) === "pharmacy";
   const stages = o.stages?.length ? o.stages : ["Received"];
   const currentIdx = Math.max(0, stages.indexOf(o.stage));
   const customer = typeof o.customer === "string" ? { name: o.customer } : o.customer ?? {};
   // Only pharmacy orders with a real customer id can be issued an offer —
   // walk-in orders capture name-only and don't qualify.
-  const canIssueOffer = isPharmacy && Boolean(tenantSlug) && Boolean(customer.id);
+  const canIssueOffer = isPharmacy && Boolean(customer.id);
   const measurements = o.measurements ? Object.entries(o.measurements) : [];
 
   const nextStage = currentIdx < stages.length - 1 ? stages[currentIdx + 1] : null;
@@ -375,11 +374,10 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
         onRecorded={onChanged}
       />
       <InvoiceModal order={o} open={invoiceOpen} onClose={() => setInvoiceOpen(false)} />
-      {canIssueOffer && tenantSlug && customer.id && (
+      {canIssueOffer && customer.id && (
         <IssueRefillOfferModal
           open={issueOpen}
           onClose={() => setIssueOpen(false)}
-          tenantSlug={tenantSlug}
           customerId={customer.id}
           customerName={customer.name}
         />

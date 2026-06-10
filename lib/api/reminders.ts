@@ -1,11 +1,14 @@
 // Pharmacy reminders — typed API surface for Spec v2 §12D.
 //
-// SMS reminders sent via Brevo. The pharmacist configures one per customer
+// SMS reminders sent via Brevo. Pharmacist configures one per customer
 // (optionally tied to a product), with template variables interpolated
-// server-side before the SMS goes out.
+// server-side before each send.
 //
-// Routes are tenant-scoped via the dashboard-slug pattern from spec v2:
-//   /api/v1/dashboard/{slug}/pharmacy/reminders
+// BE shipped paths (confirmed against PharmacyReminderController):
+//   GET   /api/v1/pharmacy/reminders
+//   POST  /api/v1/pharmacy/reminders
+//   PATCH /api/v1/pharmacy/reminders/{id}/cancel
+// Tenant from JWT — no slug in the URL.
 
 import { api } from "./client";
 
@@ -17,7 +20,6 @@ export type ReminderStatus = "SCHEDULED" | "SENT" | "FAILED" | "CANCELLED";
 
 export type ReminderProduct = {
   id: string;
-  /** v2 brand+generic when available; v1 plain `name` otherwise. */
   nameGeneric?: string | null;
   nameBrand?: string | null;
   name?: string | null;
@@ -34,7 +36,6 @@ export type Reminder = {
   customer: ReminderCustomer;
   product?: ReminderProduct | null;
   reminderType: ReminderType;
-  /** Pre-interpolated message (template variables intact). */
   message: string;
   scheduledAt: string;
   recurrence?: ReminderRecurrence | null;
@@ -62,11 +63,10 @@ export type CreateReminderInput = {
   recurrenceEnd?: string | null;
 };
 
-const path = (slug: string, rest: string = "") =>
-  `/dashboard/${encodeURIComponent(slug)}/pharmacy/reminders${rest}`;
+const BASE = "/pharmacy/reminders";
 
 export const remindersApi = {
-  list: (slug: string, p: ReminderListParams = {}) => {
+  list: (p: ReminderListParams = {}) => {
     const qs = new URLSearchParams();
     if (p.customerId) qs.set("customerId", p.customerId);
     if (p.reminderType) qs.set("reminderType", p.reminderType);
@@ -74,15 +74,14 @@ export const remindersApi = {
     if (p.page != null) qs.set("page", String(p.page));
     if (p.limit != null) qs.set("limit", String(p.limit));
     const tail = qs.toString();
-    return api.get<Reminder[]>(`${path(slug)}${tail ? `?${tail}` : ""}`);
+    return api.get<Reminder[]>(`${BASE}${tail ? `?${tail}` : ""}`);
   },
-  create: (slug: string, body: CreateReminderInput) =>
-    api.post<Reminder>(path(slug), body),
-  cancel: (slug: string, id: string) =>
-    api.patch<Reminder>(path(slug, `/${id}/cancel`)),
+  create: (body: CreateReminderInput) =>
+    api.post<Reminder>(BASE, body),
+  cancel: (id: string) =>
+    api.patch<Reminder>(`${BASE}/${id}/cancel`),
 };
 
-/** Reminder-type display labels. */
 export const REMINDER_TYPE_LABELS: Record<ReminderType, string> = {
   REFILL_DUE: "Refill due",
   DRUG_USAGE: "Drug usage",
@@ -90,15 +89,12 @@ export const REMINDER_TYPE_LABELS: Record<ReminderType, string> = {
   CUSTOM: "Custom",
 };
 
-/** Display name for the product attached to a reminder, when present. */
 export function reminderProductName(p?: ReminderProduct | null): string | null {
   if (!p) return null;
   if (p.nameBrand && p.nameGeneric) return `${p.nameBrand} (${p.nameGeneric})`;
   return p.nameBrand || p.nameGeneric || p.name || null;
 }
 
-/** Interpolate the template variables BE will swap server-side so the FE
- *  can show a faithful preview. Unknown variables are left intact. */
 export function previewReminderMessage(
   template: string,
   ctx: { firstName?: string; productName?: string | null; storeName?: string; websiteUrl?: string },

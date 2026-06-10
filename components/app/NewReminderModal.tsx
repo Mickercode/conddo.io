@@ -44,12 +44,10 @@ const DEFAULT_TEMPLATES: Record<ReminderType, string> = {
 export function NewReminderModal({
   open,
   onClose,
-  tenantSlug,
   onCreated,
 }: {
   open: boolean;
   onClose: () => void;
-  tenantSlug: string;
   onCreated?: () => void;
 }) {
   const toast = useToast();
@@ -139,7 +137,7 @@ export function NewReminderModal({
     };
     setSaving(true);
     try {
-      await remindersApi.create(tenantSlug, body);
+      await remindersApi.create(body);
       toast.success(
         "Reminder scheduled",
         recurrence === "ONCE" ? "Will send once." : `Will repeat ${recurrence.toLowerCase()} until cancelled.`,

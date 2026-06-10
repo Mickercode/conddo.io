@@ -25,12 +25,10 @@ const todayIso = () => new Date().toISOString().slice(0, 16); // YYYY-MM-DDTHH:m
 export function NewDiscountModal({
   open,
   onClose,
-  tenantSlug,
   onCreated,
 }: {
   open: boolean;
   onClose: () => void;
-  tenantSlug: string;
   onCreated?: () => void;
 }) {
   const toast = useToast();
@@ -103,7 +101,7 @@ export function NewDiscountModal({
     };
     setSaving(true);
     try {
-      await discountsApi.create(tenantSlug, body);
+      await discountsApi.create(body);
       toast.success(
         "Discount submitted",
         "An admin will review and approve it before it goes live.",

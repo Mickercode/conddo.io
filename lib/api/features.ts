@@ -4,13 +4,17 @@
 // below). The dashboard exposes one of two CTAs depending on `status`:
 //
 //   coming_soon → "Notify me when it's ready"
-//     POST /api/v1/dashboard/{slug}/feature-interest    { featureKey }
+//     POST /api/v1/feature-interest      { featureKey }
 //
 //   beta        → "Request Beta access"
-//     POST /api/v1/dashboard/{slug}/beta-access-request { featureKey }
+//     POST /api/v1/beta-access-request   { featureKey }
 //
-// Conddo ops reviews beta requests and flips the per-tenant flag on approval.
-// "Notify me" simply registers demand — no approval needed.
+// Plus a tenant-scoped read for the locked-card to show its current flag
+// state ("requested already", "granted") without juggling localStorage:
+//   GET  /api/v1/feature-flags
+//
+// Tenant comes from the JWT — no slug in the URL. (BE shipment confirmed
+// against FeatureFlagController @ /api/v1.)
 
 import type { LucideIcon } from "lucide-react";
 import {
@@ -115,22 +119,24 @@ export const ROADMAP_FEATURES: FeatureCatalogueEntry[] = [
   },
 ];
 
-const path = (slug: string, rest: string) =>
-  `/dashboard/${encodeURIComponent(slug)}${rest}`;
-
 export const featuresApi = {
+  /** Read this tenant's current feature-flag state. One row per feature the
+   *  tenant has interacted with (requested interest, asked for beta, or had
+   *  granted by ops). Missing keys = no state recorded yet. */
+  flags: () => api.get<FeatureFlag[]>("/feature-flags"),
+
   /** Register that this tenant wants to be notified when a Coming Soon
    *  feature ships. The BE deduplicates per (tenant, featureKey). */
-  notifyInterest: (slug: string, featureKey: string) =>
+  notifyInterest: (featureKey: string) =>
     api.post<{ success: true; message?: string }>(
-      path(slug, "/feature-interest"),
+      "/feature-interest",
       { featureKey },
     ),
 
   /** Request Beta access — Conddo ops reviews these manually. */
-  requestBetaAccess: (slug: string, featureKey: string) =>
+  requestBetaAccess: (featureKey: string) =>
     api.post<{ success: true; message?: string }>(
-      path(slug, "/beta-access-request"),
+      "/beta-access-request",
       { featureKey },
     ),
 };

@@ -58,12 +58,10 @@ function fmtWhen(s?: string | null): string {
 function DiscountRow({
   d,
   isAdmin,
-  tenantSlug,
   onChanged,
 }: {
   d: Discount;
   isAdmin: boolean;
-  tenantSlug: string;
   onChanged: () => void;
 }) {
   const toast = useToast();
@@ -72,7 +70,7 @@ function DiscountRow({
   async function approve() {
     setBusy("approve");
     try {
-      await discountsApi.approve(tenantSlug, d.id, { action: "APPROVE" });
+      await discountsApi.approve(d.id, { action: "APPROVE" });
       toast.success("Discount approved", discountChipLabel(d));
       onChanged();
     } catch (err) {
@@ -85,7 +83,7 @@ function DiscountRow({
     if (!note?.trim()) return;
     setBusy("reject");
     try {
-      await discountsApi.approve(tenantSlug, d.id, { action: "REJECT", note: note.trim() });
+      await discountsApi.approve(d.id, { action: "REJECT", note: note.trim() });
       toast.success("Discount rejected", "The staff member who created it will be notified.");
       onChanged();
     } catch (err) {
@@ -97,7 +95,7 @@ function DiscountRow({
     if (!window.confirm(`Delete this discount? This can't be undone.`)) return;
     setBusy("delete");
     try {
-      await discountsApi.remove(tenantSlug, d.id);
+      await discountsApi.remove(d.id);
       toast.success("Discount deleted");
       onChanged();
     } catch (err) {
@@ -169,7 +167,6 @@ function DiscountRow({
  *  REJECT. EXPIRED is set automatically by the BE scheduled job. */
 export default function DiscountsPage() {
   const { data: me } = useApiQuery(meQuery);
-  const tenantSlug = me?.tenant?.slug ?? "";
   const isAdmin = me?.user?.role?.toUpperCase().includes("ADMIN") ?? false;
   const vertical = verticalOf(me);
   const isPharmacy = vertical === "pharmacy";
@@ -178,8 +175,8 @@ export default function DiscountsPage() {
   const [createOpen, setCreateOpen] = useState(false);
 
   const { data, loading, error, refetch } = useApiQuery(
-    () => tenantSlug ? discountsApi.list(tenantSlug, filter === "ALL" ? {} : { status: filter }) : Promise.resolve({ data: [] as Discount[] }),
-    [tenantSlug, filter],
+    () => discountsApi.list(filter === "ALL" ? {} : { status: filter }),
+    [filter],
   );
   const discounts = data ?? [];
   const pendingCount = discounts.filter((d) => d.status === "PENDING_APPROVAL").length;
@@ -189,7 +186,7 @@ export default function DiscountsPage() {
       title="Discounts"
       subtitle="Time-bound pricing changes for your products"
       actions={
-        tenantSlug && isPharmacy ? (
+        isPharmacy ? (
           <Button variant="primary" size="md" onClick={() => setCreateOpen(true)}>
             <Plus size={17} />
             <span className="hidden sm:inline">New discount</span>
@@ -279,7 +276,6 @@ export default function DiscountsPage() {
                     key={d.id}
                     d={d}
                     isAdmin={isAdmin}
-                    tenantSlug={tenantSlug}
                     onChanged={refetch}
                   />
                 ))}
@@ -290,7 +286,6 @@ export default function DiscountsPage() {
           <NewDiscountModal
             open={createOpen}
             onClose={() => setCreateOpen(false)}
-            tenantSlug={tenantSlug}
             onCreated={refetch}
           />
         </>

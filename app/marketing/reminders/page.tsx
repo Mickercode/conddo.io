@@ -58,11 +58,9 @@ function fmtWhen(s?: string | null): string {
 
 function ReminderRow({
   r,
-  tenantSlug,
   onChanged,
 }: {
   r: Reminder;
-  tenantSlug: string;
   onChanged: () => void;
 }) {
   const toast = useToast();
@@ -74,7 +72,7 @@ function ReminderRow({
     if (!window.confirm("Cancel this reminder? It won't be sent.")) return;
     setCancelling(true);
     try {
-      await remindersApi.cancel(tenantSlug, r.id);
+      await remindersApi.cancel(r.id);
       toast.success("Reminder cancelled");
       onChanged();
     } catch (err) {
@@ -134,7 +132,6 @@ function ReminderRow({
  *  server-side before each send, so the FE only persists the raw template. */
 export default function RemindersPage() {
   const { data: me } = useApiQuery(meQuery);
-  const tenantSlug = me?.tenant?.slug ?? "";
   const vertical = verticalOf(me);
   const isPharmacy = vertical === "pharmacy";
 
@@ -142,10 +139,8 @@ export default function RemindersPage() {
   const [createOpen, setCreateOpen] = useState(false);
 
   const { data, loading, error, refetch } = useApiQuery(
-    () => tenantSlug
-      ? remindersApi.list(tenantSlug, filter === "ALL" ? {} : { status: filter })
-      : Promise.resolve({ data: [] as Reminder[] }),
-    [tenantSlug, filter],
+    () => remindersApi.list(filter === "ALL" ? {} : { status: filter }),
+    [filter],
   );
   const reminders = data ?? [];
   const scheduledCount = reminders.filter((r) => r.status === "SCHEDULED").length;
@@ -155,7 +150,7 @@ export default function RemindersPage() {
       title="Reminders"
       subtitle="Scheduled SMS messages to your customers"
       actions={
-        tenantSlug && isPharmacy ? (
+        isPharmacy ? (
           <Button variant="primary" size="md" onClick={() => setCreateOpen(true)}>
             <Plus size={17} />
             <span className="hidden sm:inline">New reminder</span>
@@ -236,7 +231,6 @@ export default function RemindersPage() {
                   <ReminderRow
                     key={r.id}
                     r={r}
-                    tenantSlug={tenantSlug}
                     onChanged={refetch}
                   />
                 ))}
@@ -252,7 +246,6 @@ export default function RemindersPage() {
           <NewReminderModal
             open={createOpen}
             onClose={() => setCreateOpen(false)}
-            tenantSlug={tenantSlug}
             onCreated={refetch}
           />
         </>

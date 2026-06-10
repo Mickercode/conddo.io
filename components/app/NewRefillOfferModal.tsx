@@ -27,12 +27,10 @@ const DEFAULT_MESSAGE =
 export function NewRefillOfferModal({
   open,
   onClose,
-  tenantSlug,
   onCreated,
 }: {
   open: boolean;
   onClose: () => void;
-  tenantSlug: string;
   onCreated?: () => void;
 }) {
   const toast = useToast();
@@ -110,7 +108,7 @@ export function NewRefillOfferModal({
     };
     setSaving(true);
     try {
-      await refillOffersApi.create(tenantSlug, body);
+      await refillOffersApi.create(body);
       toast.success("Refill offer created", "Issue it from an order to send to a customer.");
       onCreated?.();
       onClose();

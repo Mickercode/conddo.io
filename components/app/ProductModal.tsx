@@ -75,7 +75,6 @@ export function ProductModal({
   const { data: me } = useApiQuery(meQuery);
   const vertical = verticalOf(me);
   const isPharmacy = vertical === "pharmacy";
-  const tenantSlug = me?.tenant?.slug;
   const namePlaceholder = productNamePlaceholder(vertical);
   const editing = Boolean(product);
   const [name, setName] = useState("");
@@ -163,16 +162,12 @@ export function ProductModal({
     const file = e.target.files?.[0];
     e.target.value = ""; // allow re-picking the same file
     if (!file) return;
-    if (!tenantSlug) {
-      toast.error("Couldn't start AI scan", "Account info still loading — try again in a moment.");
-      return;
-    }
     setAiResult(null);
     setAiBusy("upload");
     try {
       const up = await mediaApi.upload(file, "pharmacy-ai-scan");
       setAiBusy("analyse");
-      const { data } = await pharmacyAiApi.suggestFromImage(tenantSlug, up.data.url);
+      const { data } = await pharmacyAiApi.suggestFromImage(up.data.url);
       setAiResult(data);
       setAiCollapsed(false);
       const conf = data.confidence === "high" ? "high" : data.confidence === "medium" ? "medium" : "low";

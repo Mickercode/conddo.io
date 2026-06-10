@@ -60,16 +60,12 @@ function OfferRow({ o }: { o: RefillOffer }) {
  *  redemption code is minted (see refillOffersApi.issue). */
 export default function RefillOffersPage() {
   const { data: me } = useApiQuery(meQuery);
-  const tenantSlug = me?.tenant?.slug ?? "";
   const vertical = verticalOf(me);
   const isPharmacy = vertical === "pharmacy";
 
   const [createOpen, setCreateOpen] = useState(false);
 
-  const { data, loading, error, refetch } = useApiQuery(
-    () => tenantSlug ? refillOffersApi.list(tenantSlug) : Promise.resolve({ data: [] as RefillOffer[] }),
-    [tenantSlug],
-  );
+  const { data, loading, error, refetch } = useApiQuery(refillOffersApi.list);
   const offers = data ?? [];
 
   return (
@@ -77,7 +73,7 @@ export default function RefillOffersPage() {
       title="Refill offers"
       subtitle="Discounted return prices that bring customers back"
       actions={
-        tenantSlug && isPharmacy ? (
+        isPharmacy ? (
           <Button variant="primary" size="md" onClick={() => setCreateOpen(true)}>
             <Plus size={17} />
             <span className="hidden sm:inline">New refill offer</span>
@@ -137,7 +133,6 @@ export default function RefillOffersPage() {
           <NewRefillOfferModal
             open={createOpen}
             onClose={() => setCreateOpen(false)}
-            tenantSlug={tenantSlug}
             onCreated={refetch}
           />
         </>

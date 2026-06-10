@@ -30,21 +30,16 @@ function fmtExpiry(s: string): string {
 export function IssueRefillOfferModal({
   open,
   onClose,
-  tenantSlug,
   customerId,
   customerName,
 }: {
   open: boolean;
   onClose: () => void;
-  tenantSlug: string;
   customerId: string;
   customerName?: string | null;
 }) {
   const toast = useToast();
-  const offersQ = useApiQuery(
-    () => tenantSlug ? refillOffersApi.list(tenantSlug) : Promise.resolve({ data: [] as RefillOffer[] }),
-    [tenantSlug],
-  );
+  const offersQ = useApiQuery(refillOffersApi.list);
   const offers = (offersQ.data ?? []).filter((o) => o.isActive);
 
   const [selected, setSelected] = useState<string>("");
@@ -81,7 +76,7 @@ export function IssueRefillOfferModal({
     }
     setIssuing(true);
     try {
-      const { data } = await refillOffersApi.issue(tenantSlug, selected, { customerId, sendSms });
+      const { data } = await refillOffersApi.issue(selected, { customerId, sendSms });
       setClaim(data);
       toast.success("Refill offer issued", sendSms ? "SMS sent to the customer." : "Share the code with the customer.");
     } catch (err) {

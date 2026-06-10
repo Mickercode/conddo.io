@@ -23,7 +23,6 @@ const inFlight = new Set<string>();
  *  dashboard widgets — not just the dedicated /features page. */
 export function FeatureLockedCard({
   feature,
-  tenantSlug,
   /** When the parent owns the requested state (e.g. a list view that wants
    *  the chip to stay confirmed across remounts), pass `requested` and the
    *  card uses it instead of its internal state. */
@@ -31,7 +30,6 @@ export function FeatureLockedCard({
   onRequested,
 }: {
   feature: FeatureCatalogueEntry;
-  tenantSlug?: string;
   requested?: boolean;
   onRequested?: (key: string) => void;
 }) {
@@ -44,20 +42,16 @@ export function FeatureLockedCard({
   const Icon = feature.icon;
 
   async function onClick() {
-    if (!tenantSlug) {
-      toast.error("Account still loading", "Try again in a moment.");
-      return;
-    }
     setBusy(true);
     try {
       if (isBeta) {
-        await featuresApi.requestBetaAccess(tenantSlug, feature.key);
+        await featuresApi.requestBetaAccess(feature.key);
         toast.success(
           "Beta access requested",
           "We'll review and grant access shortly.",
         );
       } else {
-        await featuresApi.notifyInterest(tenantSlug, feature.key);
+        await featuresApi.notifyInterest(feature.key);
         toast.success(
           "You're on the list",
           "We'll notify you when this is ready.",

@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Sparkles, Compass } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { Chip } from "@/components/ui/Chip";
@@ -9,20 +9,29 @@ import { FeatureLockedCard } from "@/components/app/FeatureLockedCard";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { meQuery } from "@/lib/api/account";
 import { verticalOf } from "@/lib/verticalCopy";
-import { ROADMAP_FEATURES, type FeatureCatalogueEntry } from "@/lib/api/features";
+import { featuresApi, ROADMAP_FEATURES, type FeatureCatalogueEntry } from "@/lib/api/features";
 
 /** Pharmacy feature roadmap overview. Each card is a locked teaser with a
  *  "Request Beta access" or "Notify me" CTA. The cards group by area so the
  *  page reads as a product tour, not a flat checklist. */
 export default function FeaturesPage() {
   const { data: me } = useApiQuery(meQuery);
-  const tenantSlug = me?.tenant?.slug;
   const vertical = verticalOf(me);
   const isPharmacy = vertical === "pharmacy";
 
-  // Local state — survives across the grouped sections so the CTA confirm
-  // sticks even if the user requests another feature in the same area.
+  // Seed `requested` from the server-known flag state so a tenant who's
+  // already opted in (in another browser, or by ops grant) sees the
+  // confirmed pill the moment they land. Local additions then layer on top.
+  const flagsQ = useApiQuery(featuresApi.flags);
   const [requested, setRequested] = useState<Set<string>>(new Set());
+  useEffect(() => {
+    if (!flagsQ.data) return;
+    setRequested((prev) => {
+      const next = new Set(prev);
+      flagsQ.data?.forEach((f) => next.add(f.featureKey));
+      return next;
+    });
+  }, [flagsQ.data]);
   const markRequested = (key: string) =>
     setRequested((prev) => {
       const next = new Set(prev);
@@ -79,7 +88,6 @@ export default function FeaturesPage() {
                     <FeatureLockedCard
                       key={f.key}
                       feature={f}
-                      tenantSlug={tenantSlug}
                       requested={requested.has(f.key)}
                       onRequested={markRequested}
                     />
