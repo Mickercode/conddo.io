@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import {
-  Plus, Check, Inbox, Ruler, Scissors, Cog, Shirt, Truck, Phone, Mail, ShoppingCart, Circle, ArrowRight, FileText, Gift, type LucideIcon,
+  Plus, Check, Inbox, Ruler, Scissors, Cog, Shirt, Truck, Phone, Mail, ShoppingCart, Circle, ArrowRight, FileText, Gift, ListChecks, type LucideIcon,
 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
@@ -19,6 +19,7 @@ import { ApiError } from "@/lib/api/client";
 import { InvoiceModal } from "@/components/app/InvoiceModal";
 import { IssueRefillOfferModal } from "@/components/app/IssueRefillOfferModal";
 import { OrderItemsCard } from "@/components/app/OrderItemsCard";
+import { ScheduleFollowupModal } from "@/components/app/ScheduleFollowupModal";
 import { meQuery } from "@/lib/api/account";
 import { verticalOf } from "@/lib/verticalCopy";
 
@@ -150,6 +151,7 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
   const [payOpen, setPayOpen] = useState(false);
   const [invoiceOpen, setInvoiceOpen] = useState(false);
   const [issueOpen, setIssueOpen] = useState(false);
+  const [followupOpen, setFollowupOpen] = useState(false);
   const [notes, setNotes] = useState(o.notes ?? "");
   const [savingNotes, setSavingNotes] = useState(false);
   const notesDirty = notes !== (o.notes ?? "");
@@ -302,13 +304,22 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
             <div className="flex items-center gap-3 text-content-secondary"><Mail size={16} className="shrink-0 text-content-muted" /><span className="truncate text-[13px]">{customer.email ?? "—"}</span></div>
           </div>
           {canIssueOffer && (
-            <button
-              type="button"
-              onClick={() => setIssueOpen(true)}
-              className="mt-4 inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-primary/30 bg-primary-bg px-3 py-2 text-[13px] font-medium text-primary transition-colors hover:bg-primary hover:text-white"
-            >
-              <Gift size={14} /> Issue refill offer
-            </button>
+            <div className="mt-4 space-y-2">
+              <button
+                type="button"
+                onClick={() => setIssueOpen(true)}
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-primary/30 bg-primary-bg px-3 py-2 text-[13px] font-medium text-primary transition-colors hover:bg-primary hover:text-white"
+              >
+                <Gift size={14} /> Issue refill offer
+              </button>
+              <button
+                type="button"
+                onClick={() => setFollowupOpen(true)}
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-neutral-border bg-neutral-surface px-3 py-2 text-[13px] font-medium text-content-secondary transition-colors hover:border-primary hover:text-primary"
+              >
+                <ListChecks size={14} /> Schedule follow-up
+              </button>
+            </div>
           )}
         </div>
 
@@ -380,6 +391,14 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
           onClose={() => setIssueOpen(false)}
           customerId={customer.id}
           customerName={customer.name}
+        />
+      )}
+      {canIssueOffer && customer.id && (
+        <ScheduleFollowupModal
+          open={followupOpen}
+          onClose={() => setFollowupOpen(false)}
+          defaultCustomerId={customer.id}
+          defaultOrderId={o.id}
         />
       )}
     </div>

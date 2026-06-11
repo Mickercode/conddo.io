@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Phone, Mail, CalendarDays, Plus, Ruler, Users, ShoppingBag, ReceiptText, X } from "lucide-react";
+import { Phone, Mail, CalendarDays, Plus, Ruler, Users, ShoppingBag, ReceiptText, Activity, X } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { NewOrderModal } from "@/components/app/NewOrderModal";
 import { MeasurementsModal } from "@/components/app/MeasurementsModal";
@@ -14,6 +14,8 @@ import { useToast } from "@/components/ui/Toast";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
 import { customersApi, tagTone, type CustomerDetail } from "@/lib/api/customers";
+import { meQuery } from "@/lib/api/account";
+import { verticalOf } from "@/lib/verticalCopy";
 import { ApiError } from "@/lib/api/client";
 
 const initialsOf = (s: string) =>
@@ -31,6 +33,8 @@ const fmtShort = (t: string | null | undefined) => {
 
 function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void }) {
   const toast = useToast();
+  const { data: me } = useApiQuery(meQuery);
+  const isPharmacy = verticalOf(me) === "pharmacy";
   const display = c.name || c.email || "Customer";
   const measurements = c.measurements ? Object.entries(c.measurements) : [];
 
@@ -181,6 +185,27 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
             </div>
           ))}
         </div>
+
+        {/* Medical record (pharmacy only — full EMR lives at /pharmacy/emr) */}
+        {isPharmacy && (
+          <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary-bg/30 px-5 py-4">
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-bg text-primary">
+                <Activity size={16} />
+              </span>
+              <div>
+                <p className="text-[14px] font-medium text-ink">Medical record</p>
+                <p className="text-[12px] text-content-muted">Demographics, allergies, conditions, vaccinations, clinical notes, documents.</p>
+              </div>
+            </div>
+            <Link
+              href={`/pharmacy/emr/${c.id}`}
+              className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-neutral-surface px-3 py-1.5 text-[12px] font-medium text-primary hover:bg-primary hover:text-white"
+            >
+              View EMR →
+            </Link>
+          </div>
+        )}
 
         {/* Measurement Profile */}
         <div className="rounded-xl border border-neutral-border bg-neutral-surface">
