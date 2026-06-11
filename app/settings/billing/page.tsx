@@ -14,7 +14,9 @@ import {
   type PlanId,
   type SubscriptionStatus,
 } from "@/lib/api/subscriptions";
+import { meQuery } from "@/lib/api/account";
 import { ApiError } from "@/lib/api/client";
+import { openPaystackInline, paystackInlineAvailable } from "@/lib/paystack-inline";
 
 // Catalog mirrors the marketing pricing page. Source of truth at run time is
 // /billing/plans (BE), but the static copy here lets the page render fully
@@ -50,6 +52,7 @@ function fmtDate(s?: string | null): string {
 export default function BillingSettings() {
   const toast = useToast();
   const sub = useApiQuery(subscriptionsApi.current);
+  const meQ = useApiQuery(meQuery);
   const [upgrading, setUpgrading] = useState<PlanId | null>(null);
 
   const data = sub.data;
@@ -76,16 +79,14 @@ export default function BillingSettings() {
     }
     if (targetId === currentPlan) return;
     setUpgrading(targetId);
+
+    let checkout: { authorizationUrl: string; reference: string; accessCode?: string };
     try {
       const { data } = await subscriptionsApi.checkout({
         planId: targetId,
         billingCycle: cycle as BillingCycle,
       });
-      if (!data.authorizationUrl) throw new Error("BE didn't return a checkout URL");
-      toast.success("Redirecting to Paystack…", "Complete payment to activate your plan.");
-      // Full-page navigate so Paystack's hosted page can bounce us back to
-      // /settings/billing/return?reference=… cleanly.
-      window.location.href = data.authorizationUrl;
+      checkout = data;
     } catch (err) {
       // Detect the env-var-not-set case (BE returns 503 PaystackNotConfigured)
       // and surface a clearer message so the user/ops can fix it.
@@ -102,10 +103,87 @@ export default function BillingSettings() {
         );
       }
       setUpgrading(null);
+      return;
     }
-    // NOTE: no `finally` to clear `upgrading` — the page is about to navigate
-    // away. The spinner stays until the redirect happens, which is the
-    // correct UX (no flicker back to the idle button).
+
+    // Prefer Paystack Inline (modal on our page) when the SDK is loaded
+    // and we have the public key + tenant email. Falls back to the BE's
+    // hosted-checkout URL if any prerequisite is missing — same user value,
+    // worse UX but never broken.
+    const targetPlan = PLAN_CATALOG.find((p) => p.id === targetId);
+    const email = meQ.data?.user?.email;
+    const monthly = targetPlan?.monthly;
+    const amountKobo = monthly ? monthly * 100 : null;
+    const publicKey = process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY;
+
+    if (paystackInlineAvailable() && publicKey && email && amountKobo) {
+      try {
+        openPaystackInline({
+          key: publicKey,
+          email,
+          amount: amountKobo,
+          ref: checkout.reference,
+          metadata: { planId: targetId, billingCycle: cycle },
+          callback: async (response) => {
+            // Modal closes immediately on success — verify with BE and
+            // refresh the subscription state so the page updates inline.
+            try {
+              const { data: v } = await subscriptionsApi.verify(response.reference);
+              if (v.status === "success") {
+                toast.success(
+                  "Subscription activated",
+                  `You're on the ${v.subscription?.planDisplayName ?? targetPlan?.name ?? "new"} plan.`,
+                );
+              } else if (v.status === "pending") {
+                toast.success(
+                  "Payment received — confirming with Paystack",
+                  "Your subscription will activate shortly.",
+                );
+              } else {
+                toast.error(
+                  "Payment didn't complete",
+                  v.failureReason ?? "Try again or pick a different plan.",
+                );
+              }
+            } catch {
+              toast.toast({
+                tone: "info",
+                title: "Payment sent — verifying",
+                description: "Refresh in a moment to see your updated plan.",
+              });
+            } finally {
+              sub.refetch();
+              setUpgrading(null);
+            }
+          },
+          onClose: () => {
+            // User dismissed the modal without paying. No charge happened
+            // and no FE state to roll back — just clear the spinner.
+            toast.toast({
+              tone: "info",
+              title: "Payment cancelled",
+              description: "No charges were made — pick a plan again whenever you're ready.",
+            });
+            setUpgrading(null);
+          },
+        });
+      } catch {
+        // SDK loaded but threw — fall back to the redirect path so the
+        // user can still complete payment.
+        toast.toast({
+          tone: "info",
+          title: "Opening Paystack",
+          description: "Falling back to the hosted checkout page.",
+        });
+        window.location.href = checkout.authorizationUrl;
+      }
+      return;
+    }
+
+    // Fallback path — redirect to the BE-generated hosted-checkout URL.
+    // Spinner stays through the navigate (no flicker back to idle).
+    toast.success("Redirecting to Paystack…", "Complete payment to activate your plan.");
+    window.location.href = checkout.authorizationUrl;
   }
 
   return (

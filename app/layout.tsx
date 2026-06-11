@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import { GeistMono } from "geist/font/mono";
+import Script from "next/script";
 import { Providers } from "./providers";
 import { PwaBootstrap } from "@/components/app/PwaBootstrap";
 import "./globals.css";
@@ -49,6 +50,11 @@ export default function RootLayout({
         {/* Registers the service worker + tracks the beforeinstallprompt event
             so any <InstallAppButton> elsewhere on the page can fire prompt(). */}
         <PwaBootstrap />
+        {/* Paystack Inline SDK — loaded once globally so /settings/billing can
+            open the modal popup without a per-route round trip. `lazyOnload`
+            keeps it off the critical path; the billing page falls back to
+            the BE redirect URL if the script hasn't landed yet. */}
+        <Script src="https://js.paystack.co/v2/inline.js" strategy="lazyOnload" />
       </body>
     </html>
   );
