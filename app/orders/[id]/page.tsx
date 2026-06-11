@@ -20,6 +20,7 @@ import { InvoiceModal } from "@/components/app/InvoiceModal";
 import { IssueRefillOfferModal } from "@/components/app/IssueRefillOfferModal";
 import { OrderItemsCard } from "@/components/app/OrderItemsCard";
 import { ScheduleFollowupModal } from "@/components/app/ScheduleFollowupModal";
+import { OrderActivityLog } from "@/components/app/OrderActivityLog";
 import { meQuery } from "@/lib/api/account";
 import { verticalOf } from "@/lib/verticalCopy";
 
@@ -266,28 +267,9 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
         {/* Order items — inline add/edit/delete via /orders/{id}/items endpoints */}
         <OrderItemsCard orderId={o.id} items={o.items} onChanged={onChanged} />
 
-        {/* Activity log */}
-        {o.activity.length > 0 && (
-          <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-6">
-            <h3 className="mb-6 text-[16px] font-medium text-ink">Activity Log</h3>
-            <ol className="relative space-y-5 before:absolute before:bottom-2 before:left-[11px] before:top-2 before:w-px before:bg-neutral-border">
-              {o.activity.map((e, i) => (
-                <li key={e.id} className="relative flex gap-4">
-                  <span className={`z-10 mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border bg-neutral-surface ${i === 0 ? "border-primary" : "border-neutral-border"}`}>
-                    <span className={`h-1.5 w-1.5 rounded-full ${i === 0 ? "bg-primary" : "bg-neutral-strong"}`} />
-                  </span>
-                  <div className="flex-1">
-                    <div className="mb-0.5 flex flex-wrap items-center justify-between gap-1">
-                      <p className="text-[14px] font-medium text-ink">{e.title}</p>
-                      <span className="font-mono text-[10px] uppercase text-content-muted">{fmtDateTime(e.at)}</span>
-                    </div>
-                    {(e.detail || e.actor) && <p className="text-[12px] text-content-secondary">{e.detail}{e.actor ? ` · ${e.actor}` : ""}</p>}
-                  </div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        )}
+        {/* Activity log — first page nested on the order GET, "Show full
+            activity" hits the dedicated /orders/{id}/activity endpoint */}
+        <OrderActivityLog orderId={o.id} initial={o.activity} />
       </div>
 
       {/* Right column */}
