@@ -17,6 +17,8 @@ import { customersApi, tagTone, type CustomerDetail } from "@/lib/api/customers"
 import { meQuery } from "@/lib/api/account";
 import { verticalOf } from "@/lib/verticalCopy";
 import { ApiError } from "@/lib/api/client";
+import { CustomerCashbackCard } from "@/components/app/CustomerCashbackCard";
+import { CustomerEmrAllergiesBanner } from "@/components/app/CustomerEmrAllergiesBanner";
 
 const initialsOf = (s: string) =>
   s.trim().split(/[\s@.]+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("") || "?";
@@ -186,6 +188,9 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
           ))}
         </div>
 
+        {/* Allergies banner — high-visibility safety net before dispense */}
+        {isPharmacy && <CustomerEmrAllergiesBanner customerId={c.id} />}
+
         {/* Medical record (pharmacy only — full EMR lives at /pharmacy/emr) */}
         {isPharmacy && (
           <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary-bg/30 px-5 py-4">
@@ -206,6 +211,9 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
             </Link>
           </div>
         )}
+
+        {/* Cashback wallet (pharmacy only — silent if cashback flag off OR no wallet) */}
+        {isPharmacy && <CustomerCashbackCard customerId={c.id} />}
 
         {/* Measurement Profile */}
         <div className="rounded-xl border border-neutral-border bg-neutral-surface">

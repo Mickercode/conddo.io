@@ -19,6 +19,9 @@ import {
 } from "lucide-react";
 import { useToast } from "@/components/ui/Toast";
 import { ApiError } from "@/lib/api/client";
+import { DashboardFollowupsWidget } from "@/components/app/DashboardFollowupsWidget";
+import { DashboardProgramsWidget } from "@/components/app/DashboardProgramsWidget";
+import { verticalOf } from "@/lib/verticalCopy";
 import { AppShell } from "@/components/app/AppShell";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
@@ -183,6 +186,7 @@ export default function DashboardPage() {
   const showWebsite = has("/website");
   const showBookings = has("/bookings");
   const stats = STAT_META.filter((s) => has(s.href));
+  const isPharmacy = verticalOf(me) === "pharmacy";
 
   const now = new Date();
   const firstName = me?.user.fullName?.trim().split(/\s+/)[0] ?? "";
@@ -231,6 +235,15 @@ export default function DashboardPage() {
           );
         })}
       </div>
+
+      {/* Pharmacy Beta-feature widgets — each self-gates on its feature
+          flag, so the grid only takes space when at least one is enabled. */}
+      {isPharmacy && (
+        <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <DashboardFollowupsWidget />
+          <DashboardProgramsWidget />
+        </div>
+      )}
 
       {/* Two-column: orders + side cards — each gated by the tenant's plan */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
