@@ -2,12 +2,13 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Plus, Search, Package, AlertTriangle, Pencil, ArrowUpDown, CalendarClock, Tag, Truck, History, ClipboardCheck } from "lucide-react";
+import { Plus, Search, Package, AlertTriangle, Pencil, ArrowUpDown, CalendarClock, Tag, Truck, History, ClipboardCheck, Upload } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { ProductModal } from "@/components/app/ProductModal";
 import { AdjustStockModal } from "@/components/app/AdjustStockModal";
 import { PharmacyAdjustModal } from "@/components/app/PharmacyAdjustModal";
 import { RestockModal } from "@/components/app/RestockModal";
+import { BulkStockUploadModal } from "@/components/app/BulkStockUploadModal";
 import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
@@ -56,6 +57,7 @@ export default function InventoryPage() {
   const [editing, setEditing] = useState<Product | null>(null);
   const [adjusting, setAdjusting] = useState<Product | null>(null);
   const [restockOpen, setRestockOpen] = useState(false);
+  const [bulkOpen, setBulkOpen] = useState(false);
 
   const { data, loading, error, refetch } = useApiQuery(
     () => inventoryApi.list({
@@ -111,6 +113,15 @@ export default function InventoryPage() {
                 <ClipboardCheck size={15} />
                 <span className="hidden lg:inline">Reconcile</span>
               </Link>
+              <button
+                type="button"
+                onClick={() => setBulkOpen(true)}
+                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-neutral-border bg-neutral-surface px-3 text-[13px] font-medium text-content-secondary transition-colors hover:border-primary hover:text-primary"
+                title="Upload a CSV to bulk-update stock"
+              >
+                <Upload size={15} />
+                <span className="hidden lg:inline">Bulk upload</span>
+              </button>
               <button
                 type="button"
                 onClick={() => setRestockOpen(true)}
@@ -325,6 +336,11 @@ export default function InventoryPage() {
         open={restockOpen}
         onClose={() => setRestockOpen(false)}
         onRestocked={() => refetch()}
+      />
+      <BulkStockUploadModal
+        open={bulkOpen}
+        onClose={() => setBulkOpen(false)}
+        onCommitted={() => refetch()}
       />
     </AppShell>
   );

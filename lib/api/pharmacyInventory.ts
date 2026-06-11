@@ -14,7 +14,7 @@
 //   PATCH  /inventory/reconciliations/{id}/counts   ← submit physical counts
 //   POST   /inventory/reconciliations/{id}/complete ← apply variances
 
-import { api } from "./client";
+import { api, uploadFile } from "./client";
 
 // ---------- Movements (audit log) -------------------------------------------
 
@@ -169,6 +169,16 @@ export const pharmacyInventoryApi = {
 
   completeReconciliation: (id: string) =>
     api.post<CompleteReconciliationResult>(`/inventory/reconciliations/${id}/complete`),
+
+  /** Multipart CSV upload. Pass `dryRun=true` to preview without persisting
+   *  — BE returns the same Summary shape either way, with `dryRun` echoed
+   *  back so the FE can confirm. */
+  bulkUpload: (file: File, dryRun: boolean) => {
+    const form = new FormData();
+    form.append("file", file);
+    form.append("dryRun", String(dryRun));
+    return uploadFile<BulkUploadSummary>("/inventory/bulk-upload", form);
+  },
 };
 
 // ---------- Display helpers -------------------------------------------------
@@ -216,3 +226,46 @@ export function movementTone(t: string): "success" | "danger" | "warning" | "pri
  *  id per tenant, so a user navigating away can resume the in-progress
  *  session. Cleared when a reconciliation completes successfully. */
 export const RECONCILIATION_RESUME_KEY = "conddo:pharmacy:lastReconciliationId";
+
+// ---------- Bulk stock upload ----------------------------------------------
+
+/** One line in the CSV that failed parse/validation. `line` is 1-indexed
+ *  including the header row, so a problem on the first data row reports
+ *  `line: 2`. */
+export type BulkUploadRowError = {
+  line: number;
+  sku: string;
+  message: string;
+};
+
+/** Preview row — server returns ~10 representative rows on dry-run so the FE
+ *  can render a table of what's about to happen. Shape is `Map<String,Object>`
+ *  on the wire — the actual columns echo the CSV (`sku`, `stock`, `name`,
+ *  `price`, …) plus a server-added `action` field of "CREATE" | "UPDATE" |
+ *  "SKIP" so the FE doesn't have to re-derive. */
+export type BulkUploadPreviewRow = Record<string, string | number | null>;
+
+export type BulkUploadSummary = {
+  totalRows: number;
+  created: number;
+  updated: number;
+  skipped: number;
+  errors: BulkUploadRowError[];
+  preview: BulkUploadPreviewRow[];
+  dryRun: boolean;
+};
+
+/** Required CSV headers per the BE service. Used by the FE to render the
+ *  "needs sku and stock" hint and to generate the template download. */
+export const BULK_UPLOAD_REQUIRED_HEADERS = ["sku", "stock"] as const;
+
+/** All recognised columns — anything else is silently ignored by BE. */
+export const BULK_UPLOAD_ALL_HEADERS = [
+  "sku",
+  "name",
+  "stock",
+  "price",
+  "reorder_threshold",
+  "batch_number",
+  "expiry_date",
+] as const;
