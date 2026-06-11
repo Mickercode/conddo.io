@@ -75,14 +75,45 @@ export function hasFeature(plan: Plan | null, key: FeatureKey): boolean {
 
 export type UpgradeInput = { planId: PlanId; billingCycle: BillingCycle };
 
+/** Paystack hosted checkout response. The FE redirects the user to
+ *  `authorizationUrl`; after payment, Paystack bounces them back to our
+ *  callback at /settings/billing/return?reference=<reference>. */
+export type CheckoutInitResult = {
+  authorizationUrl: string;
+  reference: string;
+  accessCode?: string;
+};
+
+/** Result of verifying a Paystack checkout reference. `status` is the
+ *  Paystack-canonical state; `subscription` is the post-charge state of
+ *  the tenant's subscription (always present on `success`). */
+export type CheckoutVerifyStatus = "success" | "pending" | "failed" | "abandoned";
+
+export type CheckoutVerifyResult = {
+  status: CheckoutVerifyStatus;
+  reference: string;
+  amount?: number;             // ₦ — what was actually charged
+  paidAt?: string | null;
+  failureReason?: string | null;
+  subscription?: Subscription;
+};
+
 export const subscriptionsApi = {
   // List all plans (catalog). Public — also used by the marketing pricing page
   // when we want server-driven pricing.
   plans: () => api.get<Plan[]>("/billing/plans"),
   // Current tenant's subscription.
   current: () => api.get<Subscription>("/billing/subscription"),
-  // Switch plan / cycle. Server prorates the difference.
-  upgrade: (body: UpgradeInput) => api.post<Subscription>("/billing/upgrade", body),
+  /** Initiate Paystack checkout for a plan switch. Server creates the
+   *  Paystack transaction (with the tenant + plan + cycle metadata) and
+   *  returns the hosted-checkout URL. FE redirects the user; on payment,
+   *  Paystack bounces back to /settings/billing/return?reference=… */
+  checkout: (body: UpgradeInput) =>
+    api.post<CheckoutInitResult>("/billing/checkout", body),
+  /** Verify a Paystack reference after the user returns from checkout.
+   *  Polled by /settings/billing/return until a terminal status. */
+  verify: (reference: string) =>
+    api.get<CheckoutVerifyResult>(`/billing/verify?reference=${encodeURIComponent(reference)}`),
   // Cancel — takes effect at period end (cancelledAt set, status stays active
   // until expiresAt then flips to cancelled).
   cancel: () => api.post<Subscription>("/billing/cancel"),

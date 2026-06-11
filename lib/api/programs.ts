@@ -77,6 +77,21 @@ export type ProgramEnrollment = {
 
 export type EnrollInput = {
   customerId: string;
+  /** Where Paystack should return the customer after the first-month
+   *  charge. Defaults BE-side to `${siteOrigin}/pharmacy/programs/{id}`. */
+  returnUrl?: string;
+};
+
+/** Enrollment goes through Paystack hosted checkout for the first month's
+ *  charge; subsequent months auto-bill via the Paystack subscription. The
+ *  enrollment row is `PENDING_PAYMENT` until the verify confirms `success`,
+ *  then flips to `ACTIVE`. */
+export type EnrollResult = {
+  enrollment: ProgramEnrollment;
+  /** Hosted-checkout URL — FE redirects on this. Absent for ops-side
+   *  enrolments that BE already charged separately (rare). */
+  authorizationUrl?: string;
+  reference?: string;
 };
 
 const BASE = "/pharmacy/programs";
@@ -92,8 +107,14 @@ export const programsApi = {
   enrollments: (id: string) =>
     api.get<ProgramEnrollment[]>(`${BASE}/${id}/enrollments`),
   enroll: (id: string, body: EnrollInput) =>
-    api.post<ProgramEnrollment>(`${BASE}/${id}/enroll`, body),
+    api.post<EnrollResult>(`${BASE}/${id}/enroll`, body),
 };
+
+/** Add the existing `PENDING_PAYMENT` state to the enrollment status union,
+ *  since the FE now treats the post-enroll-before-verify period as its own
+ *  status (BE may report it as ACTIVE-with-no-charges-yet — either way,
+ *  the FE just needs to display it cleanly). */
+export type EnrollmentStatusExtended = EnrollmentStatus | "PENDING_PAYMENT";
 
 export const ENROLLMENT_LABELS: Record<EnrollmentStatus, string> = {
   ACTIVE:    "Active",

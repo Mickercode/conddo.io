@@ -57,8 +57,19 @@ function EnrolModal({
     if (!customerId) { toast.error("Pick a patient"); return; }
     setSaving(true);
     try {
-      await programsApi.enroll(programId, { customerId });
-      toast.success("Patient enrolled", "First billing kicks off with their next payment.");
+      const returnUrl = typeof window !== "undefined"
+        ? `${window.location.origin}/pharmacy/programs/${programId}`
+        : undefined;
+      const { data } = await programsApi.enroll(programId, { customerId, returnUrl });
+      if (data.authorizationUrl) {
+        // BE created a Paystack hosted checkout for the first month's charge.
+        // Open in a new tab so the pharmacist can keep their dashboard open
+        // while the patient pays on the device they're sharing.
+        toast.success("Opening Paystack checkout…", "Patient pays the first month to activate the subscription.");
+        window.open(data.authorizationUrl, "_blank", "noopener,noreferrer");
+      } else {
+        toast.success("Patient enrolled", "First billing kicks off with their next payment.");
+      }
       onEnrolled?.();
       onClose();
     } catch (err) {
@@ -94,7 +105,7 @@ function EnrolModal({
         </Field>
         <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-3 py-2 text-[11px] text-content-muted">
           <AlertCircle size={11} className="mt-0.5 shrink-0" />
-          BE charges via RoutePay recurring billing. The first month's payment is collected immediately; subsequent months auto-bill on the same day each month.
+          Submitting opens a Paystack checkout in a new tab for the first month. After payment, subsequent months auto-bill on the same day each month via the Paystack subscription. The enrolment shows as ACTIVE once Paystack confirms the first charge.
         </p>
       </form>
     </Modal>

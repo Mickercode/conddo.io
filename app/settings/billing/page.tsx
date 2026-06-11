@@ -67,14 +67,22 @@ export default function BillingSettings() {
     if (targetId === currentPlan) return;
     setUpgrading(targetId);
     try {
-      await subscriptionsApi.upgrade({ planId: targetId, billingCycle: cycle as BillingCycle });
-      toast.success("Plan changed", `You're now on the ${targetId[0].toUpperCase() + targetId.slice(1)} plan.`);
-      sub.refetch();
+      const { data } = await subscriptionsApi.checkout({
+        planId: targetId,
+        billingCycle: cycle as BillingCycle,
+      });
+      if (!data.authorizationUrl) throw new Error("BE didn't return a checkout URL");
+      toast.success("Redirecting to Paystack…", "Complete payment to activate your new plan.");
+      // Full-page navigate so Paystack's hosted page can bounce us back to
+      // /settings/billing/return?reference=… cleanly.
+      window.location.href = data.authorizationUrl;
     } catch (err) {
-      toast.error("Couldn't change plan", err instanceof ApiError ? err.message : "Please try again.");
-    } finally {
+      toast.error("Couldn't start checkout", err instanceof ApiError ? err.message : "Please try again.");
       setUpgrading(null);
     }
+    // NOTE: no `finally` to clear `upgrading` — the page is about to navigate
+    // away. The spinner stays until the redirect happens, which is the
+    // correct UX (no flicker back to the idle button).
   }
 
   return (
