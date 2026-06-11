@@ -275,5 +275,6 @@ export const api = {
 
 /** For endpoints that live outside the /api/v1 prefix (auth). */
 export const authApi = {
+  get: <T>(path: string) => request<T>("GET", path, undefined, { versioned: false }),
   post: <T>(path: string, body?: Body) => request<T>("POST", path, body, { versioned: false }),
 };

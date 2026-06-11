@@ -1,21 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import { CheckCircle2, Crown } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
-import { Field, TextInput, Select } from "@/components/ui/Field";
+import { Field, TextInput } from "@/components/ui/Field";
 import { useToast } from "@/components/ui/Toast";
-import { staffApi, type StaffRole } from "@/lib/api/staff";
+import {
+  staffApi,
+  STAFF_ROLE_CATALOGUE,
+  roleDefFor,
+  type StaffSubRole,
+} from "@/lib/api/staff";
 import { ApiError } from "@/lib/api/client";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-const ROLES: { value: StaffRole; label: string; hint: string }[] = [
-  { value: "STAFF", label: "Staff", hint: "Day-to-day access: orders, customers, bookings, inventory." },
-  { value: "TENANT_ADMIN", label: "Admin", hint: "Full access including settings, billing, and staff." },
-];
-
-/** Invite a teammate by email (POST /staff/invite). They receive an invite to set a password. */
+/** Send an invite by email + role. The staffer receives an email with a
+ *  one-time `acceptInviteToken`; they land on /accept-invite, set their
+ *  password, and route to their role landing. */
 export function InviteStaffModal({
   open,
   onClose,
@@ -27,14 +30,18 @@ export function InviteStaffModal({
 }) {
   const toast = useToast();
   const [email, setEmail] = useState("");
-  const [role, setRole] = useState<StaffRole>("STAFF");
+  const [fullName, setFullName] = useState("");
+  const [selectedRole, setSelectedRole] = useState<StaffSubRole>("CASHIER");
   const [error, setError] = useState<string>();
   const [saving, setSaving] = useState(false);
+
+  const roleDef = roleDefFor(selectedRole);
 
   function close() {
     if (saving) return;
     setEmail("");
-    setRole("STAFF");
+    setFullName("");
+    setSelectedRole("CASHIER");
     setError(undefined);
     onClose();
   }
@@ -47,12 +54,27 @@ export function InviteStaffModal({
     }
     setSaving(true);
     try {
-      await staffApi.invite(email.trim(), role);
-      toast.success("Invite sent", email.trim());
+      await staffApi.invite({
+        email: email.trim(),
+        staffRole: selectedRole,
+        fullName: fullName.trim() || undefined,
+      });
+      toast.success("Invite sent", `${email.trim()} → ${roleDef.label}`);
       close();
       onInvited?.();
     } catch (err) {
-      toast.error("Couldn't send invite", err instanceof ApiError ? err.message : "Please try again.");
+      const apiErr = err instanceof ApiError ? err : null;
+      if (apiErr?.code === "PLAN_LIMIT_REACHED") {
+        toast.error(
+          "Staff limit reached",
+          "Upgrade your plan to invite more teammates.",
+        );
+        return;
+      }
+      toast.error(
+        "Couldn't send invite",
+        apiErr?.message ?? "Please try again.",
+      );
     } finally {
       setSaving(false);
     }
@@ -62,8 +84,8 @@ export function InviteStaffModal({
     <Modal
       open={open}
       onClose={close}
-      title="Invite staff"
-      description="Send an email invite. They'll set their own password to join your workspace."
+      title="Invite a teammate"
+      description="They'll receive an email with a link to set up their account."
       footer={
         <>
           <Button variant="secondary" size="md" onClick={close} disabled={saving}>Cancel</Button>
@@ -73,15 +95,85 @@ export function InviteStaffModal({
         </>
       }
     >
-      <form id="invite-staff-form" onSubmit={submit} className="space-y-4">
-        <Field label="Email" htmlFor="is-email" required error={error}>
-          <TextInput id="is-email" type="email" value={email} error={error} onChange={(e) => setEmail(e.target.value)} placeholder="teammate@example.com" autoFocus />
-        </Field>
-        <Field label="Role" htmlFor="is-role" hint={ROLES.find((r) => r.value === role)?.hint}>
-          <Select id="is-role" value={role} onChange={(e) => setRole(e.target.value as StaffRole)}>
-            {ROLES.map((r) => <option key={r.value} value={r.value}>{r.label}</option>)}
-          </Select>
-        </Field>
+      <form id="invite-staff-form" onSubmit={submit} className="space-y-5">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <Field label="Email" htmlFor="is-email" required error={error}>
+            <TextInput
+              id="is-email"
+              type="email"
+              value={email}
+              error={error}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="teammate@example.com"
+              autoFocus
+            />
+          </Field>
+          <Field label="Name (optional)" htmlFor="is-name" hint="So their welcome email is personal.">
+            <TextInput
+              id="is-name"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="e.g. Tunde Bello"
+            />
+          </Field>
+        </div>
+
+        {/* Role picker — cards instead of <Select> so the description is
+            visible inline rather than tucked into a hint */}
+        <div>
+          <label className="mb-2 block text-[12px] font-medium uppercase tracking-[0.06em] text-content-secondary">
+            Role
+          </label>
+          <div className="space-y-2">
+            {STAFF_ROLE_CATALOGUE.map((r) => {
+              const active = r.key === selectedRole;
+              return (
+                <button
+                  key={r.key}
+                  type="button"
+                  onClick={() => setSelectedRole(r.key)}
+                  className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors ${
+                    active
+                      ? "border-primary bg-primary-bg/30"
+                      : "border-neutral-border bg-neutral-surface hover:border-primary-light"
+                  }`}
+                >
+                  <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
+                    active ? "bg-primary text-white" : "border border-neutral-border"
+                  }`}>
+                    {active && <CheckCircle2 size={11} />}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[14px] font-medium text-ink">{r.label}</p>
+                    <p className="mt-0.5 text-[12px] text-content-secondary">{r.description}</p>
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Selected role's permission preview */}
+        <div className="rounded-xl border border-primary/20 bg-primary-bg/30 p-3">
+          <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.05em] text-primary">
+            What {roleDef.label}s can do
+          </p>
+          <ul className="space-y-1">
+            {roleDef.access.map((line, i) => (
+              <li key={i} className="flex items-start gap-2 text-[12px] text-content-secondary">
+                <CheckCircle2 size={11} className="mt-0.5 shrink-0 text-success" />
+                <span>{line}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <p className="flex items-start gap-1.5 text-[11px] text-content-muted">
+          <Crown size={11} className="mt-0.5 shrink-0 text-warning" />
+          You can change someone's role anytime from this page. To make
+          someone a second owner, change their role to Manager and contact
+          support.
+        </p>
       </form>
     </Modal>
   );

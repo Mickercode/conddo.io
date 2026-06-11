@@ -30,13 +30,22 @@ export default function LoginPage() {
   // to subsequent /api/v1 calls and 401s anything that depends on /me.
   useEffect(() => { clearAccessToken(); }, []);
 
+  /** Route post-login based on top-level role. STAFF land on /work which
+   *  reads me.user.staffRole and forwards to their role-specific landing
+   *  (Cashier → /work/sales, Pharmacist → /work/clinical, etc). Owners
+   *  and Conddo support staff keep the full dashboard. */
+  function landingFor(role: string): string {
+    if (role === "TENANT_ADMIN" || role === "SUPER_ADMIN") return "/dashboard";
+    return "/work";
+  }
+
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
     setSubmitting(true);
     try {
-      await login({ email, password, tenantSlug: slugify(workspace) });
-      router.push("/dashboard");
+      const { role } = await login({ email, password, tenantSlug: slugify(workspace) });
+      router.push(landingFor(role));
       // Note: navigation will unmount this page, but we still clear submitting
       // in `finally` below so a failed transition can't leave the button stuck.
     } catch (err) {
@@ -53,8 +62,8 @@ export default function LoginPage() {
     setError(null);
     setSubmitting(true);
     try {
-      await loginWithGoogle({ idToken, tenantSlug: slugify(workspace) });
-      router.push("/dashboard");
+      const { role } = await loginWithGoogle({ idToken, tenantSlug: slugify(workspace) });
+      router.push(landingFor(role));
     } catch (err) {
       if (err instanceof ApiError && err.code === "USER_NOT_FOUND") {
         setError("No account in this workspace matches that Google email. Create an account or try a different workspace.");

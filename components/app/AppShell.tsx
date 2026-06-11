@@ -182,6 +182,16 @@ export function AppShell({
     if (!isPathAllowed(pathname, modulePaths)) router.replace("/dashboard");
   }, [authed, modulePaths, pathname, router]);
 
+  // Cross-shell guard: STAFF users belong on /work, not the owner dashboard.
+  // If they somehow land here (bookmark, old session, manual URL), forward
+  // them to their role's landing. Owners + Conddo support stay on /dashboard.
+  useEffect(() => {
+    if (authed !== true || !me) return;
+    if (me.user.role === "STAFF") {
+      router.replace("/work");
+    }
+  }, [authed, me, router]);
+
   async function handleLogout() {
     await logout();
     router.replace("/login");

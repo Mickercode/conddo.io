@@ -10,14 +10,19 @@ import { Chip } from "@/components/ui/Chip";
 import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
-import { staffApi, type StaffMember, type StaffRole, type StaffStatus } from "@/lib/api/staff";
+import { staffApi, roleDefFor, type StaffMember, type StaffStatus } from "@/lib/api/staff";
 
-const roleLabel: Record<StaffRole, string> = { TENANT_ADMIN: "Admin", STAFF: "Staff" };
 const statusChip: Record<StaffStatus, { tone: "success" | "warning" | "neutral"; label: string }> = {
   active: { tone: "success", label: "Active" },
   invited: { tone: "warning", label: "Invited" },
   inactive: { tone: "neutral", label: "Inactive" },
 };
+
+function roleLabelFor(m: StaffMember): string {
+  if (m.role === "TENANT_ADMIN") return "Owner";
+  if (m.staffRole) return roleDefFor(m.staffRole).label;
+  return "Staff";
+}
 
 const initialsOf = (s: string) =>
   s.trim().split(/[\s@.]+/).slice(0, 2).map((w) => w[0]?.toUpperCase() ?? "").join("") || "?";
@@ -91,7 +96,7 @@ export default function StaffPage() {
                       </div>
                     </td>
                     <td className="whitespace-nowrap px-5 py-3.5">
-                      <Chip tone={m.role === "TENANT_ADMIN" ? "primary" : "neutral"}>{roleLabel[m.role]}</Chip>
+                      <Chip tone={m.role === "TENANT_ADMIN" ? "primary" : "neutral"}>{roleLabelFor(m)}</Chip>
                     </td>
                     <td className="px-5 py-3.5">
                       <Chip tone={statusChip[m.status].tone}>{statusChip[m.status].label}</Chip>

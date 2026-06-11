@@ -31,8 +31,29 @@ export type LoginResult = {
   role: string;
 };
 
+/** Granular staff sub-role for STAFF-role users — determines which work
+ *  surface (`/work/*`) they land on after login and which modules they
+ *  see in the sidebar. Null when the user is TENANT_ADMIN (the owner sees
+ *  everything regardless) or when no role has been assigned yet. */
+export type StaffSubRole =
+  | "MANAGER"
+  | "CASHIER"
+  | "STOCK_MANAGER"
+  | "PHARMACIST"
+  | "BOOKKEEPER";
+
 export type Me = {
-  user: { id: string; fullName: string | null; email: string; role: string; initials: string };
+  user: {
+    id: string;
+    fullName: string | null;
+    email: string;
+    /** "TENANT_ADMIN" | "STAFF" | "SUPER_ADMIN". STAFF users also carry a
+     *  `staffRole` below — see StaffSubRole. */
+    role: string;
+    /** Present only on STAFF users; null on TENANT_ADMIN / SUPER_ADMIN. */
+    staffRole?: StaffSubRole | null;
+    initials: string;
+  };
   tenant: {
     id: string;
     name: string;
@@ -112,6 +133,48 @@ export async function forgotPassword(input: { tenantSlug: string; email: string 
 /** Complete a password reset with the emailed token. */
 export async function resetPassword(input: { token: string; newPassword: string }): Promise<void> {
   await authApi.post("/auth/reset-password", input);
+}
+
+// ----- Staff invitation acceptance ------------------------------------------
+
+/** Preview shape returned by /auth/invite/preview?token=. Lets the FE show
+ *  "you've been invited to <tenant> as a <role>" before asking for password.
+ *  Resolves to null when the token is invalid / expired / already used so
+ *  the FE shows a single graceful "this invite is no longer active" state. */
+export type InvitePreview = {
+  tenantName: string;
+  /** Role label only — keeps copy human ("Cashier", not "CASHIER"). */
+  roleLabel: string;
+  /** Sub-role enum value for routing the staffer post-accept. */
+  staffRole: StaffSubRole;
+  /** Email the invite was sent to — surfaced read-only so the staffer
+   *  knows the account they're claiming. */
+  email: string;
+  invitedBy?: string | null;
+};
+
+export async function previewInvite(token: string): Promise<InvitePreview | null> {
+  try {
+    const { data } = await authApi.get<InvitePreview>(
+      `/auth/invite/preview?token=${encodeURIComponent(token)}`,
+    );
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+/** Final step of the invite flow — sets the staffer's password and logs
+ *  them in. Returns the same LoginResult shape as a normal sign-in so the
+ *  caller can route via the access token immediately. */
+export async function acceptInvite(input: {
+  token: string;
+  password: string;
+  fullName?: string;
+}): Promise<LoginResult> {
+  const { data } = await authApi.post<LoginResult>("/auth/accept-invite", input);
+  setAccessToken(data.accessToken);
+  return data;
 }
 
 /** `/me` as a Result, for use with `useApiQuery`. */
