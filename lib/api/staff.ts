@@ -26,6 +26,13 @@ export type StaffMember = {
   lastActive: string | null;
 };
 
+/** Per-module access for a sub-role. "write" implies "read". Modules omitted
+ *  from the matrix are treated as "none". Shape matches BE's
+ *  `StaffAccessMatrix` (conddo-core) so the FE can use it directly to hide
+ *  nav items that would 403 anyway. */
+export type ModuleAccessLevel = "read" | "write";
+export type ModuleAccessMatrix = Record<string, ModuleAccessLevel>;
+
 export type StaffRoleDef = {
   /** Server-canonical key — matches StaffSubRole. */
   key: StaffSubRole;
@@ -36,6 +43,22 @@ export type StaffRoleDef = {
   /** Bullet-pointed access summary shown in the invite modal + accept-invite
    *  preview. Plain strings; FE renders as a list. */
   access: string[];
+  /** Machine-readable per-module matrix. BE became canonical (commit 1384ed8
+   *  on conddo-backend); when this is populated the FE binds nav decisions
+   *  to it directly. Missing modules → "none". Optional on the type so the
+   *  local STAFF_ROLE_CATALOGUE (which doesn't carry the matrix) still
+   *  compiles as a fallback for the offline / pre-shipment path. */
+  moduleAccess?: ModuleAccessMatrix;
+};
+
+/** BE wire shape for `/staff/roles`. Keeps `permissions` matching the BE
+ *  field name; we map it onto `access` (and copy `moduleAccess` through)
+ *  at the call site so consumers don't have to learn both names. */
+type StaffRoleDefWire = {
+  role: StaffSubRole;
+  label: string;
+  permissions: string[];
+  moduleAccess?: ModuleAccessMatrix;
 };
 
 export type InviteInput = {
@@ -145,7 +168,25 @@ export function landingPathFor(role: StaffSubRole | null | undefined): string {
 
 export const staffApi = {
   list: () => api.get<StaffMember[]>("/staff"),
-  roles: () => api.get<StaffRoleDef[]>("/staff/roles"),
+  /** Pull the BE-canonical role catalogue. Server returns the wire shape
+   *  ({role, permissions, …}); we normalise onto StaffRoleDef so callers
+   *  use the same field names whether the data came from BE or the local
+   *  STAFF_ROLE_CATALOGUE fallback. `description` is filled from the local
+   *  catalogue when present (BE doesn't carry it yet); empty otherwise.
+   *
+   *  Returned shape mirrors the `api.get` wrapper ({ data, meta? }) so this
+   *  composes with `useApiQuery` the same way every other call does. */
+  roles: async (): Promise<{ data: StaffRoleDef[] }> => {
+    const res = await api.get<StaffRoleDefWire[]>("/staff/roles");
+    const mapped: StaffRoleDef[] = res.data.map((r) => ({
+      key: r.role,
+      label: r.label,
+      description: STAFF_ROLE_CATALOGUE.find((c) => c.key === r.role)?.description ?? "",
+      access: r.permissions,
+      moduleAccess: r.moduleAccess,
+    }));
+    return { data: mapped, ...(res.meta ? { meta: res.meta } : {}) };
+  },
   /** Send an invite with email + sub-role. BE issues a one-time
    *  acceptInviteToken and emails the link to /accept-invite?token=. */
   invite: (body: InviteInput) => api.post<StaffMember>("/staff/invite", body),
@@ -155,6 +196,25 @@ export const staffApi = {
   deactivate: (id: string) =>
     api.patch<StaffMember>(`/staff/${id}`, { active: false }),
 };
+
+/** Read a module-access level from a role def. Returns `"none"` if the
+ *  module isn't present in the matrix (BE convention from HANDOFF Q1) or
+ *  when the role def doesn't carry a matrix at all (local catalogue path —
+ *  fall back to "write" so we don't silently hide modules during the
+ *  pre-BE-shipment window). */
+export function moduleAccessFor(
+  role: StaffRoleDef | undefined,
+  module: string,
+): ModuleAccessLevel | "none" {
+  if (!role) return "none";
+  if (!role.moduleAccess) return "write";
+  return role.moduleAccess[module] ?? "none";
+}
+
+export const canRead = (role: StaffRoleDef | undefined, module: string) =>
+  moduleAccessFor(role, module) !== "none";
+export const canWrite = (role: StaffRoleDef | undefined, module: string) =>
+  moduleAccessFor(role, module) === "write";
 
 /** Legacy alias — earlier code used `StaffRole` for the top-level enum. New
  *  code should use the explicit literal type on `StaffMember.role` directly. */

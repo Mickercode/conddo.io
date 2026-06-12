@@ -9,6 +9,7 @@ import {
   Megaphone,
   BarChart3,
   IdCard,
+  Sparkles,
   Settings,
   type LucideIcon,
 } from "lucide-react";
@@ -27,5 +28,6 @@ export const APP_NAV: NavItem[] = [
   { label: "Marketing", href: "/marketing", icon: Megaphone },
   { label: "Analytics", href: "/analytics", icon: BarChart3 },
   { label: "Staff", href: "/staff", icon: IdCard },
+  { label: "What's new", href: "/features", icon: Sparkles },
   { label: "Settings", href: "/settings", icon: Settings },
 ];
