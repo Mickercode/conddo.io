@@ -2,8 +2,25 @@
 
 import { useManifests } from "./useManifests";
 
-// App-level routes always available regardless of plan/vertical.
-const ALWAYS_ALLOWED = ["/dashboard", "/settings", "/search", "/notifications"];
+// App-level routes always available regardless of plan/vertical. These are
+// FE-only meta surfaces (settings, search, notifications) and FE-only
+// vertical pages whose BE manifest entry hasn't shipped yet — the latter
+// MUST be listed here too, otherwise the AppShell plan-guard in
+// AppShell.tsx bounces them to /dashboard the instant the manifest loads
+// (which is exactly what happened to /features + /pharmacy/emr until they
+// were added here). Keep this in sync with the splices in useAppNav.ts.
+const ALWAYS_ALLOWED = [
+  "/dashboard",
+  "/settings",
+  "/search",
+  "/notifications",
+  // Roadmap + "Request Beta access" — every tenant, every vertical.
+  "/features",
+  // EMR index + per-customer record pages. Pharmacy-only at the page level
+  // (the page itself renders an empty state for non-pharmacy verticals), so
+  // allowing the path for all is harmless — the page does the gating.
+  "/pharmacy/emr",
+];
 
 /**
  * The active module nav-paths for the current tenant (from the manifest), or
