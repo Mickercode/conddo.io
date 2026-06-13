@@ -1,5 +1,5 @@
 import Link from "next/link";
-import Image from "next/image";
+import { Wordmark } from "@/components/marketing/Wordmark";
 
 /** Minimal three-column footer + brand block. Same operations-platform tone
  *  as the new home — short, no padding. Tagline + lede sit on the brand
@@ -40,13 +40,7 @@ export function Footer() {
           {/* Brand column — logo + the operations-platform positioning. */}
           <div>
             <Link href="/" aria-label="conddo.io home" className="inline-block">
-              <Image
-                src="/conddo_logo_dark.png"
-                alt="conddo.io"
-                width={1800}
-                height={480}
-                className="h-8 w-auto"
-              />
+              <Wordmark tone="light" className="text-[18px] [&_span:last-child]:text-[18px]" />
             </Link>
             <p className="mt-5 text-pretty text-[14px] leading-relaxed text-white/70">
               The operating system for modern businesses.

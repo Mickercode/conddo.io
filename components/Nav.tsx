@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Menu, X, ArrowRight, Sparkles } from "lucide-react";
+import { Wordmark } from "@/components/marketing/Wordmark";
 
 /** Marketing nav links. /product is the deep-dive (so we don't clash with
  *  the dashboard's auth-gated /features), /businesses is "Solutions" in
@@ -69,22 +69,13 @@ export function Nav() {
                 : "h-14 md:h-15 pl-4 pr-2 md:pl-5 md:pr-2.5"
             }`}
           >
-            {/* Brand */}
+            {/* Brand — inline wordmark (no PNG plate). */}
             <Link
               href="/"
               aria-label="conddo.io home"
               className="inline-flex items-center shrink-0"
             >
-              <Image
-                src="/conddo_logo_dark.png"
-                alt="conddo.io"
-                width={1800}
-                height={480}
-                priority
-                className={`w-auto transition-all duration-300 ${
-                  scrolled ? "h-6" : "h-7"
-                }`}
-              />
+              <Wordmark tone="light" />
             </Link>
 
             {/* Center nav — absolute-centered inside the capsule so it
