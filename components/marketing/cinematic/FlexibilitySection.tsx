@@ -1,38 +1,43 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ShoppingBag, Briefcase, Stethoscope, Truck } from "lucide-react";
+import {
+  ShoppingBag, Briefcase, Stethoscope, Truck, Hotel, type LucideIcon,
+} from "lucide-react";
 
-/** Flexibility section — "Built to adapt to your business". Four industry
- *  archetypes shown as large cards (Retailers / Professional services /
- *  Healthcare / Logistics), each with a representative icon and a
+/** Flexibility section — "Built to adapt to your business". Industry
+ *  archetype cards (Retailers / Professional services / Healthcare /
+ *  Logistics / Hospitality), each with a representative icon and a
  *  one-sentence positioning. Sets up the cross-industry pitch without
- *  drilling into vertical-specific copy (that belongs on /businesses). */
+ *  drilling into vertical-specific copy (that belongs on /businesses).
+ *
+ *  The default industry roster is the 4-tile home version; pages that
+ *  want the 5-tile /product variant pass their own roster via prop. */
 
-const industries = [
-  {
-    icon: ShoppingBag,
-    label: "Retailers",
-    tagline: "manage inventory",
-  },
-  {
-    icon: Briefcase,
-    label: "Professional service firms",
-    tagline: "manage clients",
-  },
-  {
-    icon: Stethoscope,
-    label: "Healthcare providers",
-    tagline: "manage appointments",
-  },
-  {
-    icon: Truck,
-    label: "Logistics companies",
-    tagline: "manage deliveries",
-  },
+export type Industry = { icon: LucideIcon; label: string; tagline: string };
+
+const DEFAULT_INDUSTRIES: Industry[] = [
+  { icon: ShoppingBag, label: "Retailers",                 tagline: "manage inventory" },
+  { icon: Briefcase,   label: "Professional service firms", tagline: "manage clients" },
+  { icon: Stethoscope, label: "Healthcare providers",      tagline: "manage appointments" },
+  { icon: Truck,       label: "Logistics companies",       tagline: "manage deliveries" },
 ];
 
-export function FlexibilitySection() {
+/** /product page's 5-industry variant — same set as the home page but
+ *  adds Hospitality. Exported so the product page imports it by name. */
+export const PRODUCT_INDUSTRIES: Industry[] = [
+  ...DEFAULT_INDUSTRIES,
+  { icon: Hotel, label: "Hospitality businesses", tagline: "manage bookings" },
+];
+
+export function FlexibilitySection({
+  industries = DEFAULT_INDUSTRIES,
+  outroLine,
+}: {
+  industries?: Industry[];
+  /** Override the long-form line at the bottom. */
+  outroLine?: string;
+} = {}) {
   return (
     <section className="relative bg-[#0a0a0c] overflow-hidden">
       <div className="container-x py-24 md:py-36">
@@ -97,7 +102,8 @@ export function FlexibilitySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Whether you&apos;re selling products, delivering services, or managing complex operations, Conddo gives you the flexibility to work the way your business works.
+          {outroLine ??
+            "Whether you're selling products, delivering services, or managing complex operations, Conddo gives you the flexibility to work the way your business works."}
         </motion.p>
       </div>
     </section>

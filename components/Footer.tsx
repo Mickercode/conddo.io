@@ -1,29 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
-import { Sparkles } from "lucide-react";
 
-/** Sitemap-shaped footer — each column matches a top-level nav surface so
- *  visitors can land on any deep page from anywhere. Last column is the
- *  utility/legal stack. Verticals get their own section so the music
- *  studio + fashion + pharmacy landings are reachable from the global
- *  footer (good for SEO + cross-discovery). */
+/** Minimal three-column footer + brand block. Same operations-platform tone
+ *  as the new home — short, no padding. Tagline + lede sit on the brand
+ *  side; everything else is direct nav. */
 const groups: { heading: string; links: { label: string; href: string }[] }[] = [
   {
     heading: "Product",
     links: [
-      { label: "Overview",   href: "/product" },
-      { label: "Pricing",    href: "/pricing" },
-      { label: "Start free", href: "/onboarding/create-account" },
-      { label: "Sign in",    href: "/login" },
-    ],
-  },
-  {
-    heading: "Verticals",
-    links: [
-      { label: "Pharmacy",     href: "/businesses/pharmacy" },
-      { label: "Fashion",      href: "/businesses/fashion" },
-      { label: "Music Studio", href: "/businesses/music-studio" },
-      { label: "Browse all",   href: "/businesses" },
+      { label: "Overview",  href: "/product" },
+      { label: "Features",  href: "/product#platform" },
+      { label: "Solutions", href: "/businesses" },
+      { label: "Pricing",   href: "/pricing" },
     ],
   },
   {
@@ -31,8 +19,15 @@ const groups: { heading: string; links: { label: string; href: string }[] }[] = 
     links: [
       { label: "About",   href: "/about" },
       { label: "Contact", href: "mailto:hello@conddo.io" },
-      { label: "Privacy", href: "/legal/privacy" },
-      { label: "Terms",   href: "/legal/terms" },
+      { label: "Careers", href: "mailto:careers@conddo.io" },
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
+      { label: "Privacy",  href: "/legal/privacy" },
+      { label: "Terms",    href: "/legal/terms" },
+      { label: "Security", href: "/legal/security" },
     ],
   },
 ];
@@ -42,7 +37,7 @@ export function Footer() {
     <footer className="bg-ink">
       <div className="container-x py-16 md:py-20">
         <div className="grid grid-cols-1 gap-12 md:grid-cols-[1.4fr_repeat(3,1fr)]">
-          {/* Brand column */}
+          {/* Brand column — logo + the operations-platform positioning. */}
           <div>
             <Link href="/" aria-label="conddo.io home" className="inline-block">
               <Image
@@ -53,16 +48,15 @@ export function Footer() {
                 className="h-8 w-auto"
               />
             </Link>
-            <p className="mt-4 max-w-xs text-pretty text-[14px] leading-relaxed text-white/55">
-              The operating system for Nigerian businesses. Sell more, stress less.
+            <p className="mt-5 text-pretty text-[14px] leading-relaxed text-white/70">
+              The operating system for modern businesses.
             </p>
-            <span className="mt-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3 py-1.5 font-mono text-[10.5px] uppercase tracking-[0.12em] text-primary-light backdrop-blur">
-              <Sparkles size={10} />
-              Launching 2026
-            </span>
+            <p className="mt-2 text-pretty text-[13px] leading-relaxed text-white/45">
+              One platform for customers, payments, operations, and growth.
+            </p>
           </div>
 
-          {/* Link columns */}
+          {/* Link columns — Product / Company / Legal. */}
           {groups.map((g) => (
             <div key={g.heading}>
               <p className="mb-4 font-mono text-[11px] uppercase tracking-[0.12em] text-white/40">
@@ -84,13 +78,13 @@ export function Footer() {
           ))}
         </div>
 
-        {/* Bottom bar — copyright + a small "made in Lagos" tag. */}
+        {/* Bottom bar — copyright + closing tag. */}
         <div className="mt-14 flex flex-col gap-3 border-t border-white/10 pt-7 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-[12.5px] text-white/40">
-            © 2026 Conddo.io by Handel Cores. All rights reserved.
+            © 2026 Conddo.io
           </p>
-          <p className="font-mono text-[10.5px] uppercase tracking-[0.12em] text-white/35">
-            Made in Lagos
+          <p className="text-[12.5px] text-white/40">
+            Built for businesses that are growing.
           </p>
         </div>
       </div>

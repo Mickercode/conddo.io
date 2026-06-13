@@ -138,7 +138,7 @@ function BentoCell({
 /* Cell visuals — each its own loop animation. Hand-tuned for Conddo.       */
 /* ----------------------------------------------------------------------- */
 
-function WebsiteVisual() {
+export function WebsiteVisual() {
   // A miniature mock website slowly tilts + the URL bar types out.
   const [chars, setChars] = useState(0);
   const url = "wellspring.conddo.io";
@@ -180,7 +180,7 @@ function WebsiteVisual() {
   );
 }
 
-function CustomersVisual() {
+export function CustomersVisual() {
   // Cycles through three customer avatars with the active one glowing.
   const [active, setActive] = useState(0);
   useEffect(() => {
@@ -227,7 +227,7 @@ function CustomersVisual() {
   );
 }
 
-function PaymentsVisual() {
+export function PaymentsVisual() {
   // Naira amount tick-up animation that loops.
   const [amount, setAmount] = useState(0);
   useEffect(() => {
@@ -265,7 +265,7 @@ function PaymentsVisual() {
   );
 }
 
-function OrdersVisual() {
+export function OrdersVisual() {
   // Order stage progresses: Pending → Production → Ready → Delivered, on loop.
   const stages = ["Pending", "Production", "Ready", "Delivered"];
   const [active, setActive] = useState(0);
@@ -318,7 +318,7 @@ function OrdersVisual() {
   );
 }
 
-function AnalyticsVisual() {
+export function AnalyticsVisual() {
   // Bars rise + a number ticks up. Re-randomises every loop.
   const [data, setData] = useState<number[]>([]);
   useEffect(() => {
@@ -345,7 +345,7 @@ function AnalyticsVisual() {
   );
 }
 
-function StaffVisual() {
+export function StaffVisual() {
   const roles = ["Owner", "Manager", "Sales", "Operations", "Finance"];
   return (
     <div className="h-full flex items-center justify-center">
@@ -369,7 +369,7 @@ function StaffVisual() {
   );
 }
 
-function InventoryVisual() {
+export function InventoryVisual() {
   // Stock counts on three SKUs that tick down slowly, one of them dipping
   // into the warning band to make the low-stock alert feel real.
   const [counts, setCounts] = useState([248, 56, 12]);
@@ -410,7 +410,7 @@ function InventoryVisual() {
   );
 }
 
-function MarketingVisual() {
+export function MarketingVisual() {
   // A campaign envelope opens out, releases three glowing particles that
   // drift up + fade, then resets. Reads as "messages going out".
   const [tick, setTick] = useState(0);
