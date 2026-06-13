@@ -79,6 +79,57 @@
   .section-y {
     @apply py-16 md:py-24;
   }
+
+  /* Marketing eyebrow — short uppercase tag above section headings. Same
+   *  vibe as .eyebrow but with a leading dot so it reads as "this is a
+   *  labelled section" inline at full-width sections. */
+  .marketing-eyebrow {
+    @apply inline-flex items-center gap-2 font-mono text-[11px] font-medium uppercase tracking-[0.12em] text-primary;
+  }
+  .marketing-eyebrow::before {
+    content: "";
+    @apply inline-block h-1 w-1 rounded-full bg-primary;
+  }
+
+  /* Section title — paired with .marketing-eyebrow. Big, balanced, dark. */
+  .marketing-h2 {
+    @apply text-balance text-[34px] font-medium leading-[1.1] tracking-[-0.02em] text-ink md:text-[44px];
+  }
+
+  /* Dark hero gradient — used on `/` and section-level dark blocks across
+   *  marketing pages. Reads cooler than a flat #111 so the page has subtle
+   *  depth without trying to look fancy. */
+  .marketing-hero-dark {
+    background:
+      radial-gradient(80% 60% at 50% 0%, rgba(124, 92, 191, 0.22), transparent 70%),
+      radial-gradient(60% 80% at 100% 100%, rgba(124, 92, 191, 0.12), transparent 70%),
+      #0d0d0e;
+  }
+  .marketing-hero-dark-grid {
+    background-image:
+      radial-gradient(circle at 1px 1px, rgba(255, 255, 255, 0.06) 1px, transparent 0);
+    background-size: 24px 24px;
+  }
+
+  /* Bento card — neutral surface card with a subtle hover lift. Used as the
+   *  base for every grid cell on the home + product pages so spacing and
+   *  motion feel identical across the site. Composes with backdrop-blur
+   *  utilities when needed for the glass variant. */
+  .bento-card {
+    @apply relative overflow-hidden rounded-2xl border border-neutral-border bg-neutral-surface transition-all duration-300;
+  }
+  .bento-card:hover {
+    @apply -translate-y-0.5 border-primary-border shadow-[0_24px_60px_-30px_rgba(124,92,191,0.35)];
+  }
+
+  /* Glass card — for dark sections; subtle translucent surface with a thin
+   *  light border that catches the eye without overwhelming the content. */
+  .bento-card-dark {
+    @apply relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] backdrop-blur-md transition-all duration-300;
+  }
+  .bento-card-dark:hover {
+    @apply -translate-y-0.5 border-white/20 bg-white/[0.06];
+  }
 }
 
 /* Rotating-word entrance (hero headline). */

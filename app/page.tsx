@@ -1,15 +1,11 @@
 import type { Metadata } from "next";
-import { Nav } from "@/components/Nav";
 import { Hero } from "@/components/Hero";
 import { ProofBar } from "@/components/ProofBar";
-import { Features } from "@/components/Features";
-import { RealBusinesses } from "@/components/RealBusinesses";
+import { HomeBento } from "@/components/marketing/HomeBento";
 import { BusinessTypes } from "@/components/BusinessTypes";
-import { Pricing } from "@/components/Pricing";
 import { SocialProof } from "@/components/SocialProof";
-import { FAQ } from "@/components/FAQ";
 import { FinalCTA } from "@/components/FinalCTA";
-import { Footer } from "@/components/Footer";
+import { MarketingShell } from "@/components/marketing/MarketingShell";
 import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
@@ -24,25 +20,19 @@ export const metadata: Metadata = {
   },
 };
 
+/** Home page — the high-level overview. Dark hero with product mockup,
+ *  then a bento grid teaser of every module, a slimmed BusinessTypes
+ *  glance (full version lives on /businesses), trust strip, and a closing
+ *  CTA. Deep features live on /product; pricing on /pricing; etc. */
 export default function Home() {
   return (
-    <>
-      <Nav />
-      <main>
-        {/* Section sequence: dark hero → off-white content → one light-purple
-            section → off-white → violet CTA strip → dark footer. Below-the-fold
-            sections fade-and-rise into view via <Reveal>. */}
-        <Hero />
-        <ProofBar />
-        <Reveal><Features /></Reveal>
-        <Reveal><RealBusinesses /></Reveal>
-        <Reveal><BusinessTypes /></Reveal>
-        <Reveal><Pricing /></Reveal>
-        <Reveal><SocialProof /></Reveal>
-        <Reveal><FAQ /></Reveal>
-        <Reveal><FinalCTA /></Reveal>
-      </main>
-      <Footer />
-    </>
+    <MarketingShell>
+      <Hero />
+      <ProofBar />
+      <Reveal><HomeBento /></Reveal>
+      <Reveal><BusinessTypes /></Reveal>
+      <Reveal><SocialProof /></Reveal>
+      <FinalCTA />
+    </MarketingShell>
   );
 }

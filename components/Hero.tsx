@@ -1,16 +1,25 @@
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Sparkles } from "lucide-react";
 import { Button } from "./ui/Button";
 import { RotatingWord } from "./ui/RotatingWord";
 import { HeroPreview } from "./mocks/HeroPreview";
 
 export function Hero() {
   return (
-    <section id="top" className="bg-ink">
+    <section
+      id="top"
+      className="marketing-hero-dark relative overflow-hidden"
+    >
+      {/* Subtle dotted grid layered above the radial gradient — barely
+          visible at rest, gives the dark hero a sense of "made with care"
+          without competing with the copy. */}
+      <div className="marketing-hero-dark-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden />
+
       {/* Copy block — compact, lets the preview do the heavy lifting below. */}
-      <div className="container-x pt-16 md:pt-24">
+      <div className="container-x relative pt-16 md:pt-24">
         <div className="mx-auto max-w-3xl text-center">
-          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.08em] text-primary-light">
-            Sell more · Stress less
+          <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-primary-light backdrop-blur">
+            <Sparkles size={11} className="text-primary-light" />
+            Built for Nigerian businesses
           </span>
 
           <h1 className="text-balance text-[42px] font-medium leading-[1.05] tracking-[-0.02em] text-white md:text-[64px]">
@@ -22,7 +31,7 @@ export function Hero() {
             needs to sell, operate, and grow.
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-white/70">
+          <p className="mx-auto mt-6 max-w-2xl text-pretty text-[17px] leading-relaxed text-white/70 md:text-lg">
             Your website. Your customers. Your orders. Your marketing. One
             platform, built for your type of business.
           </p>
@@ -32,7 +41,7 @@ export function Hero() {
               Start free trial
               <ArrowRight size={18} />
             </Button>
-            <Button href="#features" variant="secondary-dark" size="lg">
+            <Button href="/product" variant="secondary-dark" size="lg">
               See features
             </Button>
           </div>
@@ -43,12 +52,11 @@ export function Hero() {
         </div>
       </div>
 
-      {/* Product preview — full container width, auto-rotates through 5 tabs so
-          a visitor sees "this is a real working product" before they scroll.
-          The white card sits inside a soft shadow so it reads as foreground
-          floating above the dark hero. Pause-on-hover + reduced-motion handled
-          inside HeroPreview. */}
-      <div className="container-x pb-20 pt-12 md:pb-28 md:pt-16">
+      {/* Product preview — auto-rotates through 5 tabs so a visitor sees
+          "this is a real working product" before they scroll. White card
+          inside a soft shadow so it reads as foreground floating above
+          the dark hero. */}
+      <div className="container-x relative pb-20 pt-12 md:pb-28 md:pt-16">
         <div className="mx-auto max-w-5xl">
           <HeroPreview />
         </div>
