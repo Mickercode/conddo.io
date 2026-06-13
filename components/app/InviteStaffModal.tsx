@@ -71,6 +71,18 @@ export function InviteStaffModal({
         );
         return;
       }
+      // BE V50 — one email = one Conddo account, globally. An owner trying
+      // to invite a colleague who already has an account on a different
+      // workspace gets EMAIL_ALREADY_REGISTERED here. The colleague needs
+      // to either use a different email for this workspace or have their
+      // existing account moved (not yet supported in the FE — log a hint).
+      if (apiErr?.code === "EMAIL_ALREADY_REGISTERED" || apiErr?.code === "USER_ALREADY_EXISTS") {
+        toast.error(
+          "Email already in use",
+          "That email already has a Conddo account. Ask them to use a different email for this workspace.",
+        );
+        return;
+      }
       toast.error(
         "Couldn't send invite",
         apiErr?.message ?? "Please try again.",

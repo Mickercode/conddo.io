@@ -60,7 +60,21 @@ export default function CreateAccountStep() {
       const next = nextStep("create-account");
       if (next) router.push(hrefFor(next.slug));
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Couldn't create your account. Please try again.");
+      // BE V50 enforces global UNIQUE on users.email — the same email can no
+      // longer create a second Conddo account. We surface both error codes
+      // (EMAIL_ALREADY_REGISTERED for the new V50 cross-tenant check,
+      // USER_ALREADY_EXISTS for the legacy same-tenant path) as one clean
+      // "use sign-in" message instead of a raw error string.
+      if (
+        err instanceof ApiError &&
+        (err.code === "EMAIL_ALREADY_REGISTERED" || err.code === "USER_ALREADY_EXISTS")
+      ) {
+        setError(
+          "That email already has a Conddo account. Sign in instead, or use a different email.",
+        );
+      } else {
+        setError(err instanceof Error ? err.message : "Couldn't create your account. Please try again.");
+      }
     } finally {
       // Always reset so a failed transition can't leave the button locked in
       // "Creating account…" — the success path navigates away anyway.
@@ -174,7 +188,13 @@ export default function CreateAccountStep() {
                 const next = nextStep("create-account");
                 if (next) router.push(hrefFor(next.slug));
               } catch (err) {
-                if (err instanceof ApiError && err.code === "USER_ALREADY_EXISTS") {
+                // Same dual-code handling as the password path. V50 surfaces
+                // EMAIL_ALREADY_REGISTERED; older paths can still return
+                // USER_ALREADY_EXISTS during the rollout window.
+                if (
+                  err instanceof ApiError &&
+                  (err.code === "EMAIL_ALREADY_REGISTERED" || err.code === "USER_ALREADY_EXISTS")
+                ) {
                   setError("That Google email already has a Conddo account. Sign in instead.");
                 } else {
                   setError(err instanceof Error ? err.message : "Google sign-in failed. Please try again.");
