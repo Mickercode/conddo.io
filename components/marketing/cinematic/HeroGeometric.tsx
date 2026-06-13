@@ -68,7 +68,10 @@ function FloatingShape({
  *
  *  Tuned to Conddo's palette: deep ink background, violet/rose accents on
  *  the shapes (kept the Kokonut palette since it matches our primary violet
- *  and complements it without competing). */
+ *  and complements it without competing).
+ *
+ *  `lede` accepts a string for the simple case or ReactNode when the copy
+ *  needs multiple paragraphs / inline formatting. */
 export function HeroGeometric({
   eyebrow = "Conddo.io",
   titleTop,
@@ -79,7 +82,7 @@ export function HeroGeometric({
   eyebrow?: string;
   titleTop: string;
   titleBottom: ReactNode;
-  lede?: string;
+  lede?: ReactNode;
   children?: ReactNode;
 }) {
   const fadeUp = {
@@ -174,9 +177,13 @@ export function HeroGeometric({
 
           {lede && (
             <motion.div custom={2} variants={fadeUp} initial="hidden" animate="visible">
-              <p className="text-pretty text-lg md:text-xl text-white/55 mb-10 leading-relaxed font-light tracking-wide max-w-2xl mx-auto px-4">
-                {lede}
-              </p>
+              {/* Wrap whatever the caller passed (string or paragraphs) in
+                  the same constraints, but let the caller supply <p> tags
+                  for multi-paragraph lede so paragraph spacing stays
+                  consistent with the rest of the marketing system. */}
+              <div className="text-pretty text-lg md:text-xl text-white/55 mb-10 leading-relaxed font-light tracking-wide max-w-2xl mx-auto px-4 space-y-4 [&>p]:text-pretty">
+                {typeof lede === "string" ? <p>{lede}</p> : lede}
+              </div>
             </motion.div>
           )}
 

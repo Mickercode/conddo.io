@@ -6,13 +6,16 @@ import {
   Globe, Users, Wallet, Package, BarChart3, Megaphone, IdCard, ShoppingCart,
 } from "lucide-react";
 
-/** Cinematic bento grid for the home page. Six cards in an asymmetric
+/** Cinematic bento grid for the home page. Eight cards in an asymmetric
  *  layout, each with its own micro-animation that loops in place. The
  *  combined effect is "the product is alive, even on a static page" —
  *  exactly the Apple/Framer instinct.
  *
- *  Adapted from 21st.dev's animated bento with each cell tuned to a Conddo
- *  module (Website, Customers, Payments, Inventory, Analytics, Staff). */
+ *  Each cell maps 1:1 to a Conddo module from the operations-positioning
+ *  copy: Website & Commerce, Customers, Orders & Bookings, Payments,
+ *  Inventory, Marketing, Analytics, Team Management. Grid layout is
+ *  6-column with mixed spans so the eye lands on the high-priority
+ *  modules (Website + Customers + Payments) first. */
 export function AnimatedBento() {
   return (
     <section className="bg-[#0a0a0c] px-6 py-24 md:py-32">
@@ -23,55 +26,76 @@ export function AnimatedBento() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
         >
-          Modules
+          Capabilities
         </motion.p>
         <motion.h2
-          className="text-4xl md:text-6xl font-semibold tracking-[-0.02em] text-white mb-12 md:mb-16 max-w-3xl"
+          className="text-4xl md:text-6xl font-semibold tracking-[-0.02em] text-white mb-6 max-w-3xl leading-[1.05]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ delay: 0.1 }}
         >
-          Every tool your business needs, in one workspace.
+          Everything your business needs to operate and grow.
         </motion.h2>
+        <motion.p
+          className="text-lg text-white/55 mb-12 md:mb-16 max-w-2xl leading-relaxed"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.15 }}
+        >
+          Eight modules. One workspace. Built to work together out of the box.
+        </motion.p>
 
-        {/* 6-column asymmetric bento — same footprint as the home grid I
-            shipped before, but every cell is now a live mini-experience. */}
+        {/* 6-column asymmetric bento — every cell a live mini-experience. */}
         <div className="grid grid-cols-1 md:grid-cols-6 gap-4 auto-rows-[200px]">
           <BentoCell
-            span="md:col-span-2 md:row-span-2"
+            span="md:col-span-3 md:row-span-2"
             visual={<WebsiteVisual />}
-            title="Website"
-            description="A storefront that sells, on your subdomain. SEO-ready, fast on 3G, mobile-first."
+            title="Website & Commerce"
+            description="Create a professional online presence that helps customers discover, engage with, and buy from your business."
           />
           <BentoCell
-            span="md:col-span-2"
+            span="md:col-span-3"
             visual={<CustomersVisual />}
             title="Customers"
-            description="A real CRM, not a contact list."
+            description="Maintain a complete view of every customer, interaction, transaction, and relationship."
+          />
+          <BentoCell
+            span="md:col-span-3"
+            visual={<OrdersVisual />}
+            title="Orders & Bookings"
+            description="Manage sales, appointments, fulfilment, and service delivery from one workflow."
           />
           <BentoCell
             span="md:col-span-2 md:row-span-2"
             visual={<PaymentsVisual />}
-            title="Naira payments"
-            description="Paystack online, Routepay in-person. Reconciled into one ledger every day."
+            title="Payments"
+            description="Accept, track, and reconcile payments with confidence."
           />
           <BentoCell
             span="md:col-span-2"
-            visual={<OrdersVisual />}
-            title="Orders & Bookings"
+            visual={<InventoryVisual />}
+            title="Inventory"
+            description="Monitor stock levels, product performance, and movement in real time."
+          />
+          <BentoCell
+            span="md:col-span-2"
+            visual={<MarketingVisual />}
+            title="Marketing"
+            description="Build stronger relationships through campaigns, promotions, and automation."
           />
           <BentoCell
             span="md:col-span-3"
             visual={<AnalyticsVisual />}
-            title="Analytics that decide for you"
-            description="Revenue, top products, customer trends — at a glance."
+            title="Analytics"
+            description="Track performance through actionable insights and real-time reporting."
           />
           <BentoCell
             span="md:col-span-3"
             visual={<StaffVisual />}
-            title="Bring your team, with the right access"
-            description="Five role presets — Cashier, Pharmacist, Stock Manager, Bookkeeper, Manager."
+            title="Team Management"
+            description="Empower your team with role-based access and centralized collaboration."
           />
         </div>
       </div>
@@ -322,7 +346,7 @@ function AnalyticsVisual() {
 }
 
 function StaffVisual() {
-  const roles = ["Manager", "Pharmacist", "Cashier", "Stock Manager", "Bookkeeper"];
+  const roles = ["Owner", "Manager", "Sales", "Operations", "Finance"];
   return (
     <div className="h-full flex items-center justify-center">
       <div className="flex flex-wrap gap-2 justify-center max-w-[90%]">
@@ -341,6 +365,81 @@ function StaffVisual() {
           </motion.span>
         ))}
       </div>
+    </div>
+  );
+}
+
+function InventoryVisual() {
+  // Stock counts on three SKUs that tick down slowly, one of them dipping
+  // into the warning band to make the low-stock alert feel real.
+  const [counts, setCounts] = useState([248, 56, 12]);
+  useEffect(() => {
+    const id = setInterval(() => {
+      setCounts((c) => {
+        const next = c.map((n) => Math.max(0, n - 1));
+        // When the lowest hits zero, reseed so the loop continues.
+        if (next.every((n) => n === 0)) return [248, 56, 12];
+        return next;
+      });
+    }, 700);
+    return () => clearInterval(id);
+  }, []);
+  const skus = [
+    { name: "SKU-A4", tone: "ok" as const },
+    { name: "SKU-B2", tone: "warn" as const },
+    { name: "SKU-C1", tone: "danger" as const },
+  ];
+  return (
+    <div className="h-full flex flex-col items-center justify-center gap-2 py-2">
+      <Package className="h-5 w-5 text-primary-light" />
+      <div className="space-y-1.5 w-full max-w-[140px]">
+        {skus.map((s, i) => (
+          <div key={s.name} className="flex items-center justify-between rounded-md border border-white/[0.06] bg-white/[0.02] px-2 py-1.5">
+            <span className="font-mono text-[10px] text-white/50">{s.name}</span>
+            <span className={`font-mono text-[12px] tabular-nums ${
+              s.tone === "danger" ? "text-rose-400" :
+              s.tone === "warn" ? "text-amber-400" :
+              "text-white/85"
+            }`}>
+              {counts[i]}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function MarketingVisual() {
+  // A campaign envelope opens out, releases three glowing particles that
+  // drift up + fade, then resets. Reads as "messages going out".
+  const [tick, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 2400);
+    return () => clearInterval(id);
+  }, []);
+  return (
+    <div className="h-full flex items-center justify-center relative">
+      <motion.div
+        key={tick}
+        className="relative"
+      >
+        <Megaphone className="h-8 w-8 text-primary-light" />
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="absolute top-0 left-1/2 h-1.5 w-1.5 rounded-full bg-primary-light"
+            initial={{ x: -3, y: 0, opacity: 0 }}
+            animate={{
+              x: -3 + (i - 1) * 22,
+              y: -36,
+              opacity: [0, 1, 0],
+              scale: [0.5, 1, 0.5],
+            }}
+            transition={{ duration: 2, delay: i * 0.25, ease: "easeOut" }}
+          />
+        ))}
+      </motion.div>
     </div>
   );
 }
