@@ -7,6 +7,8 @@ import { Eye, EyeOff, Loader2, AlertCircle, ArrowRight } from "lucide-react";
 import {
   CinematicAuthShell,
   AuthCard,
+  AuthRow,
+  AuthSubmitButton,
   fieldLabelCls,
   fieldInputCls,
 } from "@/components/auth/CinematicAuthShell";
@@ -25,14 +27,9 @@ export default function LoginPage() {
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Any token in localStorage when the user lands here is by definition stale
-  // (they're trying to sign in again). Scrub it — otherwise it gets attached
-  // to subsequent /api/v1 calls and 401s anything that depends on /me.
+  // Stale tokens get scrubbed — they'd otherwise attach to /api/v1 calls.
   useEffect(() => { clearAccessToken(); }, []);
 
-  /** Route post-login based on top-level role. STAFF land on /work which
-   *  reads me.user.staffRole and forwards to their role-specific landing.
-   *  Owners and Conddo support staff keep the full dashboard. */
   function landingFor(role: string): string {
     if (role === "TENANT_ADMIN" || role === "SUPER_ADMIN") return "/dashboard";
     return "/work";
@@ -84,14 +81,16 @@ export default function LoginPage() {
     >
       <AuthCard title="Welcome back" subtitle="Sign in to your business workspace.">
         {error && (
-          <div className="mb-5 flex items-start gap-2 rounded-xl border border-rose-400/20 bg-rose-500/[0.06] px-4 py-3 text-[13.5px] text-rose-200">
-            <AlertCircle size={16} className="mt-0.5 shrink-0" />
-            <span>{error}</span>
-          </div>
+          <AuthRow className="mb-5">
+            <div className="flex items-start gap-2 rounded-xl border border-rose-400/20 bg-rose-500/[0.06] px-4 py-3 text-[13.5px] text-rose-200">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
+              <span>{error}</span>
+            </div>
+          </AuthRow>
         )}
 
         <form onSubmit={onSubmit} className="space-y-5">
-          <div>
+          <AuthRow>
             <label className={fieldLabelCls}>Workspace</label>
             <div className="flex">
               <input
@@ -105,9 +104,9 @@ export default function LoginPage() {
                 .conddo.io
               </span>
             </div>
-          </div>
+          </AuthRow>
 
-          <div>
+          <AuthRow>
             <label className={fieldLabelCls}>Email address</label>
             <input
               className={fieldInputCls}
@@ -117,9 +116,9 @@ export default function LoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               required
             />
-          </div>
+          </AuthRow>
 
-          <div>
+          <AuthRow>
             <label className={fieldLabelCls}>Password</label>
             <div className="relative">
               <input
@@ -144,22 +143,24 @@ export default function LoginPage() {
                 Forgot password?
               </Link>
             </div>
-          </div>
+          </AuthRow>
 
-          <button
-            type="submit"
-            disabled={submitting}
-            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-[14.5px] font-medium text-ink transition-all hover:bg-white/90 disabled:opacity-60 disabled:cursor-not-allowed"
-          >
-            {submitting ? <Loader2 size={16} className="animate-spin" /> : null}
-            {submitting ? "Signing in…" : "Sign in"}
-            {!submitting && <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />}
-          </button>
+          <AuthRow>
+            <AuthSubmitButton loading={submitting} loadingLabel="Signing in…">
+              {submitting && <Loader2 size={16} className="animate-spin" />}
+              {!submitting && (
+                <>
+                  Sign in
+                  <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />
+                </>
+              )}
+            </AuthSubmitButton>
+          </AuthRow>
         </form>
 
         {hasGoogleClient() && (
-          <>
-            <div className="my-6 flex items-center gap-3">
+          <AuthRow className="mt-6">
+            <div className="mb-5 flex items-center gap-3">
               <span className="h-px flex-1 bg-white/10" />
               <span className="text-[11px] uppercase tracking-loose text-white/40">or</span>
               <span className="h-px flex-1 bg-white/10" />
@@ -169,7 +170,7 @@ export default function LoginPage() {
               onCredential={onGoogleCredential}
               onError={(msg) => setError(msg)}
             />
-          </>
+          </AuthRow>
         )}
       </AuthCard>
     </CinematicAuthShell>
