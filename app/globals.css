@@ -130,6 +130,67 @@
   .bento-card-dark:hover {
     @apply -translate-y-0.5 border-white/20 bg-white/[0.06];
   }
+
+  /* =================================================================
+   * CINEMATIC DESIGN SYSTEM
+   *
+   * Pattern classes for the dark-first marketing surface. Every
+   * cinematic section composes these with Tailwind utilities so the
+   * design language stays consistent across pages without callers
+   * repeating raw color stops or arbitrary class strings.
+   *
+   * Tokens these reference live in tailwind.config.ts under
+   * theme.extend.colors.cinema:
+   *   cinema.base   #0a0a0c   page background
+   *   cinema.elev   #13131a   elevated card surface
+   *   cinema.elev2  #1a1a23   hover state
+   *   cinema.line   #252531   hairline divider
+   * ================================================================= */
+
+  /* Page-level dark surface. Apply to a <section> to make it part of
+     the cinematic flow. */
+  .cinema-surface {
+    @apply relative overflow-hidden bg-cinema-base;
+  }
+
+  /* Eyebrow for cinematic sections — violet-light mono, looser tracking. */
+  .cinema-eyebrow {
+    @apply font-mono text-[12px] uppercase tracking-loose text-primary-light;
+  }
+
+  /* Cinematic H2 — the big balanced headline above each section. */
+  .cinema-h2 {
+    @apply text-balance text-4xl md:text-6xl font-semibold tracking-tighter text-white leading-[1.05];
+  }
+
+  /* Lede paragraph — under a cinema-h2. Soft white, generous leading. */
+  .cinema-lede {
+    @apply text-pretty text-lg md:text-xl text-white/55 leading-relaxed font-light;
+  }
+
+  /* Aurora gradient text — the violet→white→rose gradient applied to
+     an inline word inside a headline. */
+  .cinema-aurora {
+    @apply bg-cinema-aurora bg-clip-text text-transparent;
+  }
+
+  /* Glass tile — the universal cinema card. Used everywhere from
+     differentiator triplets to trust cards to industry tiles. */
+  .cinema-tile {
+    @apply rounded-2xl border border-white/[0.06] bg-white/[0.02] backdrop-blur transition-colors;
+  }
+  .cinema-tile:hover {
+    @apply border-primary/30;
+  }
+
+  /* Elevated card — opaque surface for the bento cells. Sits ON TOP of
+     cinema-surface, not transparent on it. */
+  .cinema-card {
+    @apply rounded-2xl border border-white/[0.06] bg-cinema-elev transition-colors;
+  }
+  .cinema-card:hover {
+    @apply border-primary/30 bg-cinema-elev2;
+  }
 }
 
 /* Rotating-word entrance (hero headline). */
