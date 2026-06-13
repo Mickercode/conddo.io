@@ -82,19 +82,19 @@ function ConsultationRow({
     : undefined;
 
   return (
-    <li className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+    <li className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 items-start gap-3">
-          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-bg text-primary">
+          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-primary">
             <MessageCircle size={18} />
           </span>
           <div className="min-w-0">
             <div className="mb-1 flex flex-wrap items-center gap-2">
-              <p className="text-[15px] font-medium text-ink">{c.customerName}</p>
+              <p className="text-[15px] font-medium text-white">{c.customerName}</p>
               <Chip tone={chip.tone}>{chip.label}</Chip>
             </div>
-            <p className="text-[13px] leading-relaxed text-content-secondary">{c.topic}</p>
-            <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-content-muted">
+            <p className="text-[13px] leading-relaxed text-white/65">{c.topic}</p>
+            <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-white/45">
               <span className="flex items-center gap-1"><Phone size={12} /> {c.whatsappNumber}</span>
               {c.preferredTime && (
                 <span className="flex items-center gap-1">
@@ -111,18 +111,18 @@ function ConsultationRow({
               )}
             </p>
             {c.pharmacistNote && (
-              <p className="mt-2 rounded-md bg-neutral-surface2 px-2.5 py-1.5 text-[12px] text-content-secondary">
+              <p className="mt-2 rounded-md bg-white/[0.02] px-2.5 py-1.5 text-[12px] text-white/65">
                 Note: {c.pharmacistNote}
               </p>
             )}
           </div>
         </div>
-        <div className="shrink-0 text-right text-[12px] text-content-muted">
+        <div className="shrink-0 text-right text-[12px] text-white/45">
           <p>Requested {fmtDateTime(c.createdAt)}</p>
           {c.completedAt && <p>Completed {fmtDateTime(c.completedAt)}</p>}
         </div>
       </div>
-      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-neutral-border pt-3">
+      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-3">
         <a
           href={whatsappLink(c.whatsappNumber, whatsappPrefill)}
           target="_blank"
@@ -174,8 +174,8 @@ export default function ConsultationsPage() {
               onClick={() => setFilter(f.key)}
               className={`rounded-full px-3.5 py-1.5 text-[13px] transition-colors ${
                 active
-                  ? "border border-primary bg-neutral-surface font-medium text-primary"
-                  : "border border-transparent text-content-secondary hover:text-primary"
+                  ? "border border-primary bg-cinema-elev font-medium text-primary"
+                  : "border border-transparent text-white/65 hover:text-primary"
               }`}
             >
               {f.label}

@@ -28,11 +28,11 @@ export default function ApiKeysSettings() {
           />
         }
       >
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[560px] text-left">
               <thead>
-                <tr className="border-b border-neutral-border bg-neutral-surface2 text-[11px] uppercase tracking-[0.05em] text-content-secondary">
+                <tr className="border-b border-white/[0.06] bg-white/[0.02] text-[11px] uppercase tracking-[0.05em] text-white/65">
                   <th className="px-6 py-3 font-medium">Name</th>
                   <th className="px-6 py-3 font-medium">Key</th>
                   <th className="px-6 py-3 font-medium">Created</th>
@@ -40,15 +40,15 @@ export default function ApiKeysSettings() {
                   <th className="px-6 py-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-border">
+              <tbody className="divide-y divide-white/[0.06]">
                 {keys.map((k) => (
-                  <tr key={k.id} className="transition-colors hover:bg-neutral-surface2">
-                    <td className="px-6 py-3.5 text-[14px] text-ink">{k.name}</td>
-                    <td className="px-6 py-3.5 font-mono text-[13px] text-content-secondary">{k.prefix}••••••••</td>
-                    <td className="whitespace-nowrap px-6 py-3.5 text-[13px] text-content-muted">{k.createdAt}</td>
-                    <td className="whitespace-nowrap px-6 py-3.5 text-[13px] text-content-muted">{k.lastUsed ?? "Never"}</td>
+                  <tr key={k.id} className="transition-colors hover:bg-white/[0.02]">
+                    <td className="px-6 py-3.5 text-[14px] text-white">{k.name}</td>
+                    <td className="px-6 py-3.5 font-mono text-[13px] text-white/65">{k.prefix}••••••••</td>
+                    <td className="whitespace-nowrap px-6 py-3.5 text-[13px] text-white/45">{k.createdAt}</td>
+                    <td className="whitespace-nowrap px-6 py-3.5 text-[13px] text-white/45">{k.lastUsed ?? "Never"}</td>
                     <td className="px-6 py-3.5 text-right">
-                      <button aria-label="Revoke key" className="text-content-muted transition-colors hover:text-danger">
+                      <button aria-label="Revoke key" className="text-white/45 transition-colors hover:text-rose-200">
                         <Trash2 size={16} />
                       </button>
                     </td>

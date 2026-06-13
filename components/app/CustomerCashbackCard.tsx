@@ -31,13 +31,13 @@ function TransactionRow({ tx }: { tx: WalletTransaction }) {
     <li className="flex items-start justify-between gap-3 border-t border-success/10 py-2 first:border-t-0">
       <div className="flex min-w-0 items-start gap-2">
         <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-          positive ? "bg-success/15 text-success" : "bg-danger/15 text-danger"
+          positive ? "bg-success/15 text-emerald-300" : "bg-danger/15 text-rose-200"
         }`}>
           {positive ? <ArrowDownToLine size={10} /> : <ArrowUpFromLine size={10} />}
         </span>
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-1.5">
-            <p className="text-[12px] font-medium text-ink">
+            <p className="text-[12px] font-medium text-white">
               {WALLET_TX_LABELS[tx.transactionType] ?? tx.transactionType}
             </p>
             <Chip tone={walletTxTone(tx.transactionType)}>
@@ -45,9 +45,9 @@ function TransactionRow({ tx }: { tx: WalletTransaction }) {
             </Chip>
           </div>
           {tx.note && (
-            <p className="mt-0.5 line-clamp-1 text-[11px] text-content-muted">{tx.note}</p>
+            <p className="mt-0.5 line-clamp-1 text-[11px] text-white/45">{tx.note}</p>
           )}
-          <p className="mt-0.5 inline-flex items-center gap-1 font-mono text-[10px] text-content-muted">
+          <p className="mt-0.5 inline-flex items-center gap-1 font-mono text-[10px] text-white/45">
             <Clock size={9} /> {fmtWhen(tx.createdAt)}
             {tx.referenceId && (
               <>
@@ -92,25 +92,25 @@ export function CustomerCashbackCard({ customerId }: { customerId: string }) {
   const txs = (txQ.data ?? []).slice(0, 12);
 
   return (
-    <div className="rounded-xl border border-success/20 bg-success-bg/40 p-5">
+    <div className="rounded-xl border border-success/20 bg-emerald-500/15/40 p-5">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Sparkles size={15} className="text-success" />
-          <h3 className="text-[14px] font-medium text-ink">Cashback wallet</h3>
+          <Sparkles size={15} className="text-emerald-300" />
+          <h3 className="text-[14px] font-medium text-white">Cashback wallet</h3>
         </div>
-        <Wallet size={16} className="text-content-muted" />
+        <Wallet size={16} className="text-white/45" />
       </div>
-      <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Balance</p>
-      <p className="mt-1 font-mono text-[28px] font-medium leading-none text-success">
+      <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Balance</p>
+      <p className="mt-1 font-mono text-[28px] font-medium leading-none text-emerald-300">
         {naira(w.balance)}
       </p>
-      <div className="mt-4 flex items-center gap-4 font-mono text-[11px] text-content-secondary">
+      <div className="mt-4 flex items-center gap-4 font-mono text-[11px] text-white/65">
         <span className="inline-flex items-center gap-1">
-          <ArrowDownToLine size={11} className="text-success" />
+          <ArrowDownToLine size={11} className="text-emerald-300" />
           earned {naira(w.totalEarned)}
         </span>
         <span className="inline-flex items-center gap-1">
-          <ArrowUpFromLine size={11} className="text-danger" />
+          <ArrowUpFromLine size={11} className="text-rose-200" />
           redeemed {naira(w.totalRedeemed)}
         </span>
       </div>
@@ -119,20 +119,20 @@ export function CustomerCashbackCard({ customerId }: { customerId: string }) {
       <button
         type="button"
         onClick={() => setShowHistory((v) => !v)}
-        className="mt-4 inline-flex items-center gap-1 rounded-md text-[11px] font-medium text-success hover:underline"
+        className="mt-4 inline-flex items-center gap-1 rounded-md text-[11px] font-medium text-emerald-300 hover:underline"
       >
         <History size={11} />
         {showHistory ? <>Hide history <ChevronUp size={11} /></> : <>Show history <ChevronDown size={11} /></>}
       </button>
 
       {showHistory && (
-        <div className="mt-3 rounded-md bg-neutral-surface/70 px-3 py-2">
+        <div className="mt-3 rounded-md bg-cinema-elev/70 px-3 py-2">
           {txQ.loading ? (
-            <p className="flex items-center gap-1.5 py-2 text-[12px] text-content-muted">
+            <p className="flex items-center gap-1.5 py-2 text-[12px] text-white/45">
               <Loader2 size={11} className="animate-spin" /> Loading transactions…
             </p>
           ) : txs.length === 0 ? (
-            <p className="py-2 text-center text-[12px] text-content-muted">
+            <p className="py-2 text-center text-[12px] text-white/45">
               No transactions yet on this wallet.
             </p>
           ) : (

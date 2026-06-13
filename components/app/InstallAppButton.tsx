@@ -84,7 +84,7 @@ export function InstallAppButton({
         <button
           type="button"
           onClick={install}
-          className="inline-flex items-center gap-2 rounded-md border border-neutral-border bg-neutral-surface px-3 py-1.5 text-[12px] font-medium text-content-secondary transition-colors hover:bg-neutral-surface2 hover:text-ink"
+          className="inline-flex items-center gap-2 rounded-md border border-white/[0.06] bg-cinema-elev px-3 py-1.5 text-[12px] font-medium text-white/65 transition-colors hover:bg-white/[0.02] hover:text-white"
           title="Install Conddo as an app"
         >
           <Download size={14} />
@@ -107,25 +107,25 @@ export function InstallAppButton({
           </Button>
         }
       >
-        <ol className="space-y-3 text-[14px] text-content-secondary">
+        <ol className="space-y-3 text-[14px] text-white/65">
           <li className="flex items-start gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-bg text-[12px] font-medium text-primary">1</span>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-[12px] font-medium text-primary">1</span>
             <span>
               Tap the <Share2 size={14} className="inline -mt-1" /> Share button in Safari's toolbar
               (at the bottom of the screen).
             </span>
           </li>
           <li className="flex items-start gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-bg text-[12px] font-medium text-primary">2</span>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-[12px] font-medium text-primary">2</span>
             <span>
               Scroll down and tap <Smartphone size={14} className="inline -mt-1" />{" "}
-              <strong className="text-ink">Add to Home Screen</strong>.
+              <strong className="text-white">Add to Home Screen</strong>.
             </span>
           </li>
           <li className="flex items-start gap-3">
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-bg text-[12px] font-medium text-primary">3</span>
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-[12px] font-medium text-primary">3</span>
             <span>
-              Confirm the name and tap <strong className="text-ink">Add</strong>. Conddo will appear
+              Confirm the name and tap <strong className="text-white">Add</strong>. Conddo will appear
               alongside your other apps.
             </span>
           </li>

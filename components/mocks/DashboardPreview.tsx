@@ -115,7 +115,7 @@ export function DashboardPreview() {
               <p className="text-[12px] font-medium text-ink">Recent orders</p>
               <span className="text-[11px] text-primary">View all</span>
             </div>
-            <ul className="divide-y divide-neutral-border">
+            <ul className="divide-y divide-white/[0.06]">
               {orders.map((o) => (
                 <li
                   key={o.id}

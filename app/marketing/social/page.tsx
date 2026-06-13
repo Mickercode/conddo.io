@@ -17,12 +17,12 @@ const FILTERS = ["All", "instagram", "facebook", "twitter", "linkedin"];
 const FILTER_LABEL: Record<string, string> = { All: "All", instagram: "Instagram", facebook: "Facebook", twitter: "Twitter", linkedin: "LinkedIn" };
 
 const platformStyle: Record<string, { box: string; icon: LucideIcon }> = {
-  instagram: { box: "bg-primary-bg text-primary", icon: Camera },
+  instagram: { box: "bg-primary/[0.08] text-primary", icon: Camera },
   facebook: { box: "bg-info-bg text-info", icon: ThumbsUp },
-  twitter: { box: "bg-neutral-surface2 text-ink", icon: MessageCircle },
+  twitter: { box: "bg-white/[0.02] text-white", icon: MessageCircle },
   linkedin: { box: "bg-info-bg text-info", icon: Briefcase },
 };
-const styleFor = (p: string | null) => platformStyle[(p ?? "").toLowerCase()] ?? { box: "bg-neutral-surface2 text-ink", icon: MessageCircle };
+const styleFor = (p: string | null) => platformStyle[(p ?? "").toLowerCase()] ?? { box: "bg-white/[0.02] text-white", icon: MessageCircle };
 
 const iso = (d: Date) => d.toISOString().slice(0, 10);
 const sameDay = (a: Date, b: Date) => a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
@@ -93,12 +93,12 @@ export default function SocialCalendarPage() {
       {/* Toolbar */}
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <h2 className="text-[20px] font-medium tracking-[-0.01em] text-ink">{monthLabel}</h2>
-          <div className="flex items-center overflow-hidden rounded-lg border border-neutral-border">
-            <button onClick={() => setOffset((o) => o - 1)} className="p-1.5 hover:bg-neutral-surface2"><ChevronLeft size={18} /></button>
-            <button onClick={() => setOffset((o) => o + 1)} className="border-l border-neutral-border p-1.5 hover:bg-neutral-surface2"><ChevronRight size={18} /></button>
+          <h2 className="text-[20px] font-medium tracking-[-0.01em] text-white">{monthLabel}</h2>
+          <div className="flex items-center overflow-hidden rounded-lg border border-white/[0.06]">
+            <button onClick={() => setOffset((o) => o - 1)} className="p-1.5 hover:bg-white/[0.02]"><ChevronLeft size={18} /></button>
+            <button onClick={() => setOffset((o) => o + 1)} className="border-l border-white/[0.06] p-1.5 hover:bg-white/[0.02]"><ChevronRight size={18} /></button>
           </div>
-          <button onClick={() => setOffset(0)} className="rounded-lg border border-neutral-border bg-neutral-surface px-3.5 py-1.5 text-[13px] font-medium hover:bg-neutral-surface2">Today</button>
+          <button onClick={() => setOffset(0)} className="rounded-lg border border-white/[0.06] bg-cinema-elev px-3.5 py-1.5 text-[13px] font-medium hover:bg-white/[0.02]">Today</button>
         </div>
       </div>
 
@@ -109,7 +109,7 @@ export default function SocialCalendarPage() {
             key={f}
             onClick={() => setFilter(f)}
             className={`rounded-full px-4 py-1.5 text-[13px] transition-colors ${
-              f === filter ? "bg-ink text-white" : "border border-neutral-border bg-neutral-surface text-content-secondary hover:border-primary-light"
+              f === filter ? "bg-ink text-white" : "border border-white/[0.06] bg-cinema-elev text-white/65 hover:border-primary-light"
             }`}
           >
             {FILTER_LABEL[f]}
@@ -118,11 +118,11 @@ export default function SocialCalendarPage() {
       </div>
 
       <QueryBoundary loading={loading} error={error} onRetry={refetch} isEmpty={false} empty={null} loadingLabel="Loading your calendar…" gatedFeatureTitle="Social scheduler">
-        <div className="overflow-x-auto rounded-xl border border-neutral-border bg-neutral-surface">
+        <div className="overflow-x-auto rounded-xl border border-white/[0.06] bg-cinema-elev">
           <div className="min-w-[760px]">
-            <div className="grid grid-cols-7 border-b border-neutral-border bg-neutral-surface2">
+            <div className="grid grid-cols-7 border-b border-white/[0.06] bg-white/[0.02]">
               {WEEKDAYS.map((d) => (
-                <div key={d} className="py-2 text-center text-[11px] uppercase tracking-[0.05em] text-content-secondary">{d}</div>
+                <div key={d} className="py-2 text-center text-[11px] uppercase tracking-[0.05em] text-white/65">{d}</div>
               ))}
             </div>
             <div className="grid grid-cols-7">
@@ -130,8 +130,8 @@ export default function SocialCalendarPage() {
                 const dayPosts = cell.muted ? [] : postsOn(cell.date);
                 const isToday = sameDay(cell.date, today);
                 return (
-                  <div key={i} className={`min-h-[100px] border-b border-r border-neutral-border p-2 [&:nth-child(7n)]:border-r-0 ${cell.muted ? "bg-neutral-surface2/40" : ""}`}>
-                    <span className={`flex items-center gap-1 font-mono text-[13px] ${cell.muted ? "text-content-muted" : isToday ? "font-bold text-primary" : "text-ink"}`}>
+                  <div key={i} className={`min-h-[100px] border-b border-r border-white/[0.06] p-2 [&:nth-child(7n)]:border-r-0 ${cell.muted ? "bg-white/[0.02]/40" : ""}`}>
+                    <span className={`flex items-center gap-1 font-mono text-[13px] ${cell.muted ? "text-white/45" : isToday ? "font-bold text-primary" : "text-white"}`}>
                       {cell.date.getDate()}
                       {isToday && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
                     </span>

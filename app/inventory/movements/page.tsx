@@ -41,19 +41,19 @@ function MovementRow({ m, productName }: { m: StockMovement; productName: string
   const positive = m.quantityChange >= 0;
   const label = MOVEMENT_TYPE_LABELS[m.movementType] ?? m.movementType;
   return (
-    <li className="flex items-start gap-3 px-5 py-3.5 hover:bg-neutral-surface2">
+    <li className="flex items-start gap-3 px-5 py-3.5 hover:bg-white/[0.02]">
       <span className={`mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-md ${
-        positive ? "bg-success-bg text-success" : "bg-danger-bg text-danger"
+        positive ? "bg-emerald-500/15 text-emerald-300" : "bg-rose-500/[0.06] text-rose-200"
       }`}>
         {positive ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
-          <p className="truncate text-[14px] font-medium text-ink">{productName}</p>
+          <p className="truncate text-[14px] font-medium text-white">{productName}</p>
           <Chip tone={movementTone(m.movementType)}>{label}</Chip>
         </div>
-        <p className="mt-0.5 font-mono text-[12px] text-content-muted">
-          <span className={positive ? "text-success" : "text-danger"}>
+        <p className="mt-0.5 font-mono text-[12px] text-white/45">
+          <span className={positive ? "text-emerald-300" : "text-rose-200"}>
             {positive ? "+" : ""}{m.quantityChange}
           </span>
           <span className="ml-2">·</span>
@@ -65,9 +65,9 @@ function MovementRow({ m, productName }: { m: StockMovement; productName: string
             </>
           )}
         </p>
-        {m.note && <p className="mt-1 text-[12px] text-content-secondary">{m.note}</p>}
+        {m.note && <p className="mt-1 text-[12px] text-white/65">{m.note}</p>}
       </div>
-      <span className="shrink-0 font-mono text-[11px] text-content-muted">{fmtWhen(m.createdAt)}</span>
+      <span className="shrink-0 font-mono text-[11px] text-white/45">{fmtWhen(m.createdAt)}</span>
     </li>
   );
 }
@@ -99,7 +99,7 @@ export default function MovementsPage() {
     <AppShell title="Stock movements" subtitle="Every change to your inventory, in order.">
       <Link
         href="/inventory"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         <ArrowLeft size={14} /> Back to Inventory
       </Link>
@@ -113,7 +113,7 @@ export default function MovementsPage() {
       ) : (
         <>
           <div className="mb-4 flex flex-wrap items-center gap-2">
-            <div className="inline-flex items-center gap-1 rounded-lg border border-neutral-border bg-neutral-surface p-0.5">
+            <div className="inline-flex items-center gap-1 rounded-lg border border-white/[0.06] bg-cinema-elev p-0.5">
               {TYPE_FILTERS.map((f) => {
                 const active = filter === f.id;
                 return (
@@ -122,7 +122,7 @@ export default function MovementsPage() {
                     type="button"
                     onClick={() => setFilter(f.id)}
                     className={`rounded-md px-3 py-1 text-[12px] font-medium transition-colors ${
-                      active ? "bg-primary-bg text-primary" : "text-content-secondary hover:text-ink"
+                      active ? "bg-primary/[0.08] text-primary" : "text-white/65 hover:text-white"
                     }`}
                     aria-pressed={active}
                   >
@@ -152,8 +152,8 @@ export default function MovementsPage() {
               />
             }
           >
-            <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-              <ul className="divide-y divide-neutral-border">
+            <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+              <ul className="divide-y divide-white/[0.06]">
                 {movements.map((m) => (
                   <MovementRow
                     key={m.id}
@@ -165,7 +165,7 @@ export default function MovementsPage() {
             </div>
           </QueryBoundary>
 
-          <p className="mt-4 flex items-center gap-1.5 text-[11px] text-content-muted">
+          <p className="mt-4 flex items-center gap-1.5 text-[11px] text-white/45">
             <AlertCircle size={11} />
             Movements are append-only — they're never edited or deleted, so this is the source of truth for any inventory audit.
           </p>

@@ -68,14 +68,14 @@ function EmrIndexBody() {
         }}
         className="relative"
       >
-        <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-content-muted" />
+        <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/45" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           type="text"
           placeholder="Search by name or phone"
           autoFocus
-          className="h-12 w-full max-w-xl rounded-lg border border-neutral-border bg-neutral-surface pl-11 pr-3 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none"
+          className="h-12 w-full max-w-xl rounded-lg border border-white/[0.06] bg-cinema-elev pl-11 pr-3 text-[15px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none"
         />
       </form>
 
@@ -98,23 +98,23 @@ function EmrIndexBody() {
           />
         }
       >
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-          <ul className="divide-y divide-neutral-border">
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+          <ul className="divide-y divide-white/[0.06]">
             {customers.map((c) => (
               <li key={c.id}>
                 <Link
                   href={`/pharmacy/emr/${c.id}`}
-                  className="group flex items-center justify-between gap-3 px-5 py-3.5 transition-colors hover:bg-neutral-surface2"
+                  className="group flex items-center justify-between gap-3 px-5 py-3.5 transition-colors hover:bg-white/[0.02]"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-bg text-primary">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-primary">
                       <User size={16} />
                     </span>
                     <div className="min-w-0">
-                      <p className="truncate text-[14px] font-medium text-ink group-hover:text-primary">
+                      <p className="truncate text-[14px] font-medium text-white group-hover:text-primary">
                         {c.name || "—"}
                       </p>
-                      <p className="mt-0.5 inline-flex items-center gap-2 font-mono text-[11px] text-content-muted">
+                      <p className="mt-0.5 inline-flex items-center gap-2 font-mono text-[11px] text-white/45">
                         {c.phone && (
                           <span className="inline-flex items-center gap-1">
                             <Phone size={9} /> {c.phone}
@@ -134,10 +134,10 @@ function EmrIndexBody() {
         </div>
       </QueryBoundary>
 
-      <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-4 py-3 text-[12px] text-content-muted">
+      <p className="flex items-start gap-1.5 rounded-md bg-white/[0.02] px-4 py-3 text-[12px] text-white/45">
         <AlertCircle size={11} className="mt-0.5 shrink-0" />
         <span>
-          <Heart size={11} className="mr-1 inline -mt-0.5 text-content-muted" />
+          <Heart size={11} className="mr-1 inline -mt-0.5 text-white/45" />
           EMR entries are immutable — every clinical note you save is permanent. Patients are sorted alphabetically; a future BE upgrade will surface EMR-having patients first with vitals + chronic conditions inline.
         </span>
       </p>

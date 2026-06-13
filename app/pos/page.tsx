@@ -157,7 +157,7 @@ function PosBody() {
   // ----- Empty session screen -----
 
   if (sessionQ.loading) {
-    return <div className="flex items-center justify-center py-20 text-content-muted"><Loader2 className="animate-spin" /></div>;
+    return <div className="flex items-center justify-center py-20 text-white/45"><Loader2 className="animate-spin" /></div>;
   }
 
   if (!session) {
@@ -253,21 +253,21 @@ function PosBody() {
 function SessionHeader({ session, onClose }: { session: PosSession; onClose: () => void }) {
   const summary = session.summary;
   return (
-    <div className="flex flex-col gap-3 rounded-xl border border-neutral-border bg-neutral-surface px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev px-5 py-3.5 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex flex-wrap items-center gap-3 text-[13px]">
-        <span className="inline-flex items-center gap-1.5 font-medium text-ink">
-          <CheckCircle2 size={14} className="text-success" />
+        <span className="inline-flex items-center gap-1.5 font-medium text-white">
+          <CheckCircle2 size={14} className="text-emerald-300" />
           Shift open
         </span>
-        <span className="inline-flex items-center gap-1.5 text-content-secondary">
+        <span className="inline-flex items-center gap-1.5 text-white/65">
           <Clock size={12} /> {fmtTime(session.openedAt)}
         </span>
         {summary && (
           <>
-            <span className="inline-flex items-center gap-1.5 text-content-secondary">
+            <span className="inline-flex items-center gap-1.5 text-white/65">
               <ShoppingCart size={12} /> {summary.salesCount} sale{summary.salesCount === 1 ? "" : "s"}
             </span>
-            <span className="inline-flex items-center gap-1.5 text-content-secondary">
+            <span className="inline-flex items-center gap-1.5 text-white/65">
               <Wallet size={12} /> {naira(summary.totalSales)} total
             </span>
             <Chip tone="neutral">cash {naira(summary.totalCash)}</Chip>
@@ -364,41 +364,41 @@ function ProductPicker({
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-neutral-border bg-neutral-surface">
-      <form onSubmit={onSubmit} className="border-b border-neutral-border p-3">
+    <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-cinema-elev">
+      <form onSubmit={onSubmit} className="border-b border-white/[0.06] p-3">
         <div className="relative">
-          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-content-muted" />
+          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/45" />
           <input
             ref={inputRef}
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             autoFocus
             placeholder="Search or scan a barcode…"
-            className="h-11 w-full rounded-lg border border-neutral-border bg-neutral-bg pl-10 pr-3 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none"
+            className="h-11 w-full rounded-lg border border-white/[0.06] bg-cinema-base pl-10 pr-3 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none"
           />
         </div>
-        <p className="mt-1.5 px-1 text-[11px] text-content-muted">
-          Press <kbd className="rounded bg-neutral-surface2 px-1 font-mono">Enter</kbd> to add the top match (or scan a barcode for instant add).
+        <p className="mt-1.5 px-1 text-[11px] text-white/45">
+          Press <kbd className="rounded bg-white/[0.02] px-1 font-mono">Enter</kbd> to add the top match (or scan a barcode for instant add).
         </p>
       </form>
 
       <div className="max-h-[60vh] overflow-y-auto">
         {productsQ.loading && debounced && (
-          <p className="flex items-center justify-center gap-1.5 py-6 text-[12px] text-content-muted">
+          <p className="flex items-center justify-center gap-1.5 py-6 text-[12px] text-white/45">
             <Loader2 size={12} className="animate-spin" /> Searching…
           </p>
         )}
         {!productsQ.loading && debounced && hits.length === 0 && (
-          <p className="py-8 text-center text-[12px] text-content-muted">
+          <p className="py-8 text-center text-[12px] text-white/45">
             No products match &ldquo;{debounced}&rdquo;.
           </p>
         )}
         {!debounced && (
-          <p className="py-8 text-center text-[12px] text-content-muted">
+          <p className="py-8 text-center text-[12px] text-white/45">
             Type to search or scan a barcode to add directly.
           </p>
         )}
-        <ul className="divide-y divide-neutral-border">
+        <ul className="divide-y divide-white/[0.06]">
           {hits.map((p) => {
             const isAdding = adding === p.productId;
             const outOfStock = p.stock <= 0;
@@ -408,19 +408,19 @@ function ProductPicker({
                   type="button"
                   onClick={() => addByProductId(p.productId)}
                   disabled={isAdding || outOfStock}
-                  className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-neutral-surface2 disabled:cursor-not-allowed disabled:opacity-50"
+                  className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-white/[0.02] disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   <div className="min-w-0">
-                    <p className="truncate text-[14px] font-medium text-ink">{p.name}</p>
-                    <p className="mt-0.5 inline-flex items-center gap-2 font-mono text-[11px] text-content-muted">
+                    <p className="truncate text-[14px] font-medium text-white">{p.name}</p>
+                    <p className="mt-0.5 inline-flex items-center gap-2 font-mono text-[11px] text-white/45">
                       {p.sku && <span className="inline-flex items-center gap-1"><Hash size={9} /> {p.sku}</span>}
-                      <span className={outOfStock ? "text-danger" : p.lowStock ? "text-warning" : ""}>
+                      <span className={outOfStock ? "text-rose-200" : p.lowStock ? "text-amber-300" : ""}>
                         stock {p.stock}
                       </span>
                     </p>
                   </div>
                   <div className="flex items-center gap-3">
-                    <span className="font-mono text-[14px] text-ink">{naira(p.price)}</span>
+                    <span className="font-mono text-[14px] text-white">{naira(p.price)}</span>
                     {isAdding ? <Loader2 size={13} className="animate-spin text-primary" /> : <Plus size={14} className="text-primary" />}
                   </div>
                 </button>
@@ -491,19 +491,19 @@ function CartCard({
   const hasItems = sale.items.length > 0;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-neutral-border bg-neutral-surface">
+    <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-cinema-elev">
       {/* Header */}
-      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-border p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] p-4">
         <div>
-          <p className="font-mono text-[11px] text-content-muted">{sale.saleNumber}</p>
+          <p className="font-mono text-[11px] text-white/45">{sale.saleNumber}</p>
           <button
             type="button"
             onClick={onAttachCustomer}
-            className="mt-1 inline-flex items-center gap-1.5 text-[13px] font-medium text-ink hover:text-primary"
+            className="mt-1 inline-flex items-center gap-1.5 text-[13px] font-medium text-white hover:text-primary"
           >
             <User size={13} />
             {sale.customer?.name ?? "Walk-in customer"}
-            <span className="text-content-muted">·</span>
+            <span className="text-white/45">·</span>
             <span className="text-[12px] text-primary hover:underline">
               {sale.customer ? "change" : "attach"}
             </span>
@@ -518,43 +518,43 @@ function CartCard({
 
       {/* Items */}
       {hasItems ? (
-        <ul className="divide-y divide-neutral-border">
+        <ul className="divide-y divide-white/[0.06]">
           {sale.items.map((it) => {
             const busy = busyItemId === it.id;
             return (
-              <li key={it.id} className="flex items-center gap-3 px-4 py-3 hover:bg-neutral-surface2">
+              <li key={it.id} className="flex items-center gap-3 px-4 py-3 hover:bg-white/[0.02]">
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-[14px] text-ink">{it.productName}</p>
-                  <p className="font-mono text-[11px] text-content-muted">{naira(it.unitPrice)} ea</p>
+                  <p className="truncate text-[14px] text-white">{it.productName}</p>
+                  <p className="font-mono text-[11px] text-white/45">{naira(it.unitPrice)} ea</p>
                 </div>
-                <div className="inline-flex items-center gap-1 rounded-lg border border-neutral-border bg-neutral-surface2 p-0.5">
+                <div className="inline-flex items-center gap-1 rounded-lg border border-white/[0.06] bg-white/[0.02] p-0.5">
                   <button
                     type="button"
                     onClick={() => bumpQty(it.id, it.qty - 1)}
                     disabled={busy}
                     aria-label="Decrease"
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-md text-content-secondary hover:bg-neutral-surface hover:text-ink disabled:opacity-50"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/65 hover:bg-cinema-elev hover:text-white disabled:opacity-50"
                   >
                     <Minus size={12} />
                   </button>
-                  <span className="min-w-[28px] text-center font-mono text-[14px] text-ink">{it.qty}</span>
+                  <span className="min-w-[28px] text-center font-mono text-[14px] text-white">{it.qty}</span>
                   <button
                     type="button"
                     onClick={() => bumpQty(it.id, it.qty + 1)}
                     disabled={busy}
                     aria-label="Increase"
-                    className="inline-flex h-7 w-7 items-center justify-center rounded-md text-content-secondary hover:bg-neutral-surface hover:text-ink disabled:opacity-50"
+                    className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/65 hover:bg-cinema-elev hover:text-white disabled:opacity-50"
                   >
                     <Plus size={12} />
                   </button>
                 </div>
-                <span className="w-20 text-right font-mono text-[14px] font-medium text-ink">{naira(it.lineTotal)}</span>
+                <span className="w-20 text-right font-mono text-[14px] font-medium text-white">{naira(it.lineTotal)}</span>
                 <button
                   type="button"
                   onClick={() => removeItem(it.id)}
                   disabled={busy}
                   aria-label="Remove"
-                  className="inline-flex h-8 w-8 items-center justify-center rounded-md text-content-muted hover:bg-danger-bg hover:text-danger disabled:opacity-50"
+                  className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white/45 hover:bg-rose-500/[0.06] hover:text-rose-200 disabled:opacity-50"
                 >
                   {busy ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={13} />}
                 </button>
@@ -563,26 +563,26 @@ function CartCard({
           })}
         </ul>
       ) : (
-        <p className="py-12 text-center text-[13px] text-content-muted">
+        <p className="py-12 text-center text-[13px] text-white/45">
           Search or scan to add the first product.
         </p>
       )}
 
       {/* Totals + actions */}
-      <div className="border-t border-neutral-border bg-neutral-surface2 p-4">
+      <div className="border-t border-white/[0.06] bg-white/[0.02] p-4">
         <div className="mb-3 space-y-1">
           <div className="flex justify-between text-[13px]">
-            <span className="text-content-secondary">Subtotal</span>
-            <span className="font-mono text-ink">{naira(sale.subtotal)}</span>
+            <span className="text-white/65">Subtotal</span>
+            <span className="font-mono text-white">{naira(sale.subtotal)}</span>
           </div>
           <div className="flex justify-between text-[14px] font-medium">
-            <span className="text-ink">Total</span>
-            <span className="font-mono text-ink">{naira(sale.total)}</span>
+            <span className="text-white">Total</span>
+            <span className="font-mono text-white">{naira(sale.total)}</span>
           </div>
           {sale.paid > 0 && (
             <div className="flex justify-between text-[12px]">
-              <span className="text-content-secondary">Paid</span>
-              <span className="font-mono text-success">{naira(sale.paid)}</span>
+              <span className="text-white/65">Paid</span>
+              <span className="font-mono text-emerald-300">{naira(sale.paid)}</span>
             </div>
           )}
         </div>
@@ -603,7 +603,7 @@ function CartCard({
         </div>
 
         {!hasItems && (
-          <p className="mt-2 flex items-center gap-1.5 text-center text-[11px] text-content-muted">
+          <p className="mt-2 flex items-center gap-1.5 text-center text-[11px] text-white/45">
             <AlertCircle size={11} /> Add at least one product before completing.
           </p>
         )}

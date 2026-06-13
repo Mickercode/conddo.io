@@ -48,33 +48,33 @@ function ApiKeyRow({ site, onRegenerated }: { site: TenantSite; onRegenerated: (
 
   return (
     <>
-      <div className="rounded-lg border border-neutral-border bg-neutral-surface2 p-4">
+      <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-4">
         <div className="mb-2 flex items-center justify-between gap-2">
-          <span className="text-[12px] uppercase tracking-[0.05em] text-content-muted">
+          <span className="text-[12px] uppercase tracking-[0.05em] text-white/45">
             X-Conddo-Site-Key
           </span>
           <button
             type="button"
             onClick={() => setRevealed((v) => !v)}
-            className="text-[11px] font-medium text-content-secondary hover:text-ink"
+            className="text-[11px] font-medium text-white/65 hover:text-white"
           >
             {revealed ? "Hide" : "Reveal"}
           </button>
         </div>
         <div className="flex items-center gap-2">
-          <code className="flex-1 truncate rounded bg-neutral-surface px-2.5 py-1.5 font-mono text-[12px] text-ink">
+          <code className="flex-1 truncate rounded bg-cinema-elev px-2.5 py-1.5 font-mono text-[12px] text-white">
             {revealed ? site.apiKey : site.apiKeyMasked}
           </code>
           <button
             type="button"
             onClick={copy}
             aria-label="Copy API key"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-neutral-border bg-neutral-surface text-content-secondary transition-colors hover:text-ink"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-white/[0.06] bg-cinema-elev text-white/65 transition-colors hover:text-white"
           >
-            {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
+            {copied ? <Check size={14} className="text-emerald-300" /> : <Copy size={14} />}
           </button>
         </div>
-        <p className="mt-2 text-[12px] text-content-muted">
+        <p className="mt-2 text-[12px] text-white/45">
           Public-safe — scoped to your tenant, exposes only read-only and form-submit endpoints.
           Embed it in your site frontend.
         </p>
@@ -99,7 +99,7 @@ function ApiKeyRow({ site, onRegenerated }: { site: TenantSite; onRegenerated: (
           </>
         }
       >
-        <div className="flex items-start gap-2.5 rounded-lg border border-warning/30 bg-warning-bg px-4 py-3 text-[13px] text-warning">
+        <div className="flex items-start gap-2.5 rounded-lg border border-warning/30 bg-amber-500/15 px-4 py-3 text-[13px] text-amber-300">
           <AlertTriangle size={16} className="mt-0.5 shrink-0" />
           <p>
             You'll need to redeploy your tenant site (or whoever maintains it) with the new key
@@ -139,7 +139,7 @@ await fetch(
   }
 );`;
   return (
-    <pre className="overflow-x-auto rounded-lg border border-neutral-border bg-neutral-bg p-4 font-mono text-[11px] leading-relaxed text-content-secondary">
+    <pre className="overflow-x-auto rounded-lg border border-white/[0.06] bg-cinema-base p-4 font-mono text-[11px] leading-relaxed text-white/65">
       <code>{snippet}</code>
     </pre>
   );
@@ -159,12 +159,12 @@ export function SiteIntegrationPanel({ slug }: { slug: string }) {
   if (loading) return null;
   if (error || !site) {
     return (
-      <div className="rounded-xl border border-neutral-border bg-neutral-surface p-6">
+      <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-6">
         <div className="mb-2 flex items-center gap-2">
-          <Code2 size={18} className="text-content-secondary" />
-          <h2 className="text-[15px] font-medium text-ink">Developer integration</h2>
+          <Code2 size={18} className="text-white/65" />
+          <h2 className="text-[15px] font-medium text-white">Developer integration</h2>
         </div>
-        <p className="text-[14px] text-content-secondary">
+        <p className="text-[14px] text-white/65">
           Your site's developer toolkit (API key, endpoint docs, integration snippets) appears here once
           our Studio team registers your website.
         </p>
@@ -173,11 +173,11 @@ export function SiteIntegrationPanel({ slug }: { slug: string }) {
   }
 
   return (
-    <div className="space-y-6 rounded-xl border border-neutral-border bg-neutral-surface p-6">
+    <div className="space-y-6 rounded-xl border border-white/[0.06] bg-cinema-elev p-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <Code2 size={18} className="text-content-secondary" />
-          <h2 className="text-[15px] font-medium text-ink">Developer integration</h2>
+          <Code2 size={18} className="text-white/65" />
+          <h2 className="text-[15px] font-medium text-white">Developer integration</h2>
         </div>
         <div className="flex items-center gap-2">
           {site.siteType && (
@@ -194,7 +194,7 @@ export function SiteIntegrationPanel({ slug }: { slug: string }) {
       {/* Quick start */}
       <div>
         <div className="mb-2 flex items-center justify-between">
-          <h3 className="text-[13px] font-medium uppercase tracking-[0.05em] text-content-secondary">
+          <h3 className="text-[13px] font-medium uppercase tracking-[0.05em] text-white/65">
             Quick start
           </h3>
           <a
@@ -212,7 +212,7 @@ export function SiteIntegrationPanel({ slug }: { slug: string }) {
       {/* Submitted URL */}
       {site.submittedUrl && (
         <div>
-          <p className="mb-1 text-[12px] uppercase tracking-[0.05em] text-content-muted">Submitted for QA</p>
+          <p className="mb-1 text-[12px] uppercase tracking-[0.05em] text-white/45">Submitted for QA</p>
           <a
             href={site.submittedUrl}
             target="_blank"

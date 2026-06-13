@@ -21,34 +21,34 @@ import {
 
 function OfferRow({ o }: { o: RefillOffer }) {
   return (
-    <li className="flex flex-col gap-3 px-5 py-4 hover:bg-neutral-surface2 sm:flex-row sm:items-center sm:justify-between">
+    <li className="flex flex-col gap-3 px-5 py-4 hover:bg-white/[0.02] sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-start gap-3">
-        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary-bg text-primary">
+        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/[0.08] text-primary">
           <Gift size={15} />
         </span>
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="truncate text-[14px] font-medium text-ink">
+            <p className="truncate text-[14px] font-medium text-white">
               {refillProductName(o.product)}
             </p>
             <Chip tone={o.isActive ? "success" : "neutral"}>
               {o.isActive ? "Active" : "Paused"}
             </Chip>
           </div>
-          <p className="mt-0.5 text-[12px] text-content-muted">{summariseOffer(o)}</p>
+          <p className="mt-0.5 text-[12px] text-white/45">{summariseOffer(o)}</p>
           {o.maxUses > 1 && (
-            <p className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-content-muted">
+            <p className="mt-0.5 inline-flex items-center gap-1 text-[11px] text-white/45">
               <ListOrdered size={11} /> Up to {o.maxUses} uses per customer
             </p>
           )}
           {o.createdBy?.name && (
-            <p className="mt-0.5 text-[11px] text-content-muted">
+            <p className="mt-0.5 text-[11px] text-white/45">
               Created by {o.createdBy.name}
             </p>
           )}
         </div>
       </div>
-      <p className="shrink-0 text-[11px] text-content-muted">
+      <p className="shrink-0 text-[11px] text-white/45">
         Issue this offer to a customer from their order detail after dispense.
       </p>
     </li>
@@ -83,7 +83,7 @@ export default function RefillOffersPage() {
     >
       <Link
         href="/marketing"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         <ArrowLeft size={14} /> Back to Marketing
       </Link>
@@ -116,8 +116,8 @@ export default function RefillOffersPage() {
               />
             }
           >
-            <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-              <ul className="divide-y divide-neutral-border">
+            <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+              <ul className="divide-y divide-white/[0.06]">
                 {offers.map((o) => (
                   <OfferRow key={o.id} o={o} />
                 ))}
@@ -125,7 +125,7 @@ export default function RefillOffersPage() {
             </div>
           </QueryBoundary>
 
-          <p className="mt-4 flex items-center gap-1.5 text-[11px] text-content-muted">
+          <p className="mt-4 flex items-center gap-1.5 text-[11px] text-white/45">
             <AlertCircle size={11} />
             Codes are generated per customer when you click <em>Issue</em>{" "}from an order detail page — not from this list.
           </p>

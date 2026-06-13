@@ -47,18 +47,18 @@ export default function ClinicalLanding() {
     <WorkShell title={greet} subtitle="Pharmacist dashboard" nav={NAV}>
       <div className="space-y-6">
         {followupsEnabled && due.length > 0 && (
-          <div className="rounded-2xl border border-primary/30 bg-primary-bg/40 p-5">
+          <div className="rounded-2xl border border-primary/30 bg-primary/[0.08]/40 p-5">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.05em] text-primary">Follow-ups due today</p>
-                <p className="mt-1 text-[16px] font-medium text-ink">
+                <p className="mt-1 text-[16px] font-medium text-white">
                   {due.length} patient{due.length === 1 ? "" : "s"} to check in with
-                  {overdue > 0 && <span className="ml-2 text-danger">· {overdue} overdue</span>}
+                  {overdue > 0 && <span className="ml-2 text-rose-200">· {overdue} overdue</span>}
                 </p>
               </div>
               <Link
                 href="/pharmacy/followups"
-                className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-neutral-surface px-3 py-1.5 text-[12px] font-medium text-primary hover:bg-primary hover:text-white"
+                className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-cinema-elev px-3 py-1.5 text-[12px] font-medium text-primary hover:bg-primary hover:text-white"
               >
                 View all <ArrowRight size={12} />
               </Link>
@@ -67,10 +67,10 @@ export default function ClinicalLanding() {
               {due.slice(0, 5).map((f) => {
                 const isOverdue = new Date(f.dueDate).getTime() < Date.now();
                 return (
-                  <li key={f.id} className="flex items-start justify-between gap-3 rounded-md bg-neutral-surface px-3 py-2">
+                  <li key={f.id} className="flex items-start justify-between gap-3 rounded-md bg-cinema-elev px-3 py-2">
                     <div className="min-w-0">
-                      <p className="text-[13px] font-medium text-ink">{f.customer.name ?? "Patient"}</p>
-                      <p className="line-clamp-1 text-[11px] text-content-secondary">{f.checkNote}</p>
+                      <p className="text-[13px] font-medium text-white">{f.customer.name ?? "Patient"}</p>
+                      <p className="line-clamp-1 text-[11px] text-white/65">{f.checkNote}</p>
                     </div>
                     <Chip tone={isOverdue ? "danger" : "warning"}>{fmtTimeShort(f.dueDate)}</Chip>
                   </li>
@@ -108,7 +108,7 @@ export default function ClinicalLanding() {
           />
         </div>
 
-        <p className="flex items-center gap-2 rounded-md bg-neutral-surface2 px-4 py-3 text-[12px] text-content-muted">
+        <p className="flex items-center gap-2 rounded-md bg-white/[0.02] px-4 py-3 text-[12px] text-white/45">
           <AlertCircle size={11} />
           Patient EMR entries are immutable — every note you save becomes part of the permanent medical record.
         </p>
@@ -131,16 +131,16 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="group flex items-start gap-3 rounded-xl border border-neutral-border bg-neutral-surface p-5 transition-colors hover:border-primary hover:bg-primary-bg/30"
+      className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 transition-colors hover:border-primary hover:bg-primary/[0.08]/30"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-bg text-primary">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
         <Icon size={18} />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[15px] font-medium text-ink">{title}</p>
-        <p className="mt-0.5 text-[13px] text-content-secondary">{description}</p>
+        <p className="text-[15px] font-medium text-white">{title}</p>
+        <p className="mt-0.5 text-[13px] text-white/65">{description}</p>
       </div>
-      <ArrowRight size={16} className="mt-1 shrink-0 text-content-muted transition-colors group-hover:text-primary" />
+      <ArrowRight size={16} className="mt-1 shrink-0 text-white/45 transition-colors group-hover:text-primary" />
     </Link>
   );
 }

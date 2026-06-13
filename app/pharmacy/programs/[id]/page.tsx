@@ -103,7 +103,7 @@ function EnrolModal({
             ))}
           </Select>
         </Field>
-        <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-3 py-2 text-[11px] text-content-muted">
+        <p className="flex items-start gap-1.5 rounded-md bg-white/[0.02] px-3 py-2 text-[11px] text-white/45">
           <AlertCircle size={11} className="mt-0.5 shrink-0" />
           Submitting opens a Paystack checkout in a new tab for the first month. After payment, subsequent months auto-bill on the same day each month via the Paystack subscription. The enrolment shows as ACTIVE once Paystack confirms the first charge.
         </p>
@@ -154,7 +154,7 @@ export default function ProgramDetailPage({ params }: { params: { id: string } }
     <AppShell title={p?.name ?? "Program"} subtitle="Drug program detail">
       <Link
         href="/pharmacy/programs"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         <ArrowLeft size={14} /> Back to programs
       </Link>
@@ -178,18 +178,18 @@ export default function ProgramDetailPage({ params }: { params: { id: string } }
             {p && (
               <>
                 {/* Header */}
-                <div className="mb-6 rounded-2xl border border-neutral-border bg-neutral-surface p-5">
+                <div className="mb-6 rounded-2xl border border-white/[0.06] bg-cinema-elev p-5">
                   <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <div className="flex flex-wrap items-center gap-2">
-                        <h2 className="text-[18px] font-medium text-ink">{p.name}</h2>
+                        <h2 className="text-[18px] font-medium text-white">{p.name}</h2>
                         <Chip tone={p.isPublished ? "success" : "neutral"}>
                           {p.isPublished ? "Published" : "Draft"}
                         </Chip>
                         {p.targetCondition && <Chip tone="primary">{p.targetCondition}</Chip>}
                       </div>
                       {p.description && (
-                        <p className="mt-2 max-w-2xl text-[13px] text-content-secondary">{p.description}</p>
+                        <p className="mt-2 max-w-2xl text-[13px] text-white/65">{p.description}</p>
                       )}
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
@@ -202,26 +202,26 @@ export default function ProgramDetailPage({ params }: { params: { id: string } }
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3 border-t border-neutral-border pt-4 sm:grid-cols-4">
+                  <div className="grid grid-cols-2 gap-3 border-t border-white/[0.06] pt-4 sm:grid-cols-4">
                     <div>
-                      <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Price/month</p>
-                      <p className="mt-1 font-mono text-[18px] font-medium text-ink">{naira(p.monthlyPrice)}</p>
+                      <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Price/month</p>
+                      <p className="mt-1 font-mono text-[18px] font-medium text-white">{naira(p.monthlyPrice)}</p>
                     </div>
                     <div>
-                      <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Duration</p>
-                      <p className="mt-1 font-mono text-[18px] font-medium text-ink">
+                      <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Duration</p>
+                      <p className="mt-1 font-mono text-[18px] font-medium text-white">
                         {p.durationMonths ? `${p.durationMonths} months` : "Ongoing"}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Enrolled</p>
-                      <p className="mt-1 font-mono text-[18px] font-medium text-ink">
+                      <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Enrolled</p>
+                      <p className="mt-1 font-mono text-[18px] font-medium text-white">
                         {p.enrollmentsCount ?? enrolments.length}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">MRR</p>
-                      <p className="mt-1 font-mono text-[18px] font-medium text-success">
+                      <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">MRR</p>
+                      <p className="mt-1 font-mono text-[18px] font-medium text-emerald-300">
                         {naira(p.monthlyPrice * (p.enrollmentsCount ?? enrolments.length))}
                       </p>
                     </div>
@@ -230,15 +230,15 @@ export default function ProgramDetailPage({ params }: { params: { id: string } }
 
                 {/* Items */}
                 {p.items?.length > 0 && (
-                  <div className="mb-6 rounded-2xl border border-neutral-border bg-neutral-surface p-5">
-                    <h3 className="mb-3 text-[15px] font-medium text-ink">Includes</h3>
+                  <div className="mb-6 rounded-2xl border border-white/[0.06] bg-cinema-elev p-5">
+                    <h3 className="mb-3 text-[15px] font-medium text-white">Includes</h3>
                     <ul className="space-y-1">
                       {p.items.map((it, i) => (
-                        <li key={i} className="flex items-center justify-between rounded-md bg-neutral-surface2 px-3 py-2 text-[13px]">
-                          <span className="text-ink">
+                        <li key={i} className="flex items-center justify-between rounded-md bg-white/[0.02] px-3 py-2 text-[13px]">
+                          <span className="text-white">
                             {it.productName ?? `Product ${it.productId.slice(0, 8)}…`}
                           </span>
-                          <span className="font-mono text-content-secondary">
+                          <span className="font-mono text-white/65">
                             × {it.quantity}{it.frequency ? ` · ${it.frequency.toLowerCase()}` : ""}
                           </span>
                         </li>
@@ -248,13 +248,13 @@ export default function ProgramDetailPage({ params }: { params: { id: string } }
                 )}
 
                 {/* Enrolments */}
-                <div className="overflow-hidden rounded-2xl border border-neutral-border bg-neutral-surface">
-                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-border px-5 py-3">
+                <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-cinema-elev">
+                  <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] px-5 py-3">
                     <div className="flex items-center gap-2">
-                      <Users size={16} className="text-content-muted" />
-                      <h3 className="text-[15px] font-medium text-ink">Enrolments</h3>
+                      <Users size={16} className="text-white/45" />
+                      <h3 className="text-[15px] font-medium text-white">Enrolments</h3>
                     </div>
-                    <div className="inline-flex items-center gap-1 rounded-lg border border-neutral-border bg-neutral-surface p-0.5">
+                    <div className="inline-flex items-center gap-1 rounded-lg border border-white/[0.06] bg-cinema-elev p-0.5">
                       {STATUS_FILTERS.map((s) => {
                         const active = statusFilter === s.id;
                         return (
@@ -263,7 +263,7 @@ export default function ProgramDetailPage({ params }: { params: { id: string } }
                             type="button"
                             onClick={() => setStatusFilter(s.id)}
                             className={`rounded-md px-3 py-1 text-[12px] font-medium transition-colors ${
-                              active ? "bg-primary-bg text-primary" : "text-content-secondary hover:text-ink"
+                              active ? "bg-primary/[0.08] text-primary" : "text-white/65 hover:text-white"
                             }`}
                           >
                             {s.label}
@@ -291,23 +291,23 @@ export default function ProgramDetailPage({ params }: { params: { id: string } }
                       />
                     }
                   >
-                    <ul className="divide-y divide-neutral-border">
+                    <ul className="divide-y divide-white/[0.06]">
                       {enrolments.map((e) => (
-                        <li key={e.id} className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-neutral-surface2">
+                        <li key={e.id} className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-white/[0.02]">
                           <Link href={`/customers/${e.customer.id}`} className="flex items-center gap-3 hover:text-primary">
-                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary-bg text-primary">
+                            <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/[0.08] text-primary">
                               <Users size={13} />
                             </span>
                             <div className="min-w-0">
-                              <p className="truncate text-[13px] font-medium text-ink hover:text-primary">
+                              <p className="truncate text-[13px] font-medium text-white hover:text-primary">
                                 {e.customer.name ?? "Customer"}
                               </p>
-                              <p className="font-mono text-[11px] text-content-muted">{e.customer.phone ?? "—"}</p>
+                              <p className="font-mono text-[11px] text-white/45">{e.customer.phone ?? "—"}</p>
                             </div>
                           </Link>
                           <div className="flex items-center gap-3 text-right">
                             <div>
-                              <p className="font-mono text-[11px] text-content-muted">
+                              <p className="font-mono text-[11px] text-white/45">
                                 Enrolled {fmtDate(e.enrolledAt)}
                               </p>
                               {e.nextBillingAt && (
@@ -318,17 +318,17 @@ export default function ProgramDetailPage({ params }: { params: { id: string } }
                             </div>
                             <Chip tone={enrollmentTone(e.status)}>{ENROLLMENT_LABELS[e.status]}</Chip>
                             {e.status === "ACTIVE" && (
-                              <span className="text-content-muted">
+                              <span className="text-white/45">
                                 <Pause size={13} />
                               </span>
                             )}
                             {e.status === "PAUSED" && (
-                              <span className="text-content-muted">
+                              <span className="text-white/45">
                                 <Play size={13} />
                               </span>
                             )}
                             {(e.status === "ACTIVE" || e.status === "PAUSED") && (
-                              <span className="text-content-muted">
+                              <span className="text-white/45">
                                 <X size={13} />
                               </span>
                             )}

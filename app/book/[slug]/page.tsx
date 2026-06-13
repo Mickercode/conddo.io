@@ -10,8 +10,8 @@ import { ApiError, isNotConfigured, isServerError } from "@/lib/api/client";
 import type { DayKey } from "@/lib/api/bookings";
 
 const inputCls =
-  "h-11 w-full rounded-md border border-neutral-strong bg-neutral-surface px-3.5 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none";
-const labelCls = "mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-content-secondary";
+  "h-11 w-full rounded-md border border-white/10 bg-cinema-elev px-3.5 text-[15px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none";
+const labelCls = "mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-white/65";
 
 const DAY_ORDER: DayKey[] = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 const DAY_LABEL: Record<DayKey, string> = { mon: "Mon", tue: "Tue", wed: "Wed", thu: "Thu", fri: "Fri", sat: "Sat", sun: "Sun" };
@@ -63,49 +63,49 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
+    <main className="flex min-h-screen items-center justify-center bg-cinema-base px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-8 flex justify-center">
           <Image src="/conddo_logo.png" alt="conddo.io" width={1800} height={480} priority className="h-7 w-auto opacity-80" />
         </div>
 
-        <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-7 sm:p-8">
+        <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-7 sm:p-8">
           {loading ? (
             <div className="flex flex-col items-center py-10 text-center">
               <Loader2 size={24} className="mb-3 animate-spin text-primary" />
-              <p className="text-[14px] text-content-secondary">Loading availability…</p>
+              <p className="text-[14px] text-white/65">Loading availability…</p>
             </div>
           ) : unavailable ? (
             <div className="py-8 text-center">
-              <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-danger-bg text-danger">
+              <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-rose-500/[0.06] text-rose-200">
                 <AlertCircle size={26} />
               </span>
-              <h1 className="text-[20px] tracking-[-0.01em] text-ink">Booking unavailable</h1>
-              <p className="mt-2 text-[14px] text-content-secondary">
+              <h1 className="text-[20px] tracking-[-0.01em] text-white">Booking unavailable</h1>
+              <p className="mt-2 text-[14px] text-white/65">
                 We couldn&apos;t find a booking page at this link. Please check the address.
               </p>
             </div>
           ) : confirmed ? (
             <div className="py-8 text-center">
-              <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-success-bg text-success">
+              <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-emerald-500/15 text-emerald-300">
                 <CheckCircle2 size={28} />
               </span>
-              <h1 className="text-[22px] tracking-[-0.01em] text-ink">Booking requested</h1>
-              <p className="mt-2 text-[15px] leading-relaxed text-content-secondary">
+              <h1 className="text-[22px] tracking-[-0.01em] text-white">Booking requested</h1>
+              <p className="mt-2 text-[15px] leading-relaxed text-white/65">
                 Thanks, {name.trim().split(/\s+/)[0]}. {business} will confirm your booking for{" "}
-                <span className="font-medium text-ink">{fmtSlot(confirmed.start)}</span> shortly.
+                <span className="font-medium text-white">{fmtSlot(confirmed.start)}</span> shortly.
               </p>
             </div>
           ) : (
             <>
               <header className="mb-6 text-center">
-                <h1 className="text-[22px] leading-tight tracking-[-0.01em] text-ink">Book with {business}</h1>
-                <p className="mt-1.5 text-[14px] text-content-secondary">Pick a time and share your details.</p>
+                <h1 className="text-[22px] leading-tight tracking-[-0.01em] text-white">Book with {business}</h1>
+                <p className="mt-1.5 text-[14px] text-white/65">Pick a time and share your details.</p>
               </header>
 
               {hours && (
-                <div className="mb-5 rounded-lg border border-neutral-border bg-neutral-surface2 p-3">
-                  <p className="mb-2 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.05em] text-content-muted">
+                <div className="mb-5 rounded-lg border border-white/[0.06] bg-white/[0.02] p-3">
+                  <p className="mb-2 flex items-center gap-1.5 text-[11px] uppercase tracking-[0.05em] text-white/45">
                     <Clock size={13} /> Opening hours
                   </p>
                   <div className="grid grid-cols-2 gap-x-4 gap-y-1">
@@ -113,8 +113,8 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
                       const h = hours[k];
                       return (
                         <div key={k} className="flex justify-between text-[12px]">
-                          <span className="text-content-secondary">{DAY_LABEL[k]}</span>
-                          <span className="font-mono text-ink">{h?.open ? `${h.start}–${h.end}` : "Closed"}</span>
+                          <span className="text-white/65">{DAY_LABEL[k]}</span>
+                          <span className="font-mono text-white">{h?.open ? `${h.start}–${h.end}` : "Closed"}</span>
                         </div>
                       );
                     })}
@@ -123,7 +123,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
               )}
 
               {formError && (
-                <div className="mb-5 flex items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
+                <div className="mb-5 flex items-center gap-2 rounded-lg border border-danger/20 bg-rose-500/[0.06] px-4 py-3 text-[14px] text-rose-200">
                   <AlertCircle size={18} className="shrink-0" /> {formError}
                 </div>
               )}
@@ -160,10 +160,10 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
 
               {booked.length > 0 && (
                 <div className="mt-5">
-                  <p className="mb-1.5 text-[11px] uppercase tracking-[0.05em] text-content-muted">Already booked</p>
+                  <p className="mb-1.5 text-[11px] uppercase tracking-[0.05em] text-white/45">Already booked</p>
                   <div className="flex flex-wrap gap-1.5">
                     {booked.slice(0, 8).map((b, i) => (
-                      <span key={i} className="rounded-full border border-neutral-border px-2.5 py-1 text-[11px] text-content-secondary">
+                      <span key={i} className="rounded-full border border-white/[0.06] px-2.5 py-1 text-[11px] text-white/65">
                         {fmtSlot(b.start)}
                       </span>
                     ))}
@@ -174,8 +174,8 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
           )}
         </div>
 
-        <p className="mt-6 text-center text-[12px] text-content-muted">
-          Powered by <span className="font-medium text-content-secondary">conddo.io</span>
+        <p className="mt-6 text-center text-[12px] text-white/45">
+          Powered by <span className="font-medium text-white/65">conddo.io</span>
         </p>
       </div>
     </main>

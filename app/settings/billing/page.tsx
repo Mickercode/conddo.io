@@ -192,9 +192,9 @@ export default function BillingSettings() {
         {/* Hard error — only shown for real network/server failures, not
             "this tenant has no sub yet" (which is a normal first-visit). */}
         {isHardError && (
-          <div className="rounded-xl border border-danger/30 bg-danger-bg px-5 py-4">
-            <p className="text-[14px] font-medium text-ink">Couldn't load your subscription</p>
-            <p className="mt-1 text-[13px] text-content-secondary">
+          <div className="rounded-xl border border-danger/30 bg-rose-500/[0.06] px-5 py-4">
+            <p className="text-[14px] font-medium text-white">Couldn't load your subscription</p>
+            <p className="mt-1 text-[13px] text-white/65">
               {subError instanceof ApiError ? subError.message : "Please try again."}
             </p>
             <Button variant="secondary" size="md" className="mt-3" onClick={sub.refetch}>
@@ -205,18 +205,18 @@ export default function BillingSettings() {
 
         {/* Loading state — light placeholder so the picker reveals smoothly. */}
         {sub.loading && (
-          <div className="h-20 animate-pulse rounded-xl bg-neutral-surface2" />
+          <div className="h-20 animate-pulse rounded-xl bg-white/[0.02]" />
         )}
 
         {/* No active subscription — guidance banner that frames the picker
             below as the path forward. Shown when BE explicitly reports
             "no active subscription" (404 or the message check). */}
         {!sub.loading && isMissingSubscription && (
-          <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary-bg/30 px-5 py-4">
+          <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/[0.08]/30 px-5 py-4">
             <Info className="mt-0.5 shrink-0 text-primary" size={20} />
             <div>
-              <p className="text-[14px] font-medium text-ink">No active subscription yet</p>
-              <p className="mt-0.5 text-[13px] text-content-secondary">
+              <p className="text-[14px] font-medium text-white">No active subscription yet</p>
+              <p className="mt-0.5 text-[13px] text-white/65">
                 Pick a plan below to activate your workspace. We'll redirect you to Paystack to complete payment.
               </p>
             </div>
@@ -227,34 +227,34 @@ export default function BillingSettings() {
         {data && (
           <>
             {data.status === "trialing" && data.trialEndsAt && (
-              <div className="flex items-start gap-3 rounded-xl border border-warning/30 bg-warning-bg px-5 py-4">
-                <Sparkles className="mt-0.5 shrink-0 text-warning" size={20} />
+              <div className="flex items-start gap-3 rounded-xl border border-warning/30 bg-amber-500/15 px-5 py-4">
+                <Sparkles className="mt-0.5 shrink-0 text-amber-300" size={20} />
                 <div>
-                  <p className="text-[14px] font-medium text-ink">
+                  <p className="text-[14px] font-medium text-white">
                     {data.daysRemaining > 0
                       ? `${data.daysRemaining} day${data.daysRemaining === 1 ? "" : "s"} left in your free trial`
                       : "Your trial ends today"}
                   </p>
-                  <p className="mt-0.5 text-[13px] text-content-secondary">
+                  <p className="mt-0.5 text-[13px] text-white/65">
                     Trial ends {fmtDate(data.trialEndsAt)}. Add billing details to keep your workspace live after that.
                   </p>
                 </div>
               </div>
             )}
 
-            <div className="rounded-xl border border-neutral-border bg-neutral-surface p-6">
+            <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-6">
               <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <div className="mb-1 flex items-center gap-2">
-                    <h3 className="text-[18px] font-medium text-ink">{data.planDisplayName}</h3>
+                    <h3 className="text-[18px] font-medium text-white">{data.planDisplayName}</h3>
                     <Chip tone={statusChip[data.status].tone}>{statusChip[data.status].label}</Chip>
                   </div>
                   {data.amountPaid > 0 && (
-                    <p className="font-mono text-[14px] text-content-secondary">
+                    <p className="font-mono text-[14px] text-white/65">
                       {naira(data.amountPaid)} / {data.billingCycle}
                     </p>
                   )}
-                  <p className="mt-2 flex items-center gap-1.5 text-[13px] text-content-muted">
+                  <p className="mt-2 flex items-center gap-1.5 text-[13px] text-white/45">
                     <CalendarClock size={14} />
                     {data.cancelledAt
                       ? `Cancelled — access ends ${fmtDate(data.expiresAt)}`
@@ -272,10 +272,10 @@ export default function BillingSettings() {
             existing; that's the whole point of this page on a fresh tenant. */}
         {!isHardError && (
           <div>
-            <h2 className="mb-1 text-[18px] font-medium tracking-[-0.01em] text-ink">
+            <h2 className="mb-1 text-[18px] font-medium tracking-[-0.01em] text-white">
               {data ? "Change plan" : "Choose a plan"}
             </h2>
-            <p className="mb-5 text-[14px] text-content-secondary">
+            <p className="mb-5 text-[14px] text-white/65">
               {data
                 ? "Upgrades take effect immediately and are prorated. Downgrades apply at the end of your billing period."
                 : "All plans include a 14-day free trial. You won't be charged until day 15."}
@@ -288,27 +288,27 @@ export default function BillingSettings() {
                 return (
                   <div
                     key={p.id}
-                    className={`rounded-xl border bg-neutral-surface p-5 ${
+                    className={`rounded-xl border bg-cinema-elev p-5 ${
                       isCurrent
                         ? "border-2 border-primary"
-                        : "border-neutral-border hover:border-primary-light"
+                        : "border-white/[0.06] hover:border-primary-light"
                     }`}
                   >
                     <div className="mb-2 flex items-center justify-between">
-                      <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-content-secondary">
+                      <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-white/65">
                         {p.name}
                       </p>
                       {isCurrent && (
-                        <span className="inline-flex items-center gap-1 rounded-full bg-primary-bg px-2.5 py-0.5 text-[11px] font-medium text-primary">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-primary/[0.08] px-2.5 py-0.5 text-[11px] font-medium text-primary">
                           <CheckCircle2 size={12} /> Current
                         </span>
                       )}
                     </div>
                     <div className="mb-2 flex items-baseline gap-1">
-                      <span className="font-mono text-[22px] text-ink">{price}</span>
-                      <span className="text-[13px] text-content-muted">/month</span>
+                      <span className="font-mono text-[22px] text-white">{price}</span>
+                      <span className="text-[13px] text-white/45">/month</span>
                     </div>
-                    <p className="mb-4 text-[13px] text-content-secondary">{p.blurb}</p>
+                    <p className="mb-4 text-[13px] text-white/65">{p.blurb}</p>
                     <Button
                       variant={isCurrent ? "secondary" : "primary"}
                       size="md"

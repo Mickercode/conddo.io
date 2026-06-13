@@ -70,17 +70,17 @@ export default function FabricPage() {
           during the initial load. */}
       {fabrics.length > 0 && !loading && (
         <div className="mb-5 grid grid-cols-1 gap-4 sm:grid-cols-3">
-          <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
-            <p className="text-[12px] uppercase tracking-[0.05em] text-content-muted">Total yards in stock</p>
-            <p className="mt-1 font-mono text-[22px] text-ink">{yards(totalYards)}</p>
+          <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
+            <p className="text-[12px] uppercase tracking-[0.05em] text-white/45">Total yards in stock</p>
+            <p className="mt-1 font-mono text-[22px] text-white">{yards(totalYards)}</p>
           </div>
-          <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
-            <p className="text-[12px] uppercase tracking-[0.05em] text-content-muted">Value tied up</p>
-            <p className="mt-1 font-mono text-[22px] text-ink">{naira(totalValue)}</p>
+          <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
+            <p className="text-[12px] uppercase tracking-[0.05em] text-white/45">Value tied up</p>
+            <p className="mt-1 font-mono text-[22px] text-white">{naira(totalValue)}</p>
           </div>
-          <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
-            <p className="text-[12px] uppercase tracking-[0.05em] text-content-muted">Needs reordering</p>
-            <p className={`mt-1 font-mono text-[22px] ${lowCount > 0 ? "text-warning" : "text-ink"}`}>
+          <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
+            <p className="text-[12px] uppercase tracking-[0.05em] text-white/45">Needs reordering</p>
+            <p className={`mt-1 font-mono text-[22px] ${lowCount > 0 ? "text-amber-300" : "text-white"}`}>
               {lowCount} {lowCount === 1 ? "fabric" : "fabrics"}
             </p>
           </div>
@@ -90,21 +90,21 @@ export default function FabricPage() {
       {/* Toolbar */}
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="relative sm:max-w-sm sm:flex-1">
-          <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-content-muted" />
+          <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/45" />
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             type="text"
             placeholder="Search by name or supplier ref"
-            className="w-full rounded-lg border border-neutral-border bg-neutral-surface py-2.5 pl-11 pr-4 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-lg border border-white/[0.06] bg-cinema-elev py-2.5 pl-11 pr-4 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
-        <label className="inline-flex cursor-pointer items-center gap-2 text-[14px] text-content-secondary">
+        <label className="inline-flex cursor-pointer items-center gap-2 text-[14px] text-white/65">
           <input
             type="checkbox"
             checked={lowOnly}
             onChange={(e) => setLowOnly(e.target.checked)}
-            className="h-4 w-4 rounded border-neutral-border text-primary focus:ring-primary"
+            className="h-4 w-4 rounded border-white/[0.06] text-primary focus:ring-primary"
           />
           Needs reordering only
         </label>
@@ -135,11 +135,11 @@ export default function FabricPage() {
           />
         }
       >
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[720px] text-left">
               <thead>
-                <tr className="border-b border-neutral-border bg-neutral-surface2 text-[11px] uppercase tracking-[0.05em] text-content-secondary">
+                <tr className="border-b border-white/[0.06] bg-white/[0.02] text-[11px] uppercase tracking-[0.05em] text-white/65">
                   <th className="px-5 py-3 font-medium">Fabric</th>
                   <th className="px-5 py-3 text-right font-medium">Yards in stock</th>
                   <th className="px-5 py-3 text-right font-medium">Price / yd</th>
@@ -148,24 +148,24 @@ export default function FabricPage() {
                   <th className="px-5 py-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-border">
+              <tbody className="divide-y divide-white/[0.06]">
                 {fabrics.map((p) => {
                   const status = stockStatus(p);
                   const value = (p.stock || 0) * (p.price || 0);
                   return (
-                    <tr key={p.id} className="transition-colors hover:bg-neutral-surface2">
+                    <tr key={p.id} className="transition-colors hover:bg-white/[0.02]">
                       <td className="px-5 py-3.5">
-                        <p className="text-[14px] text-ink">{p.name}</p>
-                        {p.sku && <p className="font-mono text-[12px] text-content-muted">{p.sku}</p>}
+                        <p className="text-[14px] text-white">{p.name}</p>
+                        {p.sku && <p className="font-mono text-[12px] text-white/45">{p.sku}</p>}
                       </td>
                       <td className="whitespace-nowrap px-5 py-3.5 text-right">
-                        <span className={`inline-flex items-center gap-1 font-mono text-[13px] ${status === "in_stock" ? "text-ink" : "text-warning"}`}>
+                        <span className={`inline-flex items-center gap-1 font-mono text-[13px] ${status === "in_stock" ? "text-white" : "text-amber-300"}`}>
                           {status !== "in_stock" && <AlertTriangle size={13} />}
                           {yards(p.stock)}
                         </span>
                       </td>
-                      <td className="whitespace-nowrap px-5 py-3.5 text-right font-mono text-[13px] text-ink">{naira(p.price)}</td>
-                      <td className="whitespace-nowrap px-5 py-3.5 text-right font-mono text-[13px] text-content-secondary">{naira(value)}</td>
+                      <td className="whitespace-nowrap px-5 py-3.5 text-right font-mono text-[13px] text-white">{naira(p.price)}</td>
+                      <td className="whitespace-nowrap px-5 py-3.5 text-right font-mono text-[13px] text-white/65">{naira(value)}</td>
                       <td className="px-5 py-3.5">
                         <Chip tone={statusChip[status].tone}>{statusChip[status].label}</Chip>
                       </td>
@@ -173,13 +173,13 @@ export default function FabricPage() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => setAdjusting(p)}
-                            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium text-content-secondary hover:bg-neutral-surface hover:text-ink"
+                            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium text-white/65 hover:bg-cinema-elev hover:text-white"
                           >
                             <ArrowUpDown size={14} /> Adjust
                           </button>
                           <button
                             onClick={() => openEdit(p)}
-                            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium text-primary hover:bg-primary-bg"
+                            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-[12px] font-medium text-primary hover:bg-primary/[0.08]"
                           >
                             <Pencil size={14} /> Edit
                           </button>

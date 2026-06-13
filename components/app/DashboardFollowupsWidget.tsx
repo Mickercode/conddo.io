@@ -39,15 +39,15 @@ export function DashboardFollowupsWidget() {
   const overdue = dueRaw.filter((f) => new Date(f.dueDate).getTime() < Date.now()).length;
 
   return (
-    <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+    <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary-bg text-primary">
+          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/[0.08] text-primary">
             <ListChecks size={15} />
           </span>
           <div>
-            <h3 className="text-[14px] font-medium text-ink">Follow-ups due</h3>
-            <p className="text-[12px] text-content-muted">
+            <h3 className="text-[14px] font-medium text-white">Follow-ups due</h3>
+            <p className="text-[12px] text-white/45">
               {dueRaw.length === 0 ? "Nothing scheduled in the next 24h." : (
                 <>{dueRaw.length} due{overdue > 0 ? ` · ${overdue} overdue` : ""}</>
               )}
@@ -63,10 +63,10 @@ export function DashboardFollowupsWidget() {
       </div>
 
       {dueQ.loading ? (
-        <p className="py-4 text-center text-[12px] text-content-muted">Loading…</p>
+        <p className="py-4 text-center text-[12px] text-white/45">Loading…</p>
       ) : due.length === 0 ? (
-        <div className="rounded-md bg-neutral-surface2 px-3 py-4 text-center">
-          <p className="text-[12px] text-content-muted">All caught up — no follow-ups due in the next 24 hours.</p>
+        <div className="rounded-md bg-white/[0.02] px-3 py-4 text-center">
+          <p className="text-[12px] text-white/45">All caught up — no follow-ups due in the next 24 hours.</p>
         </div>
       ) : (
         <ul className="space-y-2">
@@ -76,19 +76,19 @@ export function DashboardFollowupsWidget() {
             return (
               <li
                 key={f.id}
-                className="flex items-start gap-3 rounded-md bg-neutral-surface2 px-3 py-2"
+                className="flex items-start gap-3 rounded-md bg-white/[0.02] px-3 py-2"
               >
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-1.5">
-                    <p className="truncate text-[13px] font-medium text-ink">
+                    <p className="truncate text-[13px] font-medium text-white">
                       {f.customer.name ?? "Patient"}
                     </p>
                     {isOverdue && <Chip tone="danger">Overdue</Chip>}
                   </div>
-                  <p className="mt-0.5 line-clamp-1 text-[11px] text-content-secondary">
+                  <p className="mt-0.5 line-clamp-1 text-[11px] text-white/65">
                     {productName ? `${productName} — ` : ""}{f.checkNote}
                   </p>
-                  <p className="mt-0.5 inline-flex items-center gap-1 font-mono text-[10px] text-content-muted">
+                  <p className="mt-0.5 inline-flex items-center gap-1 font-mono text-[10px] text-white/45">
                     <CalendarClock size={10} /> {fmtTimeShort(f.dueDate)}
                   </p>
                 </div>
@@ -97,7 +97,7 @@ export function DashboardFollowupsWidget() {
                     href={`tel:${f.customer.phone}`}
                     aria-label={`Call ${f.customer.name ?? ""}`}
                     title={f.customer.phone}
-                    className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-content-muted hover:bg-primary-bg hover:text-primary"
+                    className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-white/45 hover:bg-primary/[0.08] hover:text-primary"
                   >
                     <Phone size={12} />
                   </a>
@@ -109,7 +109,7 @@ export function DashboardFollowupsWidget() {
       )}
 
       {overdue > 0 && (
-        <p className="mt-3 flex items-center gap-1.5 text-[10px] text-danger">
+        <p className="mt-3 flex items-center gap-1.5 text-[10px] text-rose-200">
           <AlertCircle size={10} /> Overdue follow-ups need a call today.
         </p>
       )}

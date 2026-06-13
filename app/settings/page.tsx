@@ -16,13 +16,13 @@ const str = (form: FormData, key: string) => String(form.get(key) ?? "").trim();
 const anyFilled = (...vals: string[]) => vals.some((v) => v.length > 0);
 
 const inputCls =
-  "w-full rounded-lg border border-neutral-border bg-neutral-surface2 px-3.5 py-2.5 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary";
-const labelCls = "mb-1.5 block text-[11px] uppercase tracking-[0.05em] text-content-muted";
+  "w-full rounded-lg border border-white/[0.06] bg-white/[0.02] px-3.5 py-2.5 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none focus:ring-1 focus:ring-primary";
+const labelCls = "mb-1.5 block text-[11px] uppercase tracking-[0.05em] text-white/45";
 
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <section className="rounded-xl border border-neutral-border bg-neutral-surface p-6">
-      <h3 className="mb-5 text-[16px] font-medium text-ink">{title}</h3>
+    <section className="rounded-xl border border-white/[0.06] bg-cinema-elev p-6">
+      <h3 className="mb-5 text-[16px] font-medium text-white">{title}</h3>
       {children}
     </section>
   );
@@ -114,14 +114,14 @@ export default function BusinessProfileSettings() {
   return (
     <SettingsShell active="profile" title="Business Profile" description="This information appears on your website and in your dashboard.">
       {loading ? (
-        <p className="flex items-center gap-2 text-[14px] text-content-secondary">
+        <p className="flex items-center gap-2 text-[14px] text-white/65">
           <Loader2 size={16} className="animate-spin" /> Loading your profile…
         </p>
       ) : (
         // `key` lets defaultValues populate once data (profile + location) arrives.
         <form key={`${p ? "p" : ""}${location ? "l" : ""}`} onSubmit={onSave} className="space-y-6">
           {hadError && (
-            <p className="rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[13px] text-danger">
+            <p className="rounded-lg border border-danger/20 bg-rose-500/[0.06] px-4 py-3 text-[13px] text-rose-200">
               {error.message}
             </p>
           )}
@@ -143,7 +143,7 @@ export default function BusinessProfileSettings() {
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <div>
                   <label className={labelCls}>Industry (Locked)</label>
-                  <div className="flex cursor-not-allowed items-center justify-between rounded-lg border border-neutral-border bg-neutral-surface2 px-3.5 py-2.5 text-[14px] text-content-secondary">
+                  <div className="flex cursor-not-allowed items-center justify-between rounded-lg border border-white/[0.06] bg-white/[0.02] px-3.5 py-2.5 text-[14px] text-white/65">
                     <span>{p?.industry ?? "—"}</span>
                     <Lock size={16} />
                   </div>
@@ -160,7 +160,7 @@ export default function BusinessProfileSettings() {
                 </div>
                 <div>
                   <label className={labelCls}>Subdomain</label>
-                  <div className="cursor-not-allowed rounded-lg border border-neutral-border bg-neutral-surface2 px-3.5 py-2.5 font-mono text-[14px] text-content-secondary">
+                  <div className="cursor-not-allowed rounded-lg border border-white/[0.06] bg-white/[0.02] px-3.5 py-2.5 font-mono text-[14px] text-white/65">
                     {p?.subdomain ? `${p.subdomain}.conddo.io` : "—.conddo.io"}
                   </div>
                 </div>
@@ -173,21 +173,21 @@ export default function BusinessProfileSettings() {
               <div>
                 <label className={labelCls}>Logo</label>
                 <input type="hidden" name="logoUrl" value={logoUrl} />
-                <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-neutral-strong bg-neutral-surface2 px-3.5 py-3 transition-colors hover:border-primary">
+                <label className="flex cursor-pointer items-center gap-3 rounded-lg border border-dashed border-white/10 bg-white/[0.02] px-3.5 py-3 transition-colors hover:border-primary">
                   <input type="file" accept="image/png,image/jpeg,image/svg+xml" className="sr-only" onChange={onLogoUpload} disabled={uploadingLogo} />
                   {logoUrl ? (
                     <img src={logoUrl} alt="Logo" className="h-9 w-auto max-w-[120px] object-contain" />
                   ) : (
-                    <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary-bg text-primary"><Save size={16} /></span>
+                    <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/[0.08] text-primary"><Save size={16} /></span>
                   )}
                   <span className="text-[14px] text-primary">{uploadingLogo ? "Uploading…" : logoUrl ? "Change logo" : "Upload a logo"}</span>
                 </label>
-                <p className="mt-1 text-[12px] text-content-muted">PNG, JPG or SVG · up to 2MB</p>
+                <p className="mt-1 text-[12px] text-white/45">PNG, JPG or SVG · up to 2MB</p>
               </div>
               <div>
                 <label className={labelCls}>Primary Brand Color</label>
                 <div className="flex items-center gap-2.5">
-                  <div className="h-10 w-10 shrink-0 rounded-lg border border-neutral-border bg-primary" />
+                  <div className="h-10 w-10 shrink-0 rounded-lg border border-white/[0.06] bg-primary" />
                   <input name="primaryColor" placeholder="#7C5CBF" className={`${inputCls} font-mono uppercase`} />
                 </div>
               </div>
@@ -204,7 +204,7 @@ export default function BusinessProfileSettings() {
                 <div key={name}>
                   <label className={labelCls}>{label}</label>
                   <div className="relative">
-                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-content-muted">{prefix}</span>
+                    <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-white/45">{prefix}</span>
                     <input name={name} placeholder="yourhandle" className={`${inputCls} pl-7`} />
                   </div>
                 </div>
@@ -236,7 +236,7 @@ export default function BusinessProfileSettings() {
           </Section>
 
           <Section title="Business Hours">
-            <div className="divide-y divide-neutral-border">
+            <div className="divide-y divide-white/[0.06]">
               {hours.map((h) => (
                 <div key={h.day} className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-3">
@@ -244,20 +244,20 @@ export default function BusinessProfileSettings() {
                       <input type="checkbox" defaultChecked={h.on} className="peer sr-only" />
                       <div className="h-6 w-11 rounded-full bg-neutral-strong transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all peer-checked:bg-primary peer-checked:after:translate-x-5" />
                     </label>
-                    <span className={`w-24 text-[14px] ${h.on ? "font-medium text-ink" : "text-content-muted"}`}>{h.day}</span>
+                    <span className={`w-24 text-[14px] ${h.on ? "font-medium text-white" : "text-white/45"}`}>{h.day}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <input defaultValue={h.open ?? ""} placeholder="09:00 AM" className="w-24 rounded-lg border border-neutral-border bg-neutral-surface2 px-2 py-1.5 text-center font-mono text-[13px] text-ink placeholder:text-content-muted" />
-                    <span className="text-[12px] text-content-muted">to</span>
-                    <input defaultValue={h.close ?? ""} placeholder="06:00 PM" className="w-24 rounded-lg border border-neutral-border bg-neutral-surface2 px-2 py-1.5 text-center font-mono text-[13px] text-ink placeholder:text-content-muted" />
+                    <input defaultValue={h.open ?? ""} placeholder="09:00 AM" className="w-24 rounded-lg border border-white/[0.06] bg-white/[0.02] px-2 py-1.5 text-center font-mono text-[13px] text-white placeholder:text-white/35" />
+                    <span className="text-[12px] text-white/45">to</span>
+                    <input defaultValue={h.close ?? ""} placeholder="06:00 PM" className="w-24 rounded-lg border border-white/[0.06] bg-white/[0.02] px-2 py-1.5 text-center font-mono text-[13px] text-white placeholder:text-white/35" />
                   </div>
                 </div>
               ))}
             </div>
           </Section>
 
-          <div className="flex items-center justify-between border-t border-neutral-border pt-6">
-            <span className="text-[13px] text-success">{saved ? "Saved." : ""}</span>
+          <div className="flex items-center justify-between border-t border-white/[0.06] pt-6">
+            <span className="text-[13px] text-emerald-300">{saved ? "Saved." : ""}</span>
             <Button variant="primary" size="md" disabled={saving}>
               {saving ? <Loader2 size={17} className="animate-spin" /> : <Save size={17} />}
               {saving ? "Saving…" : "Save changes"}

@@ -67,10 +67,10 @@ function CashbackConfigCard() {
   }
 
   return (
-    <div className="rounded-xl border border-neutral-border bg-neutral-surface p-6">
+    <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-6">
       <div className="mb-4 flex items-center gap-2">
         <Sparkles size={16} className="text-primary" />
-        <h2 className="text-[15px] font-medium text-ink">Cashback program</h2>
+        <h2 className="text-[15px] font-medium text-white">Cashback program</h2>
       </div>
       <QueryBoundary
         loading={loading}
@@ -114,14 +114,14 @@ function CashbackConfigCard() {
             type="checkbox"
             checked={active}
             onChange={(e) => setActive(e.target.checked)}
-            className="h-4 w-4 rounded border-neutral-border text-primary focus:ring-primary"
+            className="h-4 w-4 rounded border-white/[0.06] text-primary focus:ring-primary"
           />
-          <span className="text-[14px] text-content-secondary">
+          <span className="text-[14px] text-white/65">
             Active — cashback accrues on every DELIVERED order
           </span>
         </label>
         <div className="mt-4 flex items-center justify-between gap-3">
-          <p className="flex items-start gap-1.5 text-[11px] text-content-muted">
+          <p className="flex items-start gap-1.5 text-[11px] text-white/45">
             <AlertCircle size={11} className="mt-0.5 shrink-0" />
             Cashback credits on order DELIVERED — not on placement. Customers see their balance on the website and at checkout.
           </p>
@@ -162,13 +162,13 @@ function WalletsCard() {
         }}
         className="relative mb-4"
       >
-        <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-content-muted" />
+        <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/45" />
         <input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           type="text"
           placeholder="Search customers"
-          className="w-full max-w-md rounded-lg border border-neutral-border bg-neutral-surface py-2.5 pl-11 pr-4 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none"
+          className="w-full max-w-md rounded-lg border border-white/[0.06] bg-cinema-elev py-2.5 pl-11 pr-4 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none"
         />
       </form>
 
@@ -190,8 +190,8 @@ function WalletsCard() {
           />
         }
       >
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-          <ul className="divide-y divide-neutral-border">
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+          <ul className="divide-y divide-white/[0.06]">
             {wallets.map((w) => <WalletRow key={w.customerId} w={w} />)}
           </ul>
         </div>
@@ -202,33 +202,33 @@ function WalletsCard() {
 
 function WalletRow({ w }: { w: CustomerWallet }) {
   return (
-    <li className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-neutral-surface2">
+    <li className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-white/[0.02]">
       <Link
         href={`/customers/${w.customerId}`}
         className="flex min-w-0 items-center gap-3"
       >
-        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary-bg text-primary">
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/[0.08] text-primary">
           <Wallet size={15} />
         </span>
         <div className="min-w-0">
-          <p className="truncate text-[14px] font-medium text-ink hover:text-primary">
+          <p className="truncate text-[14px] font-medium text-white hover:text-primary">
             {w.customerName ?? `Customer ${w.customerId.slice(0, 8)}…`}
           </p>
-          <p className="mt-0.5 inline-flex items-center gap-3 font-mono text-[11px] text-content-muted">
+          <p className="mt-0.5 inline-flex items-center gap-3 font-mono text-[11px] text-white/45">
             <span className="inline-flex items-center gap-1">
-              <ArrowDownToLine size={11} className="text-success" />
+              <ArrowDownToLine size={11} className="text-emerald-300" />
               {naira(w.totalEarned)}
             </span>
             <span className="inline-flex items-center gap-1">
-              <ArrowUpFromLine size={11} className="text-danger" />
+              <ArrowUpFromLine size={11} className="text-rose-200" />
               {naira(w.totalRedeemed)}
             </span>
           </p>
         </div>
       </Link>
       <div className="text-right">
-        <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Balance</p>
-        <p className="mt-0.5 font-mono text-[16px] font-medium text-success">
+        <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Balance</p>
+        <p className="mt-0.5 font-mono text-[16px] font-medium text-emerald-300">
           {naira(w.balance)}
         </p>
       </div>
@@ -238,13 +238,13 @@ function WalletRow({ w }: { w: CustomerWallet }) {
 
 function StatCard({ label, value, tone }: { label: string; value: string; tone: "success" | "warning" | "primary" }) {
   const toneText: Record<typeof tone, string> = {
-    success: "text-success",
-    warning: "text-warning",
+    success: "text-emerald-300",
+    warning: "text-amber-300",
     primary: "text-primary",
   };
   return (
-    <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
-      <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">{label}</p>
+    <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
+      <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">{label}</p>
       <p className={`mt-1 font-mono text-[24px] font-medium leading-none ${toneText[tone]}`}>{value}</p>
     </div>
   );

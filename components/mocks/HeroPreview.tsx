@@ -230,7 +230,7 @@ function CustomersBody() {
     <>
       <PanelHeader greeting="Customers," sub="284 total · 32 new" chip="All time" />
       <div className="overflow-hidden rounded-lg border border-neutral-border">
-        <ul className="divide-y divide-neutral-border bg-neutral-surface">
+        <ul className="divide-y divide-white/[0.06] bg-neutral-surface">
           {customers.map((c) => (
             <li key={c.name} className="flex items-center justify-between px-3.5 py-2.5">
               <div className="flex items-center gap-3">

@@ -172,7 +172,7 @@ export default function ReconciliationDetailPage({ params }: { params: { id: str
     >
       <Link
         href="/inventory/reconciliation"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         <ArrowLeft size={14} /> Back to Reconciliation
       </Link>
@@ -187,14 +187,14 @@ export default function ReconciliationDetailPage({ params }: { params: { id: str
       >
         {isComplete ? (
           <div className="space-y-5">
-            <div className="rounded-xl border border-success/20 bg-success-bg p-5">
+            <div className="rounded-xl border border-success/20 bg-emerald-500/15 p-5">
               <div className="mb-2 flex items-center gap-2">
-                <Check size={18} className="text-success" />
-                <p className="text-[15px] font-medium text-ink">
+                <Check size={18} className="text-emerald-300" />
+                <p className="text-[15px] font-medium text-white">
                   Reconciliation complete
                 </p>
               </div>
-              <p className="text-[13px] text-content-secondary">
+              <p className="text-[13px] text-white/65">
                 Completed {fmtWhen(session?.completedAt)}.
               </p>
             </div>
@@ -219,14 +219,14 @@ export default function ReconciliationDetailPage({ params }: { params: { id: str
             <div className="flex flex-wrap gap-3">
               <Link
                 href="/inventory/movements"
-                className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary-bg px-3 py-1.5 text-[13px] font-medium text-primary hover:bg-primary hover:text-white"
+                className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/[0.08] px-3 py-1.5 text-[13px] font-medium text-primary hover:bg-primary hover:text-white"
               >
                 View the audit trail
               </Link>
               <button
                 type="button"
                 onClick={() => router.push("/inventory")}
-                className="inline-flex items-center gap-1.5 rounded-md border border-neutral-border bg-neutral-surface px-3 py-1.5 text-[13px] font-medium text-content-secondary hover:border-primary hover:text-primary"
+                className="inline-flex items-center gap-1.5 rounded-md border border-white/[0.06] bg-cinema-elev px-3 py-1.5 text-[13px] font-medium text-white/65 hover:border-primary hover:text-primary"
               >
                 Back to Inventory
               </button>
@@ -235,18 +235,18 @@ export default function ReconciliationDetailPage({ params }: { params: { id: str
         ) : session ? (
           <>
             {/* Progress strip */}
-            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-border bg-neutral-surface px-4 py-3">
+            <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev px-4 py-3">
               <div className="flex flex-wrap items-center gap-3 text-[13px]">
-                <span className="flex items-center gap-1.5 text-content-secondary">
-                  <ListChecks size={14} className="text-content-muted" />
+                <span className="flex items-center gap-1.5 text-white/65">
+                  <ListChecks size={14} className="text-white/45" />
                   {filledCount} of {items.length} counted
                 </span>
-                <span className="flex items-center gap-1.5 text-content-secondary">
-                  <AlertTriangle size={14} className={varianceCount > 0 ? "text-warning" : "text-content-muted"} />
+                <span className="flex items-center gap-1.5 text-white/65">
+                  <AlertTriangle size={14} className={varianceCount > 0 ? "text-amber-300" : "text-white/45"} />
                   {varianceCount} variance{varianceCount === 1 ? "" : "s"}
                 </span>
                 {totalVariance !== 0 && (
-                  <span className={`font-mono text-[12px] ${totalVariance > 0 ? "text-success" : "text-danger"}`}>
+                  <span className={`font-mono text-[12px] ${totalVariance > 0 ? "text-emerald-300" : "text-rose-200"}`}>
                     {totalVariance > 0 ? "+" : ""}{totalVariance} unit{Math.abs(totalVariance) === 1 ? "" : "s"} net
                   </span>
                 )}
@@ -269,22 +269,22 @@ export default function ReconciliationDetailPage({ params }: { params: { id: str
 
             {/* Search */}
             <div className="relative mb-4">
-              <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-content-muted" />
+              <Search size={16} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/45" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Filter by product name"
-                className="w-full max-w-sm rounded-lg border border-neutral-border bg-neutral-surface py-2 pl-10 pr-3 text-[13px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none"
+                className="w-full max-w-sm rounded-lg border border-white/[0.06] bg-cinema-elev py-2 pl-10 pr-3 text-[13px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none"
               />
             </div>
 
             {/* Items table */}
-            <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+            <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[640px] text-left">
                   <thead>
-                    <tr className="border-b border-neutral-border bg-neutral-surface2 text-[11px] uppercase tracking-[0.05em] text-content-secondary">
+                    <tr className="border-b border-white/[0.06] bg-white/[0.02] text-[11px] uppercase tracking-[0.05em] text-white/65">
                       <th className="px-5 py-3 font-medium">Product</th>
                       <th className="px-5 py-3 text-right font-medium">System qty</th>
                       <th className="px-5 py-3 text-right font-medium">Counted</th>
@@ -292,15 +292,15 @@ export default function ReconciliationDetailPage({ params }: { params: { id: str
                       <th className="px-5 py-3 font-medium">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-border">
+                  <tbody className="divide-y divide-white/[0.06]">
                     {visibleItems.map((it) => {
                       const name = productNames.get(it.productId) ?? `Product ${it.productId.slice(0, 8)}…`;
                       const v = variance(it);
                       const filled = drafts[it.productId] !== undefined && drafts[it.productId] !== "";
                       return (
-                        <tr key={it.productId} className="hover:bg-neutral-surface2">
-                          <td className="px-5 py-2.5 text-[13px] text-ink">{name}</td>
-                          <td className="px-5 py-2.5 text-right font-mono text-[13px] text-content-secondary">{it.systemQty}</td>
+                        <tr key={it.productId} className="hover:bg-white/[0.02]">
+                          <td className="px-5 py-2.5 text-[13px] text-white">{name}</td>
+                          <td className="px-5 py-2.5 text-right font-mono text-[13px] text-white/65">{it.systemQty}</td>
                           <td className="px-5 py-2.5 text-right">
                             <input
                               type="number"
@@ -309,16 +309,16 @@ export default function ReconciliationDetailPage({ params }: { params: { id: str
                               value={drafts[it.productId] ?? ""}
                               onChange={(e) => patchCount(it.productId, e.target.value)}
                               placeholder="—"
-                              className="h-8 w-20 rounded-md border border-neutral-strong bg-neutral-bg px-2 text-right font-mono text-[13px] text-ink focus:border-primary focus:outline-none"
+                              className="h-8 w-20 rounded-md border border-white/10 bg-cinema-base px-2 text-right font-mono text-[13px] text-white focus:border-primary-light focus:outline-none"
                             />
                           </td>
                           <td className="px-5 py-2.5 text-right">
                             {v == null ? (
-                              <span className="font-mono text-[12px] text-content-muted">—</span>
+                              <span className="font-mono text-[12px] text-white/45">—</span>
                             ) : v === 0 ? (
-                              <span className="font-mono text-[12px] text-content-secondary">0</span>
+                              <span className="font-mono text-[12px] text-white/65">0</span>
                             ) : (
-                              <span className={`font-mono text-[12px] ${v > 0 ? "text-success" : "text-danger"}`}>
+                              <span className={`font-mono text-[12px] ${v > 0 ? "text-emerald-300" : "text-rose-200"}`}>
                                 {v > 0 ? "+" : ""}{v}
                               </span>
                             )}
@@ -341,7 +341,7 @@ export default function ReconciliationDetailPage({ params }: { params: { id: str
             </div>
 
             {visibleItems.length === 0 && search && (
-              <p className="mt-3 text-center text-[13px] text-content-muted">
+              <p className="mt-3 text-center text-[13px] text-white/45">
                 No products match &ldquo;{search}&rdquo;.
               </p>
             )}
@@ -362,15 +362,15 @@ function SummaryStat({
   tone?: "success" | "warning" | "danger" | "primary" | "neutral";
 }) {
   const toneText: Record<typeof tone, string> = {
-    success: "text-success",
-    warning: "text-warning",
-    danger: "text-danger",
+    success: "text-emerald-300",
+    warning: "text-amber-300",
+    danger: "text-rose-200",
     primary: "text-primary",
-    neutral: "text-ink",
+    neutral: "text-white",
   };
   return (
-    <div className="rounded-lg border border-neutral-border bg-neutral-surface p-4">
-      <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">{label}</p>
+    <div className="rounded-lg border border-white/[0.06] bg-cinema-elev p-4">
+      <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">{label}</p>
       <p className={`mt-1 font-mono text-[24px] font-medium leading-none ${toneText[tone]}`}>{value}</p>
     </div>
   );

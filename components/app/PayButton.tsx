@@ -104,7 +104,7 @@ export function PayButton({
 
   if (unavailable) {
     return (
-      <div className={`inline-flex items-center gap-2 rounded-md border border-warning/20 bg-warning-bg px-3 py-2 text-[13px] text-warning ${className ?? ""}`}>
+      <div className={`inline-flex items-center gap-2 rounded-md border border-warning/20 bg-amber-500/15 px-3 py-2 text-[13px] text-amber-300 ${className ?? ""}`}>
         <AlertCircle size={15} /> Payments are being set up — check back shortly.
       </div>
     );

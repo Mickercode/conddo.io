@@ -27,12 +27,12 @@ export default function BillingReturnPage() {
 
 function ReturnShell() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
-      <div className="w-full max-w-md rounded-2xl border border-neutral-border bg-neutral-surface p-8">
+    <main className="flex min-h-screen items-center justify-center bg-cinema-base px-4 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-white/[0.06] bg-cinema-elev p-8">
         <div className="mb-5 flex justify-center">
           <Loader2 className="animate-spin text-primary" size={36} />
         </div>
-        <h1 className="text-center text-[22px] font-medium leading-tight tracking-[-0.01em] text-ink">
+        <h1 className="text-center text-[22px] font-medium leading-tight tracking-[-0.01em] text-white">
           Verifying your subscription…
         </h1>
       </div>
@@ -83,8 +83,8 @@ function BillingReturnInner() {
   }, [reference]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
-      <div className="w-full max-w-md rounded-2xl border border-neutral-border bg-neutral-surface p-8">
+    <main className="flex min-h-screen items-center justify-center bg-cinema-base px-4 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-white/[0.06] bg-cinema-elev p-8">
         <View result={result} error={error} attempt={attempt} reference={reference} />
       </div>
     </main>
@@ -101,8 +101,8 @@ function View({
 }) {
   if (error) {
     return (
-      <Box icon={<AlertCircle className="text-warning" size={36} />} title="Something's off">
-        <p className="mb-5 text-center text-[14px] text-content-secondary">{error}</p>
+      <Box icon={<AlertCircle className="text-amber-300" size={36} />} title="Something's off">
+        <p className="mb-5 text-center text-[14px] text-white/65">{error}</p>
         <Link href="/settings/billing" className="block">
           <Button variant="primary" size="md" className="w-full">Back to Billing</Button>
         </Link>
@@ -113,23 +113,23 @@ function View({
   if (!result) {
     return (
       <Box icon={<Loader2 className="animate-spin text-primary" size={36} />} title="Confirming your subscription…">
-        <p className="text-center text-[14px] text-content-secondary">
+        <p className="text-center text-[14px] text-white/65">
           This usually takes a few seconds.
         </p>
-        {reference && <p className="mt-4 text-center font-mono text-[11px] text-content-muted">Ref: {reference}</p>}
+        {reference && <p className="mt-4 text-center font-mono text-[11px] text-white/45">Ref: {reference}</p>}
       </Box>
     );
   }
 
   if (result.status === "success") {
     return (
-      <Box icon={<CheckCircle2 className="text-success" size={40} />} title="Subscription activated">
-        <p className="mb-1 text-center text-[14px] text-content-secondary">
-          You're now on the <span className="font-medium text-ink">{result.subscription?.planDisplayName ?? "new"}</span> plan.
+      <Box icon={<CheckCircle2 className="text-emerald-300" size={40} />} title="Subscription activated">
+        <p className="mb-1 text-center text-[14px] text-white/65">
+          You're now on the <span className="font-medium text-white">{result.subscription?.planDisplayName ?? "new"}</span> plan.
         </p>
         {typeof result.amount === "number" && (
-          <p className="mb-5 text-center text-[13px] text-content-muted">
-            Charged <span className="font-mono text-ink">{naira(result.amount)}</span>
+          <p className="mb-5 text-center text-[13px] text-white/45">
+            Charged <span className="font-mono text-white">{naira(result.amount)}</span>
             {result.subscription?.expiresAt && (
               <> · next renewal {new Date(result.subscription.expiresAt).toLocaleDateString("en-NG", { month: "long", day: "numeric", year: "numeric" })}</>
             )}
@@ -140,32 +140,32 @@ function View({
             Go to dashboard <ArrowRight size={16} />
           </Button>
         </Link>
-        {reference && <p className="mt-4 text-center font-mono text-[11px] text-content-muted">Ref: {reference}</p>}
+        {reference && <p className="mt-4 text-center font-mono text-[11px] text-white/45">Ref: {reference}</p>}
       </Box>
     );
   }
 
   if (result.status === "failed" || result.status === "abandoned") {
     return (
-      <Box icon={<XCircle className="text-danger" size={40} />} title="Subscription not activated">
-        <p className="mb-5 text-center text-[14px] text-content-secondary">
+      <Box icon={<XCircle className="text-rose-200" size={40} />} title="Subscription not activated">
+        <p className="mb-5 text-center text-[14px] text-white/65">
           {result.failureReason ?? "Your payment didn't go through. Your card was not charged."}
         </p>
         <Link href="/settings/billing" className="block">
           <Button variant="primary" size="md" className="w-full">Try again</Button>
         </Link>
-        {reference && <p className="mt-4 text-center font-mono text-[11px] text-content-muted">Ref: {reference}</p>}
+        {reference && <p className="mt-4 text-center font-mono text-[11px] text-white/45">Ref: {reference}</p>}
       </Box>
     );
   }
 
   // pending — keep waiting
   return (
-    <Box icon={<Clock className="text-warning" size={36} />} title="Still pending">
-      <p className="text-center text-[14px] text-content-secondary">
+    <Box icon={<Clock className="text-amber-300" size={36} />} title="Still pending">
+      <p className="text-center text-[14px] text-white/65">
         Waiting for confirmation from Paystack. Attempt {attempt}/40 — usually under 30 seconds.
       </p>
-      {reference && <p className="mt-4 text-center font-mono text-[11px] text-content-muted">Ref: {reference}</p>}
+      {reference && <p className="mt-4 text-center font-mono text-[11px] text-white/45">Ref: {reference}</p>}
     </Box>
   );
 }
@@ -174,7 +174,7 @@ function Box({ icon, title, children }: { icon: React.ReactNode; title: string; 
   return (
     <>
       <div className="mb-5 flex justify-center">{icon}</div>
-      <h1 className="mb-3 text-center text-[22px] font-medium leading-tight tracking-[-0.01em] text-ink">{title}</h1>
+      <h1 className="mb-3 text-center text-[22px] font-medium leading-tight tracking-[-0.01em] text-white">{title}</h1>
       {children}
     </>
   );

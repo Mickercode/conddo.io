@@ -60,11 +60,11 @@ export function OrderActivityLog({
     !loaded && initial.length >= NESTED_PAGE_LIKELY_FULL_AT;
 
   return (
-    <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-6">
+    <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-6">
       <div className="mb-6 flex items-center justify-between gap-2">
-        <h3 className="text-[16px] font-medium text-ink">Activity Log</h3>
+        <h3 className="text-[16px] font-medium text-white">Activity Log</h3>
         {loaded && (
-          <span className="font-mono text-[11px] text-content-muted">
+          <span className="font-mono text-[11px] text-white/45">
             Showing all {loaded.length}
           </span>
         )}
@@ -73,16 +73,16 @@ export function OrderActivityLog({
       <ol className="relative space-y-5 before:absolute before:bottom-2 before:left-[11px] before:top-2 before:w-px before:bg-neutral-border">
         {items.map((e, i) => (
           <li key={e.id} className="relative flex gap-4">
-            <span className={`z-10 mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border bg-neutral-surface ${i === 0 ? "border-primary" : "border-neutral-border"}`}>
+            <span className={`z-10 mt-0.5 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border bg-cinema-elev ${i === 0 ? "border-primary" : "border-white/[0.06]"}`}>
               <span className={`h-1.5 w-1.5 rounded-full ${i === 0 ? "bg-primary" : "bg-neutral-strong"}`} />
             </span>
             <div className="flex-1">
               <div className="mb-0.5 flex flex-wrap items-center justify-between gap-1">
-                <p className="text-[14px] font-medium text-ink">{e.title}</p>
-                <span className="font-mono text-[10px] uppercase text-content-muted">{fmtDateTime(e.at)}</span>
+                <p className="text-[14px] font-medium text-white">{e.title}</p>
+                <span className="font-mono text-[10px] uppercase text-white/45">{fmtDateTime(e.at)}</span>
               </div>
               {(e.detail || e.actor) && (
-                <p className="text-[12px] text-content-secondary">
+                <p className="text-[12px] text-white/65">
                   {e.detail}
                   {e.actor ? ` · ${e.actor}` : ""}
                 </p>
@@ -98,7 +98,7 @@ export function OrderActivityLog({
             type="button"
             onClick={loadFull}
             disabled={loading}
-            className="inline-flex items-center gap-1.5 rounded-md border border-neutral-border bg-neutral-surface px-3 py-1.5 text-[12px] font-medium text-content-secondary hover:border-primary hover:text-primary disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-md border border-white/[0.06] bg-cinema-elev px-3 py-1.5 text-[12px] font-medium text-white/65 hover:border-primary hover:text-primary disabled:opacity-60"
           >
             {loading ? (
               <><Loader2 size={12} className="animate-spin" /> Loading…</>

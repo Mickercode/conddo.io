@@ -59,22 +59,22 @@ export default function EmailCampaignsPage() {
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {campaigns.map((c) => (
-            <div key={c.id} className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+            <div key={c.id} className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
               <div className="mb-4 flex items-start justify-between">
-                <h3 className="text-[15px] font-semibold text-ink">{c.name}</h3>
+                <h3 className="text-[15px] font-semibold text-white">{c.name}</h3>
                 <Chip tone={statusTone(c.status)}>{titleCase(c.status)}</Chip>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Recipients</p>
-                  <p className="font-mono text-[18px] text-ink">{(c.sent || c.audienceSize || 0).toLocaleString()}</p>
+                  <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Recipients</p>
+                  <p className="font-mono text-[18px] text-white">{(c.sent || c.audienceSize || 0).toLocaleString()}</p>
                 </div>
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Open rate</p>
-                  <p className="font-mono text-[18px] text-ink">{c.openRate ? `${c.openRate.toFixed(1)}%` : "—"}</p>
+                  <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Open rate</p>
+                  <p className="font-mono text-[18px] text-white">{c.openRate ? `${c.openRate.toFixed(1)}%` : "—"}</p>
                 </div>
               </div>
-              <p className="mt-3 text-[12px] text-content-muted">{fmtDate(c.scheduledAt)}</p>
+              <p className="mt-3 text-[12px] text-white/45">{fmtDate(c.scheduledAt)}</p>
             </div>
           ))}
         </div>

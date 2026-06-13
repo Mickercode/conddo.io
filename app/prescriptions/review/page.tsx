@@ -109,12 +109,12 @@ function ReviewModal({
       }
     >
       <form id="review-form" onSubmit={submit} className="space-y-4">
-        <div className="rounded-lg border border-neutral-border bg-neutral-surface2 p-3 text-[13px] text-content-secondary">
+        <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-3 text-[13px] text-white/65">
           <p>
-            <span className="text-content-muted">Patient:</span> <span className="text-ink">{rx.patientName}</span>
+            <span className="text-white/45">Patient:</span> <span className="text-white">{rx.patientName}</span>
           </p>
           <p>
-            <span className="text-content-muted">Prescriber:</span> <span className="text-ink">{rx.prescriberName}</span>
+            <span className="text-white/45">Prescriber:</span> <span className="text-white">{rx.prescriberName}</span>
           </p>
         </div>
         <Field
@@ -147,21 +147,21 @@ function PrescriptionRow({
   const isPending = rx.status === "PENDING";
 
   return (
-    <li className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+    <li className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 items-start gap-3">
-          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-bg text-primary">
+          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-primary">
             <FileText size={18} />
           </span>
           <div className="min-w-0">
             <div className="mb-1 flex flex-wrap items-center gap-2">
-              <p className="text-[15px] font-medium text-ink">{rx.patientName}</p>
+              <p className="text-[15px] font-medium text-white">{rx.patientName}</p>
               <Chip tone={chip.tone}>{chip.label}</Chip>
             </div>
-            <p className="text-[13px] text-content-secondary">
-              Prescribed by <span className="text-ink">{rx.prescriberName}</span>
+            <p className="text-[13px] text-white/65">
+              Prescribed by <span className="text-white">{rx.prescriberName}</span>
             </p>
-            <p className="mt-1 flex items-center gap-1.5 text-[12px] text-content-muted">
+            <p className="mt-1 flex items-center gap-1.5 text-[12px] text-white/45">
               <User size={12} />
               {rx.customerId ? (
                 <Link href={`/customers/${rx.customerId}`} className="hover:text-primary hover:underline">
@@ -172,21 +172,21 @@ function PrescriptionRow({
               )}
               {rx.customerPhone && <span> · {rx.customerPhone}</span>}
             </p>
-            {rx.notes && <p className="mt-2 text-[12px] text-content-muted">{rx.notes}</p>}
+            {rx.notes && <p className="mt-2 text-[12px] text-white/45">{rx.notes}</p>}
             {rx.reviewNote && !isPending && (
-              <p className={`mt-2 rounded-md px-2.5 py-1.5 text-[12px] ${rx.status === "APPROVED" ? "bg-success-bg text-success" : "bg-danger-bg text-danger"}`}>
+              <p className={`mt-2 rounded-md px-2.5 py-1.5 text-[12px] ${rx.status === "APPROVED" ? "bg-emerald-500/15 text-emerald-300" : "bg-rose-500/[0.06] text-rose-200"}`}>
                 Review note: {rx.reviewNote}
-                {rx.reviewedByName && <span className="text-content-muted"> · by {rx.reviewedByName}</span>}
+                {rx.reviewedByName && <span className="text-white/45"> · by {rx.reviewedByName}</span>}
               </p>
             )}
           </div>
         </div>
         <div className="flex shrink-0 flex-col items-start gap-1 text-[12px] sm:items-end">
-          <p className="flex items-center gap-1 text-content-muted">
+          <p className="flex items-center gap-1 text-white/45">
             <Clock size={12} /> Submitted {fmtDateTime(rx.submittedAt)}
           </p>
           {rx.reviewedAt && (
-            <p className="text-content-muted">Reviewed {fmtDateTime(rx.reviewedAt)}</p>
+            <p className="text-white/45">Reviewed {fmtDateTime(rx.reviewedAt)}</p>
           )}
           {rx.orderId && (
             <Link href={`/orders/${rx.orderId}`} className="font-medium text-primary hover:underline">
@@ -195,12 +195,12 @@ function PrescriptionRow({
           )}
         </div>
       </div>
-      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-neutral-border pt-3">
+      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-3">
         <a
           href={rx.fileUrl}
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-md border border-neutral-strong px-3 py-1.5 text-[12px] font-medium text-content-secondary transition-colors hover:bg-neutral-surface2 hover:text-ink"
+          className="inline-flex items-center gap-1.5 rounded-md border border-white/10 px-3 py-1.5 text-[12px] font-medium text-white/65 transition-colors hover:bg-white/[0.02] hover:text-white"
         >
           <ExternalLink size={13} /> View Rx image
         </a>
@@ -253,7 +253,7 @@ export default function PrescriptionsReviewPage() {
     >
       <Link
         href="/prescriptions"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         <ArrowLeft size={14} /> Back to dispensing log
       </Link>
@@ -268,8 +268,8 @@ export default function PrescriptionsReviewPage() {
               onClick={() => setFilter(f.key)}
               className={`rounded-full px-3.5 py-1.5 text-[13px] transition-colors ${
                 active
-                  ? "border border-primary bg-neutral-surface font-medium text-primary"
-                  : "border border-transparent text-content-secondary hover:text-primary"
+                  ? "border border-primary bg-cinema-elev font-medium text-primary"
+                  : "border border-transparent text-white/65 hover:text-primary"
               }`}
             >
               {f.label}

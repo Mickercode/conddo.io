@@ -124,7 +124,7 @@ export function NewCreativeRequestModal({
         {/* Offering picker */}
         <Field label="What do you need?">
           {loadingCatalog && offerings === FALLBACK_OFFERINGS ? (
-            <p className="text-[12px] text-content-muted">Loading services…</p>
+            <p className="text-[12px] text-white/45">Loading services…</p>
           ) : null}
           <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
             {offerings.map((o) => {
@@ -136,16 +136,16 @@ export function NewCreativeRequestModal({
                   onClick={() => setCode(o.code)}
                   className={`flex flex-col items-start gap-1 rounded-lg border p-3 text-left transition-colors ${
                     on
-                      ? "border-primary bg-primary-bg"
-                      : "border-neutral-border bg-neutral-surface hover:border-primary-light"
+                      ? "border-primary bg-primary/[0.08]"
+                      : "border-white/[0.06] bg-cinema-elev hover:border-primary-light"
                   }`}
                 >
                   <div className="flex w-full items-center justify-between">
-                    <span className={`text-[13px] font-medium ${on ? "text-primary" : "text-ink"}`}>{o.name}</span>
-                    <span className="font-mono text-[12px] text-content-secondary">{naira(koboToNaira(o.priceKobo))}</span>
+                    <span className={`text-[13px] font-medium ${on ? "text-primary" : "text-white"}`}>{o.name}</span>
+                    <span className="font-mono text-[12px] text-white/65">{naira(koboToNaira(o.priceKobo))}</span>
                   </div>
-                  <p className="text-[12px] text-content-muted">{o.description}</p>
-                  <p className="mt-1 inline-flex items-center gap-1 text-[11px] text-content-muted">
+                  <p className="text-[12px] text-white/45">{o.description}</p>
+                  <p className="mt-1 inline-flex items-center gap-1 text-[11px] text-white/45">
                     <Clock size={11} /> {o.turnaroundHours <= 48 ? "Next 48h" : `${o.turnaroundHours}h turnaround`}
                   </p>
                 </button>
@@ -156,8 +156,8 @@ export function NewCreativeRequestModal({
 
         {/* Attached media count (informational) */}
         {attachedIds.length > 0 && (
-          <div className="flex items-center gap-2 rounded-lg border border-neutral-border bg-neutral-surface2 px-3 py-2 text-[13px] text-content-secondary">
-            <ImageIcon size={14} className="text-content-muted" />
+          <div className="flex items-center gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-[13px] text-white/65">
+            <ImageIcon size={14} className="text-white/45" />
             {attachedIds.length} file{attachedIds.length === 1 ? "" : "s"} from your post will be sent as reference.
           </div>
         )}
@@ -174,7 +174,7 @@ export function NewCreativeRequestModal({
           />
         </Field>
 
-        <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary-bg px-3 py-2.5 text-[12px] text-primary">
+        <div className="flex items-start gap-2 rounded-lg border border-primary/20 bg-primary/[0.08] px-3 py-2.5 text-[12px] text-primary">
           <Sparkles size={14} className="mt-0.5 shrink-0" />
           <span>
             On a Brand Package? Eligible requests are deducted from your monthly quota — no checkout needed.{" "}

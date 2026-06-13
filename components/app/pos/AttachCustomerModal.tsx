@@ -70,27 +70,27 @@ export function AttachCustomerModal({
     >
       <div className="space-y-3">
         <div className="relative">
-          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-content-muted" />
+          <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/45" />
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by name or phone"
             autoFocus
-            className="h-11 w-full rounded-lg border border-neutral-border bg-neutral-surface pl-10 pr-3 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none"
+            className="h-11 w-full rounded-lg border border-white/[0.06] bg-cinema-elev pl-10 pr-3 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none"
           />
         </div>
 
-        <div className="max-h-72 overflow-y-auto rounded-lg border border-neutral-border bg-neutral-surface">
+        <div className="max-h-72 overflow-y-auto rounded-lg border border-white/[0.06] bg-cinema-elev">
           {customersQ.loading ? (
-            <p className="flex items-center justify-center gap-1.5 py-6 text-[12px] text-content-muted">
+            <p className="flex items-center justify-center gap-1.5 py-6 text-[12px] text-white/45">
               <Loader2 size={12} className="animate-spin" /> Searching…
             </p>
           ) : list.length === 0 ? (
-            <p className="py-6 text-center text-[12px] text-content-muted">
+            <p className="py-6 text-center text-[12px] text-white/45">
               {query ? "No matches. Add the customer from /customers first." : "Start typing to search."}
             </p>
           ) : (
-            <ul className="divide-y divide-neutral-border">
+            <ul className="divide-y divide-white/[0.06]">
               {list.map((c) => {
                 const isAttached = c.id === currentAttached;
                 const busy = attaching === c.id;
@@ -100,23 +100,23 @@ export function AttachCustomerModal({
                       type="button"
                       onClick={() => attach(c.id)}
                       disabled={attaching !== null || isAttached}
-                      className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-neutral-surface2 disabled:cursor-not-allowed"
+                      className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left transition-colors hover:bg-white/[0.02] disabled:cursor-not-allowed"
                     >
                       <div className="flex min-w-0 items-center gap-3">
-                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary-bg text-primary">
+                        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-primary">
                           <User size={14} />
                         </span>
                         <div className="min-w-0">
-                          <p className="truncate text-[13px] font-medium text-ink">{c.name}</p>
+                          <p className="truncate text-[13px] font-medium text-white">{c.name}</p>
                           {c.phone && (
-                            <p className="inline-flex items-center gap-1 font-mono text-[11px] text-content-muted">
+                            <p className="inline-flex items-center gap-1 font-mono text-[11px] text-white/45">
                               <Phone size={10} /> {c.phone}
                             </p>
                           )}
                         </div>
                       </div>
                       {isAttached ? (
-                        <span className="rounded-full bg-success-bg px-2 py-0.5 text-[10px] font-medium text-success">
+                        <span className="rounded-full bg-emerald-500/15 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
                           Attached
                         </span>
                       ) : busy ? (

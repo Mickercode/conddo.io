@@ -67,39 +67,39 @@ function SearchInner() {
     <AppShell title="Search" subtitle="Find customers, orders, and bookings">
       <div className="mx-auto max-w-2xl">
         <div className="relative">
-          <Search size={20} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-content-muted" />
+          <Search size={20} className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-white/45" />
           <input
             autoFocus
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search by name, reference, phone…"
-            className="w-full rounded-xl border border-neutral-border bg-neutral-surface py-3.5 pl-12 pr-4 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-xl border border-white/[0.06] bg-cinema-elev py-3.5 pl-12 pr-4 text-[15px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
 
         <div className="mt-6 space-y-6">
           {query.trim().length < 2 ? (
-            <p className="py-12 text-center text-[14px] text-content-muted">Type at least 2 characters to search.</p>
+            <p className="py-12 text-center text-[14px] text-white/45">Type at least 2 characters to search.</p>
           ) : loading && !results ? (
-            <p className="py-12 text-center text-[14px] text-content-secondary">Searching…</p>
+            <p className="py-12 text-center text-[14px] text-white/65">Searching…</p>
           ) : searched && total === 0 ? (
-            <p className="py-12 text-center text-[14px] text-content-secondary">No results for “{query.trim()}”.</p>
+            <p className="py-12 text-center text-[14px] text-white/65">No results for “{query.trim()}”.</p>
           ) : (
             GROUPS.map((g) => {
               const hits = results?.[g.key] ?? [];
               if (hits.length === 0) return null;
               return (
                 <section key={g.key}>
-                  <div className="mb-2 flex items-center gap-2 px-1 text-[11px] uppercase tracking-[0.05em] text-content-muted">
+                  <div className="mb-2 flex items-center gap-2 px-1 text-[11px] uppercase tracking-[0.05em] text-white/45">
                     <g.icon size={14} /> {g.label}
                   </div>
-                  <ul className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface divide-y divide-neutral-border">
+                  <ul className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev divide-y divide-white/[0.06]">
                     {hits.map((h: SearchHit) => (
                       <li key={h.id}>
-                        <Link href={g.href(h.id)} className="flex items-center justify-between px-4 py-3 hover:bg-neutral-surface2">
+                        <Link href={g.href(h.id)} className="flex items-center justify-between px-4 py-3 hover:bg-white/[0.02]">
                           <span className="min-w-0">
-                            <span className="block truncate text-[14px] text-ink">{h.label}</span>
-                            {h.sublabel && <span className="block truncate text-[12px] text-content-muted">{h.sublabel}</span>}
+                            <span className="block truncate text-[14px] text-white">{h.label}</span>
+                            {h.sublabel && <span className="block truncate text-[12px] text-white/45">{h.sublabel}</span>}
                           </span>
                           <span className="text-[13px] text-primary">Open →</span>
                         </Link>

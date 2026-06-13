@@ -89,14 +89,14 @@ export function AdjustStockModal({
           <button
             type="button"
             onClick={() => setDirection(1)}
-            className={`flex items-center justify-center gap-1.5 rounded-md border py-2 text-[14px] font-medium ${direction === 1 ? "border-success bg-success-bg text-success" : "border-neutral-border text-content-secondary hover:bg-neutral-surface2"}`}
+            className={`flex items-center justify-center gap-1.5 rounded-md border py-2 text-[14px] font-medium ${direction === 1 ? "border-success bg-emerald-500/15 text-emerald-300" : "border-white/[0.06] text-white/65 hover:bg-white/[0.02]"}`}
           >
             <Plus size={15} /> Add
           </button>
           <button
             type="button"
             onClick={() => setDirection(-1)}
-            className={`flex items-center justify-center gap-1.5 rounded-md border py-2 text-[14px] font-medium ${direction === -1 ? "border-danger bg-danger-bg text-danger" : "border-neutral-border text-content-secondary hover:bg-neutral-surface2"}`}
+            className={`flex items-center justify-center gap-1.5 rounded-md border py-2 text-[14px] font-medium ${direction === -1 ? "border-danger bg-rose-500/[0.06] text-rose-200" : "border-white/[0.06] text-white/65 hover:bg-white/[0.02]"}`}
           >
             <Minus size={15} /> Remove
           </button>
@@ -109,8 +109,8 @@ export function AdjustStockModal({
             {REASONS.map((r) => <option key={r} value={r}>{r}</option>)}
           </Select>
         </Field>
-        <p className="rounded-md bg-neutral-surface2 px-3 py-2 text-[13px] text-content-secondary">
-          New stock level: <span className="font-mono font-medium text-ink">{Math.max(0, projected)}</span>
+        <p className="rounded-md bg-white/[0.02] px-3 py-2 text-[13px] text-white/65">
+          New stock level: <span className="font-mono font-medium text-white">{Math.max(0, projected)}</span>
         </p>
       </form>
     </Modal>

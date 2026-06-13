@@ -24,9 +24,9 @@ export default function WorkIndex() {
   }, [me, router]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-bg">
+    <main className="flex min-h-screen items-center justify-center bg-cinema-base">
       <Loader2 className="animate-spin text-primary" size={28} />
-      {loading && <span className="ml-3 text-[13px] text-content-muted">Loading your workspace…</span>}
+      {loading && <span className="ml-3 text-[13px] text-white/45">Loading your workspace…</span>}
     </main>
   );
 }

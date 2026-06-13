@@ -40,36 +40,36 @@ function ProgramCard({ p, onChanged }: { p: Program; onChanged: () => void }) {
   }
 
   return (
-    <div className="flex flex-col rounded-2xl border border-neutral-border bg-neutral-surface p-5">
+    <div className="flex flex-col rounded-2xl border border-white/[0.06] bg-cinema-elev p-5">
       <div className="mb-3 flex items-start justify-between gap-3">
         <div>
           <div className="flex flex-wrap items-center gap-2">
-            <h3 className="text-[15px] font-medium text-ink">{p.name}</h3>
+            <h3 className="text-[15px] font-medium text-white">{p.name}</h3>
             <Chip tone={p.isPublished ? "success" : "neutral"}>
               {p.isPublished ? "Published" : "Draft"}
             </Chip>
             {p.targetCondition && <Chip tone="primary">{p.targetCondition}</Chip>}
           </div>
           {p.description && (
-            <p className="mt-1 line-clamp-2 text-[13px] text-content-secondary">{p.description}</p>
+            <p className="mt-1 line-clamp-2 text-[13px] text-white/65">{p.description}</p>
           )}
         </div>
       </div>
 
       <div className="mb-4 grid grid-cols-3 gap-2">
-        <div className="rounded-md bg-neutral-surface2 px-3 py-2">
-          <p className="text-[10px] uppercase tracking-[0.05em] text-content-muted">Price/mo</p>
-          <p className="mt-0.5 font-mono text-[14px] font-medium text-ink">{naira(p.monthlyPrice)}</p>
+        <div className="rounded-md bg-white/[0.02] px-3 py-2">
+          <p className="text-[10px] uppercase tracking-[0.05em] text-white/45">Price/mo</p>
+          <p className="mt-0.5 font-mono text-[14px] font-medium text-white">{naira(p.monthlyPrice)}</p>
         </div>
-        <div className="rounded-md bg-neutral-surface2 px-3 py-2">
-          <p className="text-[10px] uppercase tracking-[0.05em] text-content-muted">Duration</p>
-          <p className="mt-0.5 font-mono text-[14px] font-medium text-ink">
+        <div className="rounded-md bg-white/[0.02] px-3 py-2">
+          <p className="text-[10px] uppercase tracking-[0.05em] text-white/45">Duration</p>
+          <p className="mt-0.5 font-mono text-[14px] font-medium text-white">
             {p.durationMonths ? `${p.durationMonths}mo` : "Ongoing"}
           </p>
         </div>
-        <div className="rounded-md bg-neutral-surface2 px-3 py-2">
-          <p className="text-[10px] uppercase tracking-[0.05em] text-content-muted">Enrolled</p>
-          <p className="mt-0.5 font-mono text-[14px] font-medium text-ink">
+        <div className="rounded-md bg-white/[0.02] px-3 py-2">
+          <p className="text-[10px] uppercase tracking-[0.05em] text-white/45">Enrolled</p>
+          <p className="mt-0.5 font-mono text-[14px] font-medium text-white">
             {p.enrollmentsCount ?? 0}
           </p>
         </div>
@@ -77,19 +77,19 @@ function ProgramCard({ p, onChanged }: { p: Program; onChanged: () => void }) {
 
       {p.items?.length > 0 && (
         <div className="mb-4">
-          <p className="mb-1 text-[10px] uppercase tracking-[0.05em] text-content-muted">Includes</p>
+          <p className="mb-1 text-[10px] uppercase tracking-[0.05em] text-white/45">Includes</p>
           <ul className="space-y-1">
             {p.items.slice(0, 3).map((item, i) => (
-              <li key={i} className="flex items-center gap-2 text-[12px] text-content-secondary">
-                <Repeat size={11} className="text-content-muted" />
+              <li key={i} className="flex items-center gap-2 text-[12px] text-white/65">
+                <Repeat size={11} className="text-white/45" />
                 <span className="truncate">
                   {item.productName ?? `Product ${item.productId.slice(0, 8)}…`} × {item.quantity}
                 </span>
-                {item.frequency && <span className="text-content-muted">· {item.frequency.toLowerCase()}</span>}
+                {item.frequency && <span className="text-white/45">· {item.frequency.toLowerCase()}</span>}
               </li>
             ))}
             {p.items.length > 3 && (
-              <li className="text-[11px] text-content-muted">+ {p.items.length - 3} more</li>
+              <li className="text-[11px] text-white/45">+ {p.items.length - 3} more</li>
             )}
           </ul>
         </div>
@@ -146,7 +146,7 @@ export default function ProgramsPage() {
     >
       <Link
         href="/dashboard"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         ← Back to Dashboard
       </Link>
@@ -166,26 +166,26 @@ export default function ProgramsPage() {
           {/* Headline stats */}
           {programs.length > 0 && (
             <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+              <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
                 <div className="mb-2 flex items-center justify-between">
-                  <p className="text-[13px] text-content-secondary">Active programs</p>
-                  <CheckCircle2 size={18} className="text-content-muted" />
+                  <p className="text-[13px] text-white/65">Active programs</p>
+                  <CheckCircle2 size={18} className="text-white/45" />
                 </div>
-                <p className="font-mono text-[24px] font-medium leading-none text-ink">{publishedCount}</p>
+                <p className="font-mono text-[24px] font-medium leading-none text-white">{publishedCount}</p>
               </div>
-              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+              <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
                 <div className="mb-2 flex items-center justify-between">
-                  <p className="text-[13px] text-content-secondary">Total enrolled</p>
-                  <Users size={18} className="text-content-muted" />
+                  <p className="text-[13px] text-white/65">Total enrolled</p>
+                  <Users size={18} className="text-white/45" />
                 </div>
-                <p className="font-mono text-[24px] font-medium leading-none text-ink">{totalEnrolled}</p>
+                <p className="font-mono text-[24px] font-medium leading-none text-white">{totalEnrolled}</p>
               </div>
-              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+              <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
                 <div className="mb-2 flex items-center justify-between">
-                  <p className="text-[13px] text-content-secondary">Monthly recurring</p>
-                  <Calendar size={18} className="text-content-muted" />
+                  <p className="text-[13px] text-white/65">Monthly recurring</p>
+                  <Calendar size={18} className="text-white/45" />
                 </div>
-                <p className="font-mono text-[24px] font-medium leading-none text-success">
+                <p className="font-mono text-[24px] font-medium leading-none text-emerald-300">
                   {naira(monthlyRecurring)}
                 </p>
               </div>

@@ -45,21 +45,21 @@ export function BetaFeatureGate({
   const isRequested = Boolean(flag);
 
   return (
-    <div className="rounded-2xl border border-primary/20 bg-primary-bg/30 p-8 text-center">
-      <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary-bg text-primary">
+    <div className="rounded-2xl border border-primary/20 bg-primary/[0.08]/30 p-8 text-center">
+      <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/[0.08] text-primary">
         {isRequested ? <Sparkles size={22} /> : <Lock size={22} />}
       </span>
-      <h3 className="text-[16px] font-medium text-ink">
+      <h3 className="text-[16px] font-medium text-white">
         {featureName}
         <span className="ml-2 rounded bg-primary px-1.5 py-0.5 align-middle text-[10px] font-bold text-white">
           BETA
         </span>
       </h3>
-      <p className="mx-auto mt-2 max-w-lg text-[13px] text-content-secondary">
+      <p className="mx-auto mt-2 max-w-lg text-[13px] text-white/65">
         {description ?? "This is a beta pharmacy feature. Request access to start using it."}
       </p>
       {isRequested ? (
-        <p className="mt-4 text-[12px] text-content-muted">
+        <p className="mt-4 text-[12px] text-white/45">
           Your access request is being reviewed. We'll notify you when it's granted.
         </p>
       ) : (

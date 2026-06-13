@@ -36,12 +36,12 @@ export default function PaymentsReturnPage() {
 
 function ReturnShell() {
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
-      <div className="w-full max-w-md rounded-2xl border border-neutral-border bg-neutral-surface p-8">
+    <main className="flex min-h-screen items-center justify-center bg-cinema-base px-4 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-white/[0.06] bg-cinema-elev p-8">
         <div className="mb-5 flex justify-center">
           <Loader2 className="animate-spin text-primary" size={36} />
         </div>
-        <h1 className="text-center text-[22px] font-medium leading-tight tracking-[-0.01em] text-ink">
+        <h1 className="text-center text-[22px] font-medium leading-tight tracking-[-0.01em] text-white">
           Loading your payment…
         </h1>
       </div>
@@ -95,8 +95,8 @@ function PaymentsReturnInner() {
   }, [reference]);
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
-      <div className="w-full max-w-md rounded-2xl border border-neutral-border bg-neutral-surface p-8">
+    <main className="flex min-h-screen items-center justify-center bg-cinema-base px-4 py-10">
+      <div className="w-full max-w-md rounded-2xl border border-white/[0.06] bg-cinema-elev p-8">
         <View result={result} error={error} attempt={attempt} reference={reference} onTryAgain={() => router.back()} />
       </div>
     </main>
@@ -114,8 +114,8 @@ function View({
 }) {
   if (error) {
     return (
-      <Box icon={<AlertCircle className="text-warning" size={36} />} title="Something's off">
-        <p className="mb-5 text-center text-[14px] text-content-secondary">{error}</p>
+      <Box icon={<AlertCircle className="text-amber-300" size={36} />} title="Something's off">
+        <p className="mb-5 text-center text-[14px] text-white/65">{error}</p>
         <Button onClick={onTryAgain} variant="primary" size="md" className="w-full">Go back</Button>
       </Box>
     );
@@ -124,21 +124,21 @@ function View({
   if (!result) {
     return (
       <Box icon={<Loader2 className="animate-spin text-primary" size={36} />} title="Confirming your payment…">
-        <p className="text-center text-[14px] text-content-secondary">
+        <p className="text-center text-[14px] text-white/65">
           This usually takes a few seconds.
         </p>
-        {reference && <p className="mt-4 text-center font-mono text-[11px] text-content-muted">Ref: {reference}</p>}
+        {reference && <p className="mt-4 text-center font-mono text-[11px] text-white/45">Ref: {reference}</p>}
       </Box>
     );
   }
 
   if (result.status === "PAID") {
     return (
-      <Box icon={<CheckCircle2 className="text-success" size={40} />} title="Payment received">
-        <p className="mb-1 text-center text-[14px] text-content-secondary">
-          Thank you — your payment of <span className="font-mono text-ink">{naira(result.amount / 100)}</span> is in.
+      <Box icon={<CheckCircle2 className="text-emerald-300" size={40} />} title="Payment received">
+        <p className="mb-1 text-center text-[14px] text-white/65">
+          Thank you — your payment of <span className="font-mono text-white">{naira(result.amount / 100)}</span> is in.
         </p>
-        <p className="mb-5 text-center text-[13px] text-content-muted">
+        <p className="mb-5 text-center text-[13px] text-white/45">
           The business has been notified and you'll get a confirmation email shortly.
         </p>
         <Link href="/dashboard" className="block">
@@ -146,32 +146,32 @@ function View({
             Go to dashboard <ArrowRight size={16} />
           </Button>
         </Link>
-        {reference && <p className="mt-4 text-center font-mono text-[11px] text-content-muted">Ref: {reference}</p>}
+        {reference && <p className="mt-4 text-center font-mono text-[11px] text-white/45">Ref: {reference}</p>}
       </Box>
     );
   }
 
   if (result.status === "FAILED" || result.status === "EXPIRED") {
     return (
-      <Box icon={<XCircle className="text-danger" size={40} />} title="Payment didn't complete">
-        <p className="mb-5 text-center text-[14px] text-content-secondary">
+      <Box icon={<XCircle className="text-rose-200" size={40} />} title="Payment didn't complete">
+        <p className="mb-5 text-center text-[14px] text-white/65">
           {result.failureReason ?? "Your payment didn't go through. Your card was not charged."}
         </p>
         <Button onClick={onTryAgain} variant="primary" size="md" className="w-full">
           Try again
         </Button>
-        {reference && <p className="mt-4 text-center font-mono text-[11px] text-content-muted">Ref: {reference}</p>}
+        {reference && <p className="mt-4 text-center font-mono text-[11px] text-white/45">Ref: {reference}</p>}
       </Box>
     );
   }
 
   // PENDING — keep waiting
   return (
-    <Box icon={<Clock className="text-warning" size={36} />} title="Still pending">
-      <p className="text-center text-[14px] text-content-secondary">
+    <Box icon={<Clock className="text-amber-300" size={36} />} title="Still pending">
+      <p className="text-center text-[14px] text-white/65">
         We're waiting for confirmation from your bank. Attempt {attempt}/40 — usually less than 30 seconds.
       </p>
-      {reference && <p className="mt-4 text-center font-mono text-[11px] text-content-muted">Ref: {reference}</p>}
+      {reference && <p className="mt-4 text-center font-mono text-[11px] text-white/45">Ref: {reference}</p>}
     </Box>
   );
 }
@@ -180,7 +180,7 @@ function Box({ icon, title, children }: { icon: React.ReactNode; title: string; 
   return (
     <>
       <div className="mb-5 flex justify-center">{icon}</div>
-      <h1 className="mb-3 text-center text-[22px] font-medium leading-tight tracking-[-0.01em] text-ink">{title}</h1>
+      <h1 className="mb-3 text-center text-[22px] font-medium leading-tight tracking-[-0.01em] text-white">{title}</h1>
       {children}
     </>
   );

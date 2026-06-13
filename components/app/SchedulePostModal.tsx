@@ -190,12 +190,12 @@ export function SchedulePostModal({
               {media.length > 0 && (
                 <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
                   {media.map((m, i) => (
-                    <div key={i} className="group relative overflow-hidden rounded-lg border border-neutral-border bg-neutral-surface2">
+                    <div key={i} className="group relative overflow-hidden rounded-lg border border-white/[0.06] bg-white/[0.02]">
                       {m.kind === "image" ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img src={m.previewUrl} alt={m.filename} className="aspect-square w-full object-cover" />
                       ) : (
-                        <div className="flex aspect-square items-center justify-center bg-ink/5 text-content-secondary">
+                        <div className="flex aspect-square items-center justify-center bg-ink/5 text-white/65">
                           <Film size={28} />
                         </div>
                       )}
@@ -207,7 +207,7 @@ export function SchedulePostModal({
                       >
                         <X size={12} />
                       </button>
-                      <p className="truncate px-2 py-1 text-[10px] text-content-muted">{m.filename}</p>
+                      <p className="truncate px-2 py-1 text-[10px] text-white/45">{m.filename}</p>
                     </div>
                   ))}
                 </div>
@@ -234,13 +234,13 @@ export function SchedulePostModal({
                 <button
                   type="button"
                   onClick={() => setCreativeOpen(true)}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-primary/20 bg-primary-bg px-3 py-1.5 text-[12px] font-medium text-primary transition-colors hover:bg-primary/10"
+                  className="inline-flex items-center gap-1.5 rounded-md border border-primary/20 bg-primary/[0.08] px-3 py-1.5 text-[12px] font-medium text-primary transition-colors hover:bg-primary/10"
                 >
                   <Sparkles size={13} /> Need creative help?
                 </button>
               </div>
               {media.length === 0 && !uploading && (
-                <p className="flex items-center gap-1 text-[11px] text-content-muted">
+                <p className="flex items-center gap-1 text-[11px] text-white/45">
                   <ImageIcon size={12} /> Posts with at least one image perform ~2× better.
                 </p>
               )}
@@ -256,7 +256,7 @@ export function SchedulePostModal({
                     key={p.value}
                     type="button"
                     onClick={() => togglePlatform(p.value)}
-                    className={`rounded-full border px-3.5 py-1.5 text-[13px] transition-colors ${on ? "border-primary bg-primary-bg font-medium text-primary" : "border-neutral-border text-content-secondary hover:bg-neutral-surface2"}`}
+                    className={`rounded-full border px-3.5 py-1.5 text-[13px] transition-colors ${on ? "border-primary bg-primary/[0.08] font-medium text-primary" : "border-white/[0.06] text-white/65 hover:bg-white/[0.02]"}`}
                   >
                     {p.label}
                   </button>

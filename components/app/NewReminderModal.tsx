@@ -224,21 +224,21 @@ export function NewReminderModal({
             rows={4}
             placeholder="Hi {firstName}, your {productName} refill is due…"
           />
-          <p className="mt-1.5 text-[11px] text-content-muted">
-            Variables: <code className="rounded bg-neutral-surface2 px-1">{"{firstName}"}</code>{" "}
-            <code className="rounded bg-neutral-surface2 px-1">{"{productName}"}</code>{" "}
-            <code className="rounded bg-neutral-surface2 px-1">{"{storeName}"}</code>{" "}
-            <code className="rounded bg-neutral-surface2 px-1">{"{websiteUrl}"}</code>
+          <p className="mt-1.5 text-[11px] text-white/45">
+            Variables: <code className="rounded bg-white/[0.02] px-1">{"{firstName}"}</code>{" "}
+            <code className="rounded bg-white/[0.02] px-1">{"{productName}"}</code>{" "}
+            <code className="rounded bg-white/[0.02] px-1">{"{storeName}"}</code>{" "}
+            <code className="rounded bg-white/[0.02] px-1">{"{websiteUrl}"}</code>
           </p>
         </Field>
 
         {message.trim() && (
-          <div className="rounded-lg border border-primary/20 bg-primary-bg/40 p-3">
+          <div className="rounded-lg border border-primary/20 bg-primary/[0.08]/40 p-3">
             <div className="mb-1 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.04em] text-primary">
               <Sparkles size={11} /> Preview
             </div>
-            <p className="flex items-start gap-2 text-[13px] text-content-secondary">
-              <MessageSquare size={14} className="mt-0.5 shrink-0 text-content-muted" />
+            <p className="flex items-start gap-2 text-[13px] text-white/65">
+              <MessageSquare size={14} className="mt-0.5 shrink-0 text-white/45" />
               <span>{preview}</span>
             </p>
           </div>
@@ -283,7 +283,7 @@ export function NewReminderModal({
           </Field>
         )}
 
-        <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-3 py-2 text-[11px] text-content-muted">
+        <p className="flex items-start gap-1.5 rounded-md bg-white/[0.02] px-3 py-2 text-[11px] text-white/45">
           <AlertCircle size={11} className="mt-0.5 shrink-0" />
           SMS is sent via your Brevo sender. Make sure the customer has a valid phone number on file.
         </p>

@@ -72,18 +72,18 @@ export default function NotificationSettings() {
           />
         }
       >
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-          <div className="grid grid-cols-[1fr_auto_auto] gap-4 border-b border-neutral-border bg-neutral-surface2 px-6 py-3 text-[11px] uppercase tracking-[0.05em] text-content-secondary">
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+          <div className="grid grid-cols-[1fr_auto_auto] gap-4 border-b border-white/[0.06] bg-white/[0.02] px-6 py-3 text-[11px] uppercase tracking-[0.05em] text-white/65">
             <span>Notify me about</span>
             <span className="w-12 text-center">Email</span>
             <span className="w-12 text-center">SMS</span>
           </div>
-          <ul className="divide-y divide-neutral-border">
+          <ul className="divide-y divide-white/[0.06]">
             {prefs.map((p) => (
               <li key={p.key} className="grid grid-cols-[1fr_auto_auto] items-center gap-4 px-6 py-4">
                 <div>
-                  <p className="text-[14px] font-medium text-ink">{p.label}</p>
-                  <p className="text-[13px] text-content-muted">{p.description}</p>
+                  <p className="text-[14px] font-medium text-white">{p.label}</p>
+                  <p className="text-[13px] text-white/45">{p.description}</p>
                 </div>
                 <div className="flex w-12 justify-center"><Toggle on={p.email} onChange={(v) => setPref(p.key, "email", v)} /></div>
                 <div className="flex w-12 justify-center"><Toggle on={p.sms} onChange={(v) => setPref(p.key, "sms", v)} /></div>

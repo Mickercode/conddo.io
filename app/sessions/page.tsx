@@ -63,7 +63,7 @@ function SessionCard({ ev, onSendLink }: { ev: BookingEvent; onSendLink: (id: st
   const depositChip = DEPOSIT_CHIP[deposit];
   const showDeposit = deposit !== "NONE";
   return (
-    <div className="rounded-xl border border-neutral-border bg-neutral-surface p-4 transition-colors hover:border-primary-light">
+    <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-4 transition-colors hover:border-primary-light">
       <div className="mb-2 flex flex-wrap items-center gap-2">
         <Chip tone={meta.tone}>
           <span className="inline-flex items-center gap-1"><meta.icon size={11} /> {meta.label}</span>
@@ -73,29 +73,29 @@ function SessionCard({ ev, onSendLink }: { ev: BookingEvent; onSendLink: (id: st
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           {ev.customerId ? (
-            <Link href={`/customers/${ev.customerId}`} className="block truncate text-[14px] font-medium text-ink hover:text-primary hover:underline">
+            <Link href={`/customers/${ev.customerId}`} className="block truncate text-[14px] font-medium text-white hover:text-primary hover:underline">
               {ev.customer}
             </Link>
           ) : (
-            <p className="truncate text-[14px] font-medium text-ink">
+            <p className="truncate text-[14px] font-medium text-white">
               <User size={12} className="mr-1 inline" />
               {ev.customer}
             </p>
           )}
-          {ev.notes && <p className="mt-0.5 line-clamp-2 text-[12px] text-content-muted">{ev.notes}</p>}
+          {ev.notes && <p className="mt-0.5 line-clamp-2 text-[12px] text-white/45">{ev.notes}</p>}
         </div>
         <div className="shrink-0 text-right">
-          <p className="flex items-center justify-end gap-1 font-mono text-[12px] text-ink">
+          <p className="flex items-center justify-end gap-1 font-mono text-[12px] text-white">
             <Clock size={11} /> {fmtRange(ev.start, ev.end)}
           </p>
-          {ev.amount && <p className="mt-0.5 font-mono text-[11px] text-content-muted">{naira(ev.amount)}</p>}
+          {ev.amount && <p className="mt-0.5 font-mono text-[11px] text-white/45">{naira(ev.amount)}</p>}
         </div>
       </div>
       {deposit === "PENDING_DEPOSIT" && (
         <button
           type="button"
           onClick={() => onSendLink(ev.id)}
-          className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-warning/30 bg-warning-bg px-2.5 py-1 text-[11px] font-medium text-warning hover:bg-warning/10"
+          className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-warning/30 bg-amber-500/15 px-2.5 py-1 text-[11px] font-medium text-amber-300 hover:bg-warning/10"
         >
           <Wallet size={12} /> Resend deposit link
         </button>
@@ -115,17 +115,17 @@ function ResourceColumn({
 }) {
   const utilization = events.length;
   return (
-    <section className="rounded-2xl border border-neutral-border bg-neutral-bg p-4">
+    <section className="rounded-2xl border border-white/[0.06] bg-cinema-base p-4">
       <header className="mb-3 flex items-center justify-between gap-2">
         <div className="min-w-0">
-          <p className="truncate text-[14px] font-medium text-ink">{resource.name}</p>
-          <p className="font-mono text-[11px] text-content-muted">
+          <p className="truncate text-[14px] font-medium text-white">{resource.name}</p>
+          <p className="font-mono text-[11px] text-white/45">
             {naira(resource.price)}/hr · {utilization} session{utilization === 1 ? "" : "s"} today
           </p>
         </div>
       </header>
       {events.length === 0 ? (
-        <p className="rounded-md border border-dashed border-neutral-border px-3 py-4 text-center text-[12px] text-content-muted">
+        <p className="rounded-md border border-dashed border-white/[0.06] px-3 py-4 text-center text-[12px] text-white/45">
           No sessions
         </p>
       ) : (
@@ -207,25 +207,25 @@ export default function SessionsPage() {
       }
     >
       {/* Day picker */}
-      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-border bg-neutral-surface p-3">
+      <div className="mb-5 flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-3">
         <div className="flex items-center gap-2">
           <button
             type="button"
             aria-label="Previous day"
             onClick={() => setDayOffset((n) => n - 1)}
-            className="rounded-full p-1 text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+            className="rounded-full p-1 text-white/65 hover:bg-white/[0.02] hover:text-white"
           >
             <ChevronLeft size={20} />
           </button>
-          <span className="text-[15px] font-medium text-ink">{dayLabel(day, today)}</span>
-          <span className="font-mono text-[12px] text-content-muted">
+          <span className="text-[15px] font-medium text-white">{dayLabel(day, today)}</span>
+          <span className="font-mono text-[12px] text-white/45">
             {day.toLocaleDateString("en-NG", { month: "short", day: "numeric", year: "numeric" })}
           </span>
           <button
             type="button"
             aria-label="Next day"
             onClick={() => setDayOffset((n) => n + 1)}
-            className="rounded-full p-1 text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+            className="rounded-full p-1 text-white/65 hover:bg-white/[0.02] hover:text-white"
           >
             <ChevronRight size={20} />
           </button>
@@ -234,7 +234,7 @@ export default function SessionsPage() {
           type="button"
           onClick={() => setDayOffset(0)}
           disabled={dayOffset === 0}
-          className="rounded-lg border border-neutral-border px-3 py-1 text-[12px] font-medium text-ink hover:bg-neutral-surface2 disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent"
+          className="rounded-lg border border-white/[0.06] px-3 py-1 text-[12px] font-medium text-white hover:bg-white/[0.02] disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent"
         >
           Today
         </button>
@@ -290,10 +290,10 @@ export default function SessionsPage() {
             {/* Catch-all column for bookings with no resourceId (legacy data
                 or bookings created via the generic /bookings flow). */}
             {byResource.get(null)?.length ? (
-              <section className="rounded-2xl border border-dashed border-neutral-border bg-neutral-bg p-4">
+              <section className="rounded-2xl border border-dashed border-white/[0.06] bg-cinema-base p-4">
                 <header className="mb-3">
-                  <p className="text-[14px] font-medium text-content-secondary">No room assigned</p>
-                  <p className="font-mono text-[11px] text-content-muted">{byResource.get(null)!.length} session(s) — open each to assign a room</p>
+                  <p className="text-[14px] font-medium text-white/65">No room assigned</p>
+                  <p className="font-mono text-[11px] text-white/45">{byResource.get(null)!.length} session(s) — open each to assign a room</p>
                 </header>
                 <div className="space-y-2.5">
                   {byResource.get(null)!.map((ev) => (
@@ -318,10 +318,10 @@ export default function SessionsPage() {
 }
 
 function KpiCard({ label, value, tone = "neutral" }: { label: string; value: string; tone?: "neutral" | "warning" }) {
-  const cls = tone === "warning" ? "text-warning" : "text-ink";
+  const cls = tone === "warning" ? "text-amber-300" : "text-white";
   return (
-    <div className="rounded-xl border border-neutral-border bg-neutral-surface p-4">
-      <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">{label}</p>
+    <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-4">
+      <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">{label}</p>
       <p className={`mt-1 font-mono text-[20px] ${cls}`}>{value}</p>
     </div>
   );

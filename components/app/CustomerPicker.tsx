@@ -60,7 +60,7 @@ export function CustomerPicker({
 
   return (
     <div ref={boxRef} className="relative">
-      <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-content-muted" />
+      <Search size={16} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/45" />
       <TextInput
         value={query}
         error={error}
@@ -74,12 +74,12 @@ export function CustomerPicker({
         }}
       />
       {value.id && (
-        <span className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-1 rounded-full bg-success-bg px-2 py-0.5 text-[11px] font-medium text-success">
+        <span className="absolute right-2.5 top-1/2 inline-flex -translate-y-1/2 items-center gap-1 rounded-full bg-emerald-500/15 px-2 py-0.5 text-[11px] font-medium text-emerald-300">
           <Check size={12} /> Linked
         </span>
       )}
       {open && results.length > 0 && (
-        <ul className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-neutral-border bg-neutral-surface py-1">
+        <ul className="absolute z-10 mt-1 max-h-56 w-full overflow-y-auto rounded-lg border border-white/[0.06] bg-cinema-elev py-1">
           {results.map((c) => (
             <li key={c.id}>
               <button
@@ -89,14 +89,14 @@ export function CustomerPicker({
                   setQuery(c.name);
                   setOpen(false);
                 }}
-                className="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-neutral-surface2"
+                className="flex w-full items-center gap-3 px-3 py-2 text-left hover:bg-white/[0.02]"
               >
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary-bg font-mono text-[11px] font-medium text-primary">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] font-mono text-[11px] font-medium text-primary">
                   {c.initials}
                 </span>
                 <span className="min-w-0">
-                  <span className="block truncate text-[13px] text-ink">{c.name}</span>
-                  <span className="block truncate text-[11px] text-content-muted">{c.phone || c.email}</span>
+                  <span className="block truncate text-[13px] text-white">{c.name}</span>
+                  <span className="block truncate text-[11px] text-white/45">{c.phone || c.email}</span>
                 </span>
               </button>
             </li>

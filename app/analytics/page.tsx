@@ -108,13 +108,13 @@ export default function AnalyticsPage() {
       }
     >
       {/* Range selector */}
-      <div className="mb-5 inline-flex rounded-lg border border-neutral-border bg-neutral-surface2 p-0.5">
+      <div className="mb-5 inline-flex rounded-lg border border-white/[0.06] bg-white/[0.02] p-0.5">
         {RANGES.map((r) => (
           <button
             key={r.key}
             onClick={() => setRange(r.key)}
             className={`rounded-md px-4 py-1.5 text-[13px] font-medium transition-colors ${
-              range === r.key ? "bg-neutral-surface text-primary" : "text-content-secondary hover:text-ink"
+              range === r.key ? "bg-cinema-elev text-primary" : "text-white/65 hover:text-white"
             }`}
           >
             {r.label}
@@ -141,12 +141,12 @@ export default function AnalyticsPage() {
             {/* Headline KPIs */}
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               {CARDS.map(({ key, label, icon: Icon, currency }) => (
-                <div key={key} className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+                <div key={key} className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
                   <div className="mb-3 flex items-start justify-between">
-                    <p className="text-[13px] text-content-secondary">{label}</p>
-                    <Icon size={18} className="text-content-muted" />
+                    <p className="text-[13px] text-white/65">{label}</p>
+                    <Icon size={18} className="text-white/45" />
                   </div>
-                  <p className="font-mono text-[24px] font-medium leading-none text-ink">
+                  <p className="font-mono text-[24px] font-medium leading-none text-white">
                     {currency ? naira(overview[key]) : overview[key]}
                   </p>
                 </div>
@@ -155,15 +155,15 @@ export default function AnalyticsPage() {
 
             {/* Revenue + Orders series */}
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+              <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
                 <div className="mb-3 flex items-center justify-between">
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Revenue trend</p>
-                    <p className="mt-1 font-mono text-[20px] font-medium leading-none text-ink">
+                    <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Revenue trend</p>
+                    <p className="mt-1 font-mono text-[20px] font-medium leading-none text-white">
                       {revenueQ.loading ? "…" : naira(lastVal(revenueQ.data))}
                     </p>
                   </div>
-                  <Wallet size={18} className="text-content-muted" />
+                  <Wallet size={18} className="text-white/45" />
                 </div>
                 <Sparkline
                   values={revenueValues}
@@ -173,58 +173,58 @@ export default function AnalyticsPage() {
                 />
               </div>
 
-              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+              <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
                 <div className="mb-3 flex items-center justify-between">
                   <div>
-                    <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Orders trend</p>
-                    <p className="mt-1 font-mono text-[20px] font-medium leading-none text-ink">
+                    <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Orders trend</p>
+                    <p className="mt-1 font-mono text-[20px] font-medium leading-none text-white">
                       {ordersQ.loading ? "…" : lastVal(ordersQ.data)}
                     </p>
                   </div>
-                  <ShoppingCart size={18} className="text-content-muted" />
+                  <ShoppingCart size={18} className="text-white/45" />
                 </div>
                 <Sparkline
                   values={orderValues}
                   width={300}
                   height={56}
-                  className="w-full text-success"
+                  className="w-full text-emerald-300"
                 />
               </div>
             </div>
 
             {/* Customer cohort + Traffic */}
             <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
-              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5 lg:col-span-2">
+              <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5 lg:col-span-2">
                 <div className="mb-4 flex items-center justify-between">
-                  <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Customer mix</p>
-                  <UserPlus size={18} className="text-content-muted" />
+                  <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Customer mix</p>
+                  <UserPlus size={18} className="text-white/45" />
                 </div>
                 {customersQ.loading ? (
-                  <p className="text-[13px] text-content-muted">Loading…</p>
+                  <p className="text-[13px] text-white/45">Loading…</p>
                 ) : (
                   <>
                     <div className="mb-4 grid grid-cols-3 gap-4">
                       <div>
-                        <p className="text-[11px] text-content-muted">New</p>
-                        <p className="mt-1 font-mono text-[20px] font-medium text-success">
+                        <p className="text-[11px] text-white/45">New</p>
+                        <p className="mt-1 font-mono text-[20px] font-medium text-emerald-300">
                           {cohort?.newCustomers ?? 0}
                         </p>
                       </div>
                       <div>
-                        <p className="text-[11px] text-content-muted">Returning</p>
+                        <p className="text-[11px] text-white/45">Returning</p>
                         <p className="mt-1 font-mono text-[20px] font-medium text-primary">
                           {cohort?.returningCustomers ?? 0}
                         </p>
                       </div>
                       <div>
-                        <p className="text-[11px] text-content-muted">Returning rate</p>
-                        <p className="mt-1 font-mono text-[20px] font-medium text-ink">
+                        <p className="text-[11px] text-white/45">Returning rate</p>
+                        <p className="mt-1 font-mono text-[20px] font-medium text-white">
                           {fmtPct(returningPct, 0)}
                         </p>
                       </div>
                     </div>
                     {/* Returning rate bar */}
-                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-neutral-surface2">
+                    <div className="h-1.5 w-full overflow-hidden rounded-full bg-white/[0.02]">
                       <div
                         className="h-full bg-primary"
                         style={{ width: `${Math.min(100, returningPct * 100).toFixed(1)}%` }}
@@ -240,30 +240,30 @@ export default function AnalyticsPage() {
                 )}
               </div>
 
-              <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+              <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
                 <div className="mb-4 flex items-center justify-between">
-                  <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Traffic</p>
-                  <Eye size={18} className="text-content-muted" />
+                  <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">Traffic</p>
+                  <Eye size={18} className="text-white/45" />
                 </div>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 text-[13px] text-content-secondary">
+                    <span className="inline-flex items-center gap-1.5 text-[13px] text-white/65">
                       <Eye size={13} /> Visits
                     </span>
-                    <span className="font-mono text-[14px] text-ink">
+                    <span className="font-mono text-[14px] text-white">
                       {trafficQ.loading ? "…" : traffic?.visits ?? 0}
                     </span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-1.5 text-[13px] text-content-secondary">
+                    <span className="inline-flex items-center gap-1.5 text-[13px] text-white/65">
                       <Repeat size={13} /> Enquiries
                     </span>
-                    <span className="font-mono text-[14px] text-ink">
+                    <span className="font-mono text-[14px] text-white">
                       {trafficQ.loading ? "…" : traffic?.enquiries ?? 0}
                     </span>
                   </div>
-                  <div className="flex items-center justify-between border-t border-neutral-border pt-3">
-                    <span className="inline-flex items-center gap-1.5 text-[13px] text-content-secondary">
+                  <div className="flex items-center justify-between border-t border-white/[0.06] pt-3">
+                    <span className="inline-flex items-center gap-1.5 text-[13px] text-white/65">
                       <Target size={13} /> Conversion
                     </span>
                     <span className="font-mono text-[14px] text-primary">
@@ -275,21 +275,21 @@ export default function AnalyticsPage() {
             </div>
 
             {/* Top-N leaderboard */}
-            <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-neutral-border px-6 py-4">
+            <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/[0.06] px-6 py-4">
                 <div className="flex items-center gap-2">
-                  <Trophy size={16} className="text-warning" />
-                  <h2 className="text-[15px] font-medium text-ink">
+                  <Trophy size={16} className="text-amber-300" />
+                  <h2 className="text-[15px] font-medium text-white">
                     {TOP_METRICS.find((m) => m.key === topMetric)?.label ?? "Top"}
                   </h2>
                 </div>
-                <div className="inline-flex rounded-lg border border-neutral-border bg-neutral-surface2 p-0.5">
+                <div className="inline-flex rounded-lg border border-white/[0.06] bg-white/[0.02] p-0.5">
                   {TOP_METRICS.map((m) => (
                     <button
                       key={m.key}
                       onClick={() => setTopMetric(m.key)}
                       className={`rounded-md px-3 py-1 text-[12px] font-medium transition-colors ${
-                        topMetric === m.key ? "bg-neutral-surface text-primary" : "text-content-secondary hover:text-ink"
+                        topMetric === m.key ? "bg-cinema-elev text-primary" : "text-white/65 hover:text-white"
                       }`}
                     >
                       {m.label.replace("Top ", "")}
@@ -298,28 +298,28 @@ export default function AnalyticsPage() {
                 </div>
               </div>
               {topQ.loading ? (
-                <p className="px-6 py-8 text-center text-[13px] text-content-muted">Loading…</p>
+                <p className="px-6 py-8 text-center text-[13px] text-white/45">Loading…</p>
               ) : topRows.length === 0 ? (
-                <p className="px-6 py-8 text-center text-[13px] text-content-muted">
+                <p className="px-6 py-8 text-center text-[13px] text-white/45">
                   Nothing in this leaderboard yet for the selected range.
                 </p>
               ) : (
-                <ul className="divide-y divide-neutral-border">
+                <ul className="divide-y divide-white/[0.06]">
                   {topRows.slice(0, 10).map((row, i) => {
                     const max = Math.max(...topRows.map((r) => r.value), 1);
                     const pct = (row.value / max) * 100;
                     return (
                       <li key={`${row.label}-${i}`} className="px-6 py-3">
                         <div className="mb-1 flex items-center justify-between gap-3">
-                          <span className="flex items-center gap-2 text-[13px] text-ink">
+                          <span className="flex items-center gap-2 text-[13px] text-white">
                             <Chip tone={i === 0 ? "warning" : "neutral"}>#{i + 1}</Chip>
                             <span className="truncate">{row.label}</span>
                           </span>
-                          <span className="shrink-0 font-mono text-[12px] text-content-secondary">
+                          <span className="shrink-0 font-mono text-[12px] text-white/65">
                             {row.value}
                           </span>
                         </div>
-                        <div className="h-1 w-full overflow-hidden rounded-full bg-neutral-surface2">
+                        <div className="h-1 w-full overflow-hidden rounded-full bg-white/[0.02]">
                           <div className="h-full bg-primary/60" style={{ width: `${pct.toFixed(1)}%` }} />
                         </div>
                       </li>

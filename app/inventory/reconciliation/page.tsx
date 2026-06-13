@@ -59,7 +59,7 @@ export default function ReconciliationLandingPage() {
     <AppShell title="Stock reconciliation" subtitle="Compare physical stock to what Conddo expects, and apply the variances.">
       <Link
         href="/inventory"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         <ArrowLeft size={14} /> Back to Inventory
       </Link>
@@ -73,29 +73,29 @@ export default function ReconciliationLandingPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {resume && (
-            <div className="rounded-xl border border-warning/20 bg-warning-bg/40 p-5">
+            <div className="rounded-xl border border-warning/20 bg-amber-500/15/40 p-5">
               <div className="mb-2 flex items-center gap-2">
-                <History size={16} className="text-warning" />
-                <p className="text-[14px] font-medium text-ink">Continue previous session</p>
+                <History size={16} className="text-amber-300" />
+                <p className="text-[14px] font-medium text-white">Continue previous session</p>
               </div>
-              <p className="mb-4 text-[13px] text-content-secondary">
+              <p className="mb-4 text-[13px] text-white/65">
                 You started a reconciliation in this browser but didn't finish. Pick up where you left off, or start a fresh one.
               </p>
               <Link
                 href={`/inventory/reconciliation/${resume}`}
-                className="inline-flex items-center gap-1.5 rounded-md border border-warning/40 bg-neutral-surface px-3 py-1.5 text-[13px] font-medium text-warning hover:bg-warning hover:text-white"
+                className="inline-flex items-center gap-1.5 rounded-md border border-warning/40 bg-cinema-elev px-3 py-1.5 text-[13px] font-medium text-amber-300 hover:bg-warning hover:text-white"
               >
                 Resume reconciliation
               </Link>
             </div>
           )}
 
-          <div className={`rounded-xl border border-neutral-border bg-neutral-surface p-5 ${resume ? "" : "lg:col-span-2"}`}>
+          <div className={`rounded-xl border border-white/[0.06] bg-cinema-elev p-5 ${resume ? "" : "lg:col-span-2"}`}>
             <div className="mb-2 flex items-center gap-2">
               <ClipboardCheck size={16} className="text-primary" />
-              <p className="text-[14px] font-medium text-ink">Start a new reconciliation</p>
+              <p className="text-[14px] font-medium text-white">Start a new reconciliation</p>
             </div>
-            <p className="mb-4 text-[13px] text-content-secondary">
+            <p className="mb-4 text-[13px] text-white/65">
               We'll snapshot the current stock for every active product. You then count each one physically, submit the totals, and Conddo applies the variances as RECONCILIATION movements in your audit log.
             </p>
             <Field label="Note" htmlFor="rec-note" hint="Optional — context for the audit log (e.g. &ldquo;Monthly physical count — June 2026&rdquo;).">
@@ -119,7 +119,7 @@ export default function ReconciliationLandingPage() {
                 <>Start reconciliation</>
               )}
             </Button>
-            <p className="mt-3 flex items-start gap-1.5 text-[11px] text-content-muted">
+            <p className="mt-3 flex items-start gap-1.5 text-[11px] text-white/45">
               <AlertCircle size={11} className="mt-0.5 shrink-0" />
               The snapshot freezes <strong>current</strong> system quantities the moment you start. Any sales that happen during the count will still deduct stock — we'll reconcile based on what you counted vs the live number when you complete.
             </p>

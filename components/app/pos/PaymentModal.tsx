@@ -114,21 +114,21 @@ export function PaymentModal({
     >
       <div className="space-y-4">
         {/* Top stats */}
-        <div className="rounded-lg border border-neutral-border bg-neutral-surface2 p-4">
+        <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="grid grid-cols-3 gap-3 text-center">
             <div>
-              <p className="text-[10px] uppercase tracking-[0.05em] text-content-muted">Total</p>
-              <p className="mt-0.5 font-mono text-[14px] text-ink">{naira(total)}</p>
+              <p className="text-[10px] uppercase tracking-[0.05em] text-white/45">Total</p>
+              <p className="mt-0.5 font-mono text-[14px] text-white">{naira(total)}</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.05em] text-content-muted">Paid</p>
-              <p className="mt-0.5 font-mono text-[14px] text-success">{naira(totalPaid)}</p>
+              <p className="text-[10px] uppercase tracking-[0.05em] text-white/45">Paid</p>
+              <p className="mt-0.5 font-mono text-[14px] text-emerald-300">{naira(totalPaid)}</p>
             </div>
             <div>
-              <p className="text-[10px] uppercase tracking-[0.05em] text-content-muted">
+              <p className="text-[10px] uppercase tracking-[0.05em] text-white/45">
                 {balance >= 0 ? "Balance" : "Change"}
               </p>
-              <p className={`mt-0.5 font-mono text-[14px] ${balance > 0 ? "text-warning" : balance < 0 ? "text-primary" : "text-success"}`}>
+              <p className={`mt-0.5 font-mono text-[14px] ${balance > 0 ? "text-amber-300" : balance < 0 ? "text-primary" : "text-emerald-300"}`}>
                 {naira(Math.abs(balance))}
               </p>
             </div>
@@ -137,9 +137,9 @@ export function PaymentModal({
 
         {/* Add tender — only when there's still a balance */}
         {balance > 0 && (
-          <form onSubmit={add} className="space-y-3 rounded-lg border border-neutral-border bg-neutral-surface p-4">
+          <form onSubmit={add} className="space-y-3 rounded-lg border border-white/[0.06] bg-cinema-elev p-4">
             {/* Method tabs */}
-            <div className="inline-flex w-full overflow-hidden rounded-lg border border-neutral-border bg-neutral-surface2 p-0.5">
+            <div className="inline-flex w-full overflow-hidden rounded-lg border border-white/[0.06] bg-white/[0.02] p-0.5">
               {METHODS.map((m) => {
                 const active = method === m.id;
                 const Icon = m.icon;
@@ -149,7 +149,7 @@ export function PaymentModal({
                     type="button"
                     onClick={() => setMethod(m.id)}
                     className={`flex flex-1 items-center justify-center gap-1.5 rounded-md py-1.5 text-[13px] font-medium transition-colors ${
-                      active ? "bg-neutral-surface text-primary" : "text-content-secondary hover:text-ink"
+                      active ? "bg-cinema-elev text-primary" : "text-white/65 hover:text-white"
                     }`}
                   >
                     <Icon size={14} /> {m.label}
@@ -189,30 +189,30 @@ export function PaymentModal({
 
         {/* Tender list */}
         {sale.payments.length > 0 && (
-          <div className="overflow-hidden rounded-lg border border-neutral-border">
-            <ul className="divide-y divide-neutral-border">
+          <div className="overflow-hidden rounded-lg border border-white/[0.06]">
+            <ul className="divide-y divide-white/[0.06]">
               {sale.payments.map((p) => {
                 const Icon = METHODS.find((m) => m.id === p.method)?.icon ?? Banknote;
                 const removing = removingId === p.id;
                 return (
                   <li key={p.id} className="flex items-center justify-between gap-3 px-4 py-2.5">
                     <div className="flex items-center gap-2">
-                      <Icon size={14} className="text-content-muted" />
-                      <span className="text-[13px] font-medium text-ink">
+                      <Icon size={14} className="text-white/45" />
+                      <span className="text-[13px] font-medium text-white">
                         {METHODS.find((m) => m.id === p.method)?.label ?? p.method}
                       </span>
                       {p.reference && (
-                        <span className="font-mono text-[11px] text-content-muted">· {p.reference}</span>
+                        <span className="font-mono text-[11px] text-white/45">· {p.reference}</span>
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      <span className="font-mono text-[14px] text-ink">{naira(p.amount)}</span>
+                      <span className="font-mono text-[14px] text-white">{naira(p.amount)}</span>
                       <button
                         type="button"
                         onClick={() => remove(p.id)}
                         disabled={removing}
                         aria-label="Remove"
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-content-muted hover:bg-danger-bg hover:text-danger disabled:opacity-50"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/45 hover:bg-rose-500/[0.06] hover:text-rose-200 disabled:opacity-50"
                       >
                         {removing ? <Loader2 size={11} className="animate-spin" /> : <Trash2 size={12} />}
                       </button>
@@ -225,7 +225,7 @@ export function PaymentModal({
         )}
 
         {balance < 0 && (
-          <p className="flex items-start gap-1.5 rounded-md bg-primary-bg/40 px-3 py-2 text-[12px] text-primary">
+          <p className="flex items-start gap-1.5 rounded-md bg-primary/[0.08]/40 px-3 py-2 text-[12px] text-primary">
             <AlertCircle size={11} className="mt-0.5 shrink-0" />
             Change due to customer: <span className="font-medium">{naira(Math.abs(balance))}</span>
           </p>

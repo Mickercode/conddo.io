@@ -57,7 +57,7 @@ export default function DeskLanding() {
           />
         </div>
 
-        <p className="flex items-center gap-2 rounded-md bg-neutral-surface2 px-4 py-3 text-[12px] text-content-muted">
+        <p className="flex items-center gap-2 rounded-md bg-white/[0.02] px-4 py-3 text-[12px] text-white/45">
           <Download size={12} />
           Every list page has an Export CSV button — ready for QuickBooks, Xero, Sage, anything that swallows CSV.
         </p>
@@ -68,9 +68,9 @@ export default function DeskLanding() {
 
 function KpiTile({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
-      <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">{label}</p>
-      <p className="mt-1 font-mono text-[22px] font-medium leading-none text-ink">{value}</p>
+    <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
+      <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">{label}</p>
+      <p className="mt-1 font-mono text-[22px] font-medium leading-none text-white">{value}</p>
     </div>
   );
 }
@@ -89,16 +89,16 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="group flex items-start gap-3 rounded-xl border border-neutral-border bg-neutral-surface p-5 transition-colors hover:border-primary hover:bg-primary-bg/30"
+      className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 transition-colors hover:border-primary hover:bg-primary/[0.08]/30"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-bg text-primary">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
         <Icon size={18} />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[15px] font-medium text-ink">{title}</p>
-        <p className="mt-0.5 text-[13px] text-content-secondary">{description}</p>
+        <p className="text-[15px] font-medium text-white">{title}</p>
+        <p className="mt-0.5 text-[13px] text-white/65">{description}</p>
       </div>
-      <ArrowRight size={16} className="mt-1 shrink-0 text-content-muted transition-colors group-hover:text-primary" />
+      <ArrowRight size={16} className="mt-1 shrink-0 text-white/45 transition-colors group-hover:text-primary" />
     </Link>
   );
 }

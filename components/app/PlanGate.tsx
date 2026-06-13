@@ -44,14 +44,14 @@ export function PlanGate({
   hint: PlanUpgradeHint;
 }) {
   return (
-    <div className="mx-auto max-w-md rounded-2xl border border-neutral-border bg-neutral-surface p-8 text-center">
-      <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-bg text-primary">
+    <div className="mx-auto max-w-md rounded-2xl border border-white/[0.06] bg-cinema-elev p-8 text-center">
+      <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/[0.08] text-primary">
         <Lock size={22} />
       </span>
-      <h2 className="text-[20px] tracking-[-0.01em] text-ink">{title}</h2>
-      <p className="mt-2 text-[14px] leading-relaxed text-content-secondary">{hint.message}</p>
+      <h2 className="text-[20px] tracking-[-0.01em] text-white">{title}</h2>
+      <p className="mt-2 text-[14px] leading-relaxed text-white/65">{hint.message}</p>
       {hint.requiredPlan && hint.requiredPlanPrice && (
-        <p className="mt-2 font-mono text-[12px] text-content-muted">
+        <p className="mt-2 font-mono text-[12px] text-white/45">
           {hint.requiredPlan} · from {naira(hint.requiredPlanPrice)}/month
         </p>
       )}
@@ -61,7 +61,7 @@ export function PlanGate({
         </Button>
         <a
           href="mailto:hello@conddo.io?subject=Plan%20questions"
-          className="text-[13px] text-content-muted hover:text-ink"
+          className="text-[13px] text-white/45 hover:text-white"
         >
           Talk to sales
         </a>

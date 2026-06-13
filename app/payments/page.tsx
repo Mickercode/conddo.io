@@ -40,9 +40,9 @@ export default function PaymentsPage() {
 
   const stats = [
     { label: "This month", value: naira(s?.thisMonth ?? 0), tone: "text-primary" },
-    { label: "Outstanding", value: naira(s?.outstanding ?? 0), tone: "text-warning" },
-    { label: "Paid invoices", value: String(s?.paidInvoices ?? 0), tone: "text-ink" },
-    { label: "Overdue", value: naira(s?.overdue ?? 0), tone: "text-danger" },
+    { label: "Outstanding", value: naira(s?.outstanding ?? 0), tone: "text-amber-300" },
+    { label: "Paid invoices", value: String(s?.paidInvoices ?? 0), tone: "text-white" },
+    { label: "Overdue", value: naira(s?.overdue ?? 0), tone: "text-rose-200" },
   ];
 
   async function remind(customerId: string, name: string) {
@@ -79,8 +79,8 @@ export default function PaymentsPage() {
           {/* Stat cards */}
           <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
             {stats.map((st) => (
-              <div key={st.label} className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
-                <p className="mb-2 text-[11px] uppercase tracking-[0.05em] text-content-secondary">{st.label}</p>
+              <div key={st.label} className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
+                <p className="mb-2 text-[11px] uppercase tracking-[0.05em] text-white/65">{st.label}</p>
                 <p className={`font-mono text-[26px] font-medium leading-none ${st.tone}`}>{summary.loading ? "—" : st.value}</p>
               </div>
             ))}
@@ -96,8 +96,8 @@ export default function PaymentsPage() {
                   onClick={() => setFilter(f)}
                   className={`rounded-full border px-3.5 py-1.5 text-[13px] transition-colors ${
                     active
-                      ? "border-primary/20 bg-primary-bg font-medium text-primary"
-                      : "border-neutral-border bg-neutral-surface text-content-secondary hover:bg-neutral-surface2"
+                      ? "border-primary/20 bg-primary/[0.08] font-medium text-primary"
+                      : "border-white/[0.06] bg-cinema-elev text-white/65 hover:bg-white/[0.02]"
                   }`}
                 >
                   {f}
@@ -121,11 +121,11 @@ export default function PaymentsPage() {
               />
             }
           >
-            <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+            <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
               <div className="overflow-x-auto">
                 <table className="w-full min-w-[640px] text-left">
                   <thead>
-                    <tr className="border-b border-neutral-border bg-neutral-surface2 text-[11px] uppercase tracking-[0.05em] text-content-secondary">
+                    <tr className="border-b border-white/[0.06] bg-white/[0.02] text-[11px] uppercase tracking-[0.05em] text-white/65">
                       <th className="px-4 py-3 font-medium">Date</th>
                       <th className="px-4 py-3 font-medium">Customer</th>
                       <th className="px-4 py-3 font-medium">Description</th>
@@ -134,16 +134,16 @@ export default function PaymentsPage() {
                       <th className="px-4 py-3 font-medium">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-neutral-border">
+                  <tbody className="divide-y divide-white/[0.06]">
                     {rows.map((t, i) => {
                       const meta = statusMeta[t.status] ?? statusMeta.outstanding;
                       return (
-                        <tr key={i} className="transition-colors hover:bg-neutral-surface2">
-                          <td className="whitespace-nowrap px-4 py-3.5 font-mono text-[13px] text-content-secondary">{fmtDate(t.date)}</td>
-                          <td className="whitespace-nowrap px-4 py-3.5 text-[14px] text-ink">{t.customer}</td>
-                          <td className="whitespace-nowrap px-4 py-3.5 text-[14px] text-content-secondary">{t.description}</td>
-                          <td className="whitespace-nowrap px-4 py-3.5 text-right font-mono text-[13px] text-ink">{naira(t.amount)}</td>
-                          <td className="whitespace-nowrap px-4 py-3.5 text-[14px] text-content-secondary">{t.method ?? <span className="text-content-muted">—</span>}</td>
+                        <tr key={i} className="transition-colors hover:bg-white/[0.02]">
+                          <td className="whitespace-nowrap px-4 py-3.5 font-mono text-[13px] text-white/65">{fmtDate(t.date)}</td>
+                          <td className="whitespace-nowrap px-4 py-3.5 text-[14px] text-white">{t.customer}</td>
+                          <td className="whitespace-nowrap px-4 py-3.5 text-[14px] text-white/65">{t.description}</td>
+                          <td className="whitespace-nowrap px-4 py-3.5 text-right font-mono text-[13px] text-white">{naira(t.amount)}</td>
+                          <td className="whitespace-nowrap px-4 py-3.5 text-[14px] text-white/65">{t.method ?? <span className="text-white/45">—</span>}</td>
                           <td className="px-4 py-3.5"><Chip tone={meta.tone}>{meta.label}</Chip></td>
                         </tr>
                       );
@@ -156,38 +156,38 @@ export default function PaymentsPage() {
         </div>
 
         {/* Right: outstanding */}
-        <aside className="rounded-xl border border-neutral-border bg-neutral-surface">
-          <div className="border-b border-neutral-border p-6">
-            <h3 className="mb-4 text-[16px] font-medium text-ink">Outstanding</h3>
+        <aside className="rounded-xl border border-white/[0.06] bg-cinema-elev">
+          <div className="border-b border-white/[0.06] p-6">
+            <h3 className="mb-4 text-[16px] font-medium text-white">Outstanding</h3>
             {owing.length > 0 ? (
-              <div className="flex gap-3 rounded-lg border border-warning/15 bg-warning-bg p-4">
-                <AlertTriangle size={18} className="mt-0.5 shrink-0 text-warning" />
+              <div className="flex gap-3 rounded-lg border border-warning/15 bg-amber-500/15 p-4">
+                <AlertTriangle size={18} className="mt-0.5 shrink-0 text-amber-300" />
                 <div>
-                  <p className="mb-0.5 text-[11px] font-medium uppercase tracking-[0.05em] text-warning">Action Required</p>
-                  <p className="text-[13px] text-content-secondary">{owing.length} customer{owing.length > 1 ? "s have" : " has"} an open balance.</p>
+                  <p className="mb-0.5 text-[11px] font-medium uppercase tracking-[0.05em] text-amber-300">Action Required</p>
+                  <p className="text-[13px] text-white/65">{owing.length} customer{owing.length > 1 ? "s have" : " has"} an open balance.</p>
                 </div>
               </div>
             ) : (
-              <p className="text-[13px] text-content-secondary">{outstanding.loading ? "Loading…" : "No outstanding balances — you're all caught up."}</p>
+              <p className="text-[13px] text-white/65">{outstanding.loading ? "Loading…" : "No outstanding balances — you're all caught up."}</p>
             )}
           </div>
           {owing.length > 0 && (
             <div className="p-6">
-              <p className="mb-4 text-[11px] uppercase tracking-[0.05em] text-content-secondary">By Customer</p>
+              <p className="mb-4 text-[11px] uppercase tracking-[0.05em] text-white/65">By Customer</p>
               <div className="space-y-5">
                 {owing.map((c) => (
                   <div key={c.customerId}>
                     <div className="mb-2 flex items-start justify-between">
                       <div>
-                        <p className="text-[14px] font-medium text-ink">{c.name}</p>
-                        <p className="text-[11px] text-content-muted">{c.note}</p>
+                        <p className="text-[14px] font-medium text-white">{c.name}</p>
+                        <p className="text-[11px] text-white/45">{c.note}</p>
                       </div>
-                      <span className="font-mono text-[14px] text-ink">{naira(c.amount)}</span>
+                      <span className="font-mono text-[14px] text-white">{naira(c.amount)}</span>
                     </div>
                     <button
                       onClick={() => remind(c.customerId, c.name)}
                       disabled={reminding === c.customerId}
-                      className="w-full rounded-md border border-neutral-border bg-neutral-surface2 py-2 text-[13px] font-medium text-ink transition-colors hover:border-primary hover:bg-primary hover:text-white disabled:opacity-50"
+                      className="w-full rounded-md border border-white/[0.06] bg-white/[0.02] py-2 text-[13px] font-medium text-white transition-colors hover:border-primary hover:bg-primary hover:text-white disabled:opacity-50"
                     >
                       {reminding === c.customerId ? "Sending…" : "Send reminder"}
                     </button>

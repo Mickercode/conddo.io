@@ -180,14 +180,14 @@ export function NewDiscountModal({
         </div>
 
         {selectedProduct && previewPrice != null && (
-          <div className="flex items-center justify-between gap-3 rounded-lg border border-success/20 bg-success-bg px-3 py-2">
-            <div className="flex items-center gap-2 text-[13px] text-content-secondary">
-              <Percent size={14} className="text-success" />
+          <div className="flex items-center justify-between gap-3 rounded-lg border border-success/20 bg-emerald-500/15 px-3 py-2">
+            <div className="flex items-center gap-2 text-[13px] text-white/65">
+              <Percent size={14} className="text-emerald-300" />
               Customer pays
             </div>
             <div className="font-mono text-[13px]">
-              <span className="text-content-muted line-through">{naira(selectedProduct.price)}</span>
-              <span className="ml-2 text-success">{naira(previewPrice)}</span>
+              <span className="text-white/45 line-through">{naira(selectedProduct.price)}</span>
+              <span className="ml-2 text-emerald-300">{naira(previewPrice)}</span>
             </div>
           </div>
         )}
@@ -225,7 +225,7 @@ export function NewDiscountModal({
           </Field>
         </div>
 
-        <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-3 py-2 text-[11px] text-content-muted">
+        <p className="flex items-start gap-1.5 rounded-md bg-white/[0.02] px-3 py-2 text-[11px] text-white/45">
           <AlertCircle size={11} className="mt-0.5 shrink-0" />
           <span>
             <Tag size={11} className="inline -mt-0.5" /> Your discount won't be visible to customers

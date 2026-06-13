@@ -37,7 +37,7 @@ export function AddStageButton({ onAdded }: { onAdded: () => void }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl border-2 border-dashed border-neutral-strong px-5 text-content-muted transition-colors hover:border-primary hover:text-primary"
+        className="flex h-12 shrink-0 items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/10 px-5 text-white/45 transition-colors hover:border-primary hover:text-primary"
       >
         <PlusCircle size={18} />
         <span className="text-[13px] font-medium">Add Stage</span>
@@ -91,7 +91,7 @@ function AddStageModal({ onClose, onCreated }: { onClose: () => void; onCreated:
     >
       <form id="add-stage-form" onSubmit={submit} className="space-y-3">
         <div>
-          <label className="mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-content-secondary">
+          <label className="mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-white/65">
             Stage name
           </label>
           <TextInput
@@ -100,7 +100,7 @@ function AddStageModal({ onClose, onCreated }: { onClose: () => void; onCreated:
             placeholder="e.g. Quality Check"
             autoFocus
           />
-          <p className="mt-1.5 text-[12px] text-content-muted">
+          <p className="mt-1.5 text-[12px] text-white/45">
             Short and concrete — what's happening at this step?
           </p>
         </div>
@@ -166,17 +166,17 @@ export function StageActionsMenu({
         aria-label={`${stage.name} actions`}
         aria-haspopup="menu"
         aria-expanded={open}
-        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-content-muted transition-colors hover:bg-neutral-surface hover:text-ink"
+        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/45 transition-colors hover:bg-cinema-elev hover:text-white"
       >
         <MoreHorizontal size={18} />
       </button>
       {open && (
         <div
           role="menu"
-          className="absolute right-0 z-20 mt-1 w-44 overflow-hidden rounded-lg border border-neutral-border bg-neutral-surface text-[13px] shadow-lg"
+          className="absolute right-0 z-20 mt-1 w-44 overflow-hidden rounded-lg border border-white/[0.06] bg-cinema-elev text-[13px] shadow-lg"
         >
           {!canMutate ? (
-            <p className="px-3 py-2.5 text-[12px] text-content-muted">
+            <p className="px-3 py-2.5 text-[12px] text-white/45">
               Customise this stage in any column to start managing them — the platform default stages materialise on first edit.
             </p>
           ) : (
@@ -208,7 +208,7 @@ export function StageActionsMenu({
               </MenuItem>
               {!isTerminal && (
                 <>
-                  <div className="border-t border-neutral-border" />
+                  <div className="border-t border-white/[0.06]" />
                   <MenuItem
                     icon={Trash2}
                     tone="danger"
@@ -255,7 +255,7 @@ function MenuItem({
       onClick={onClick}
       disabled={disabled}
       className={`flex w-full items-center gap-2.5 px-3 py-2.5 text-left transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
-        danger ? "text-danger hover:bg-danger-bg" : "text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+        danger ? "text-rose-200 hover:bg-rose-500/[0.06]" : "text-white/65 hover:bg-white/[0.02] hover:text-white"
       }`}
     >
       <Icon size={14} />
@@ -322,7 +322,7 @@ function RenameStageModal({
       }
     >
       <form id="rename-stage-form" onSubmit={submit}>
-        <label className="mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-content-secondary">
+        <label className="mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-white/65">
           Stage name
         </label>
         <TextInput value={name} onChange={(e) => setName(e.target.value)} autoFocus />
@@ -382,12 +382,12 @@ function ConfirmDeleteStageModal({
       }
     >
       {error && (
-        <div className="mb-3 flex items-start gap-2 rounded-md border border-danger/20 bg-danger-bg px-3 py-2 text-[13px] text-danger">
+        <div className="mb-3 flex items-start gap-2 rounded-md border border-danger/20 bg-rose-500/[0.06] px-3 py-2 text-[13px] text-rose-200">
           <AlertCircle size={15} className="mt-0.5 shrink-0" /> {error}
         </div>
       )}
       {hasOrders ? (
-        <p className="text-[14px] text-content-secondary">
+        <p className="text-[14px] text-white/65">
           Currently has open orders — drag them to another stage before deleting.
         </p>
       ) : null}

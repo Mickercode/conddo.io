@@ -32,33 +32,33 @@ export default function StockLanding() {
       <div className="space-y-6">
         {/* Headline alert */}
         {lowStock.length > 0 && (
-          <div className="flex items-start gap-3 rounded-2xl border border-warning/30 bg-warning-bg/40 p-5">
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-warning/15 text-warning">
+          <div className="flex items-start gap-3 rounded-2xl border border-warning/30 bg-amber-500/15/40 p-5">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-warning/15 text-amber-300">
               <AlertTriangle size={18} />
             </span>
             <div className="min-w-0 flex-1">
-              <p className="text-[16px] font-medium text-ink">
+              <p className="text-[16px] font-medium text-white">
                 {lowStock.length} product{lowStock.length === 1 ? "" : "s"} below reorder threshold
               </p>
-              <p className="mt-1 text-[13px] text-content-secondary">
+              <p className="mt-1 text-[13px] text-white/65">
                 Receive a restock or update reorder thresholds to silence these alerts.
               </p>
               <ul className="mt-3 space-y-1">
                 {lowStock.slice(0, 5).map((p) => (
                   <li key={p.id} className="flex items-center justify-between text-[12px]">
-                    <span className="truncate text-ink">{p.name}</span>
+                    <span className="truncate text-white">{p.name}</span>
                     <Chip tone={p.stock <= 0 ? "danger" : "warning"}>
                       stock {p.stock} / reorder {p.reorderThreshold}
                     </Chip>
                   </li>
                 ))}
                 {lowStock.length > 5 && (
-                  <li className="text-[11px] text-content-muted">+ {lowStock.length - 5} more</li>
+                  <li className="text-[11px] text-white/45">+ {lowStock.length - 5} more</li>
                 )}
               </ul>
               <Link
                 href="/inventory"
-                className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-warning hover:underline"
+                className="mt-3 inline-flex items-center gap-1 text-[13px] font-medium text-amber-300 hover:underline"
               >
                 Open inventory <ArrowRight size={12} />
               </Link>
@@ -97,7 +97,7 @@ export default function StockLanding() {
 
         <Link
           href="/inventory/movements"
-          className="block rounded-xl border border-neutral-border bg-neutral-surface p-4 text-[13px] text-content-secondary hover:border-primary hover:text-primary"
+          className="block rounded-xl border border-white/[0.06] bg-cinema-elev p-4 text-[13px] text-white/65 hover:border-primary hover:text-primary"
         >
           <span className="inline-flex items-center gap-2 font-medium">
             <History size={14} /> Movement log
@@ -128,16 +128,16 @@ function QuickLink({
   return (
     <Link
       href={target}
-      className="group flex items-start gap-3 rounded-xl border border-neutral-border bg-neutral-surface p-5 transition-colors hover:border-primary hover:bg-primary-bg/30"
+      className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 transition-colors hover:border-primary hover:bg-primary/[0.08]/30"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-bg text-primary">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
         <Icon size={18} />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[15px] font-medium text-ink">{title}</p>
-        <p className="mt-0.5 text-[13px] text-content-secondary">{description}</p>
+        <p className="text-[15px] font-medium text-white">{title}</p>
+        <p className="mt-0.5 text-[13px] text-white/65">{description}</p>
       </div>
-      <ArrowRight size={16} className="mt-1 shrink-0 text-content-muted transition-colors group-hover:text-primary" />
+      <ArrowRight size={16} className="mt-1 shrink-0 text-white/45 transition-colors group-hover:text-primary" />
     </Link>
   );
 }

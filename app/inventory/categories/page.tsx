@@ -80,9 +80,9 @@ function CategoryRow({
   }
 
   return (
-    <li className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-neutral-surface2">
+    <li className="flex items-center justify-between gap-3 px-5 py-3.5 hover:bg-white/[0.02]">
       <div className="flex min-w-0 items-center gap-3">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary-bg text-primary">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-primary/[0.08] text-primary">
           <Tag size={14} />
         </span>
         {editing ? (
@@ -95,14 +95,14 @@ function CategoryRow({
             }}
             disabled={saving}
             autoFocus
-            className="h-9 flex-1 rounded-md border border-primary bg-neutral-bg px-3 text-[14px] text-ink focus:outline-none"
+            className="h-9 flex-1 rounded-md border border-primary bg-cinema-base px-3 text-[14px] text-white focus:outline-none"
           />
         ) : (
-          <p className="truncate text-[14px] font-medium text-ink">{cat.name}</p>
+          <p className="truncate text-[14px] font-medium text-white">{cat.name}</p>
         )}
       </div>
       <div className="flex shrink-0 items-center gap-3">
-        <span className="font-mono text-[12px] text-content-muted">
+        <span className="font-mono text-[12px] text-white/45">
           {count != null ? `${count} product${count === 1 ? "" : "s"}` : "—"}
         </span>
         {editing ? (
@@ -112,7 +112,7 @@ function CategoryRow({
               onClick={save}
               disabled={saving}
               aria-label="Save"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-success hover:bg-success-bg disabled:opacity-50"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-emerald-300 hover:bg-emerald-500/15 disabled:opacity-50"
             >
               {saving ? <Loader2 size={14} className="animate-spin" /> : <Check size={15} />}
             </button>
@@ -121,7 +121,7 @@ function CategoryRow({
               onClick={() => { setName(cat.name); setEditing(false); }}
               disabled={saving}
               aria-label="Cancel"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-content-muted hover:bg-neutral-surface hover:text-ink"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white/45 hover:bg-cinema-elev hover:text-white"
             >
               <X size={15} />
             </button>
@@ -132,7 +132,7 @@ function CategoryRow({
               type="button"
               onClick={() => setEditing(true)}
               aria-label="Rename"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-content-muted hover:bg-neutral-surface hover:text-ink"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white/45 hover:bg-cinema-elev hover:text-white"
             >
               <Pencil size={14} />
             </button>
@@ -142,7 +142,7 @@ function CategoryRow({
               disabled={deleting || hasProducts}
               aria-label="Delete"
               title={hasProducts ? `${count} product${count === 1 ? "" : "s"} still in this category — move them first.` : "Delete category"}
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-content-muted hover:bg-danger-bg hover:text-danger disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-content-muted"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white/45 hover:bg-rose-500/[0.06] hover:text-rose-200 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white/45"
             >
               {deleting ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
             </button>
@@ -185,14 +185,14 @@ function AddCategoryRow({
   }
 
   return (
-    <div className="flex items-center gap-2 border-t border-neutral-border bg-neutral-surface2 px-5 py-3">
+    <div className="flex items-center gap-2 border-t border-white/[0.06] bg-white/[0.02] px-5 py-3">
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
         onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); add(); } }}
         disabled={saving}
         placeholder="Add a category (press Enter)…"
-        className="h-9 flex-1 rounded-md border border-neutral-strong bg-neutral-bg px-3 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none"
+        className="h-9 flex-1 rounded-md border border-white/10 bg-cinema-base px-3 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none"
       />
       <Button variant="primary" size="md" onClick={add} disabled={saving || !name.trim()}>
         {saving ? <Loader2 size={14} className="animate-spin" /> : <Plus size={15} />}
@@ -242,17 +242,17 @@ function SuggestionChips({
   }
 
   return (
-    <div className="mb-5 rounded-xl border border-primary/20 bg-primary-bg/40 p-4">
+    <div className="mb-5 rounded-xl border border-primary/20 bg-primary/[0.08]/40 p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Sparkles size={15} className="text-primary" />
-          <p className="text-[13px] font-medium text-ink">Quick start for your vertical</p>
+          <p className="text-[13px] font-medium text-white">Quick start for your vertical</p>
         </div>
         <button
           type="button"
           onClick={addAll}
           disabled={adding !== null}
-          className="rounded-md border border-primary/30 bg-neutral-surface px-2.5 py-1 text-[11px] font-medium text-primary hover:bg-primary-bg disabled:opacity-50"
+          className="rounded-md border border-primary/30 bg-cinema-elev px-2.5 py-1 text-[11px] font-medium text-primary hover:bg-primary/[0.08] disabled:opacity-50"
         >
           Add all {remaining.length}
         </button>
@@ -264,7 +264,7 @@ function SuggestionChips({
             type="button"
             onClick={() => quickAdd(s)}
             disabled={adding === s}
-            className="inline-flex items-center gap-1.5 rounded-full border border-neutral-border bg-neutral-surface px-3 py-1 text-[12px] text-content-secondary transition-colors hover:border-primary hover:text-primary disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-full border border-white/[0.06] bg-cinema-elev px-3 py-1 text-[12px] text-white/65 transition-colors hover:border-primary hover:text-primary disabled:opacity-50"
           >
             {adding === s ? <Loader2 size={11} className="animate-spin" /> : <Plus size={11} />}
             {s}
@@ -291,7 +291,7 @@ export default function InventoryCategoriesPage() {
     <AppShell title="Categories" subtitle="Organise your inventory into the groups your customers search by.">
       <Link
         href="/inventory"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         <ArrowLeft size={14} /> Back to Inventory
       </Link>
@@ -315,7 +315,7 @@ export default function InventoryCategoriesPage() {
               title="No categories yet"
               description="Add categories so customers can browse your catalog by group — and your stock reports group by them too. Click any suggestion above, or add your own below."
             />
-            <div className="mt-4 overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+            <div className="mt-4 overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
               <AddCategoryRow existingNames={existingNames} onAdded={refetch} />
             </div>
           </>
@@ -327,13 +327,13 @@ export default function InventoryCategoriesPage() {
           onAdded={refetch}
         />
 
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-          <div className="border-b border-neutral-border bg-neutral-surface2 px-5 py-2.5">
-            <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+          <div className="border-b border-white/[0.06] bg-white/[0.02] px-5 py-2.5">
+            <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">
               {categories.length} categor{categories.length === 1 ? "y" : "ies"}
             </p>
           </div>
-          <ul className="divide-y divide-neutral-border">
+          <ul className="divide-y divide-white/[0.06]">
             {categories.map((cat) => (
               <CategoryRow
                 key={cat.id}
@@ -346,7 +346,7 @@ export default function InventoryCategoriesPage() {
           <AddCategoryRow existingNames={existingNames} onAdded={refetch} />
         </div>
 
-        <p className="mt-4 flex items-center gap-1.5 text-[11px] text-content-muted">
+        <p className="mt-4 flex items-center gap-1.5 text-[11px] text-white/45">
           <AlertCircle size={11} />
           Categories with products can't be deleted — move products to another category first.
         </p>

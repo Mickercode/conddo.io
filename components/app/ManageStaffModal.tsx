@@ -100,11 +100,11 @@ export function ManageStaffModal({
       }
     >
       {isOwner ? (
-        <div className="flex items-start gap-3 rounded-md border border-warning/30 bg-warning-bg px-4 py-3">
-          <Crown size={16} className="mt-0.5 shrink-0 text-warning" />
+        <div className="flex items-start gap-3 rounded-md border border-warning/30 bg-amber-500/15 px-4 py-3">
+          <Crown size={16} className="mt-0.5 shrink-0 text-amber-300" />
           <div>
-            <p className="text-[14px] font-medium text-ink">This is the workspace owner</p>
-            <p className="mt-0.5 text-[12px] text-content-secondary">
+            <p className="text-[14px] font-medium text-white">This is the workspace owner</p>
+            <p className="mt-0.5 text-[12px] text-white/65">
               The owner's role can't be changed from the dashboard. Contact support to transfer ownership.
             </p>
           </div>
@@ -126,27 +126,27 @@ export function ManageStaffModal({
           </Field>
 
           {/* Compact preview of the selected role's access */}
-          <div className="rounded-lg bg-neutral-surface2 px-3 py-2">
-            <p className="mb-1.5 text-[10px] uppercase tracking-[0.05em] text-content-muted">
+          <div className="rounded-lg bg-white/[0.02] px-3 py-2">
+            <p className="mb-1.5 text-[10px] uppercase tracking-[0.05em] text-white/45">
               {roleDef.label} can
             </p>
-            <ul className="space-y-0.5 text-[12px] text-content-secondary">
+            <ul className="space-y-0.5 text-[12px] text-white/65">
               {roleDef.access.slice(0, 3).map((line, i) => (
                 <li key={i} className="line-clamp-1">· {line}</li>
               ))}
               {roleDef.access.length > 3 && (
-                <li className="text-[11px] text-content-muted">…and {roleDef.access.length - 3} more.</li>
+                <li className="text-[11px] text-white/45">…and {roleDef.access.length - 3} more.</li>
               )}
             </ul>
           </div>
 
-          <label className="flex items-center justify-between rounded-lg border border-neutral-border px-3 py-2.5">
-            <span className="text-[14px] text-ink">Account active</span>
+          <label className="flex items-center justify-between rounded-lg border border-white/[0.06] px-3 py-2.5">
+            <span className="text-[14px] text-white">Account active</span>
             <input
               type="checkbox"
               checked={active}
               onChange={(e) => setActive(e.target.checked)}
-              className="h-4 w-4 rounded border-neutral-border text-primary focus:ring-primary"
+              className="h-4 w-4 rounded border-white/[0.06] text-primary focus:ring-primary"
             />
           </label>
 
@@ -155,7 +155,7 @@ export function ManageStaffModal({
               type="button"
               onClick={resend}
               disabled={resending}
-              className="flex w-full items-center justify-center gap-2 rounded-md border border-neutral-border py-2.5 text-[14px] font-medium text-content-secondary hover:bg-neutral-surface2 hover:text-ink disabled:opacity-50"
+              className="flex w-full items-center justify-center gap-2 rounded-md border border-white/[0.06] py-2.5 text-[14px] font-medium text-white/65 hover:bg-white/[0.02] hover:text-white disabled:opacity-50"
             >
               <Mail size={16} /> {resending ? "Resending…" : "Resend invite"}
             </button>

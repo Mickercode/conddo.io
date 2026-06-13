@@ -201,11 +201,11 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
       {/* Main */}
       <div className="space-y-6">
         {/* Header */}
-        <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-6">
+        <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-6">
           <div className="mb-4 flex items-start justify-between gap-3">
             <div>
-              <h2 className="font-mono text-[20px] font-bold text-ink">{o.reference}</h2>
-              <p className="mt-1 text-[14px] text-content-secondary">{o.service ?? "—"}</p>
+              <h2 className="font-mono text-[20px] font-bold text-white">{o.reference}</h2>
+              <p className="mt-1 text-[14px] text-white/65">{o.service ?? "—"}</p>
             </div>
             <div className="flex items-center gap-2">
               <Chip tone={stageTone(o.stage)}>{o.stage}</Chip>
@@ -214,49 +214,49 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
               </Button>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-4 border-t border-neutral-border pt-4 sm:grid-cols-3">
+          <div className="grid grid-cols-2 gap-4 border-t border-white/[0.06] pt-4 sm:grid-cols-3">
             <div>
-              <p className="mb-1 text-[10px] uppercase tracking-[0.05em] text-content-muted">Customer</p>
-              <p className="text-[14px] font-medium text-ink">{customer.name ?? "—"}</p>
+              <p className="mb-1 text-[10px] uppercase tracking-[0.05em] text-white/45">Customer</p>
+              <p className="text-[14px] font-medium text-white">{customer.name ?? "—"}</p>
             </div>
             <div>
-              <p className="mb-1 text-[10px] uppercase tracking-[0.05em] text-content-muted">Ordered</p>
-              <p className="font-mono text-[14px] text-ink">{fmtDate(o.orderedAt)}</p>
+              <p className="mb-1 text-[10px] uppercase tracking-[0.05em] text-white/45">Ordered</p>
+              <p className="font-mono text-[14px] text-white">{fmtDate(o.orderedAt)}</p>
             </div>
             <div>
-              <p className="mb-1 text-[10px] uppercase tracking-[0.05em] text-content-muted">Due Date</p>
-              <p className={`font-mono text-[14px] ${o.flag ? "text-danger" : "text-primary"}`}>{fmtDate(o.dueDate)}</p>
+              <p className="mb-1 text-[10px] uppercase tracking-[0.05em] text-white/45">Due Date</p>
+              <p className={`font-mono text-[14px] ${o.flag ? "text-rose-200" : "text-primary"}`}>{fmtDate(o.dueDate)}</p>
             </div>
           </div>
         </div>
 
         {/* Production progress */}
-        <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-6">
+        <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-6">
           <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-            <h3 className="text-[16px] font-medium text-ink">Production Progress</h3>
+            <h3 className="text-[16px] font-medium text-white">Production Progress</h3>
             {nextStage ? (
               <Button variant="primary" size="md" className="h-9 px-4 text-[13px]" onClick={advance} disabled={advancing}>
                 {advancing ? "Advancing…" : <>Advance to {nextStage} <ArrowRight size={15} /></>}
               </Button>
             ) : (
-              <span className="inline-flex items-center gap-1.5 rounded-md bg-success-bg px-3 py-1.5 text-[13px] font-medium text-success">
+              <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/15 px-3 py-1.5 text-[13px] font-medium text-emerald-300">
                 <Check size={15} /> Final stage
               </span>
             )}
           </div>
           <div className="overflow-x-auto pb-1">
             <div className="relative flex min-w-[560px] justify-between">
-              <div className="absolute left-6 right-6 top-4 -z-0 h-0.5 bg-neutral-surface2" />
+              <div className="absolute left-6 right-6 top-4 -z-0 h-0.5 bg-white/[0.02]" />
               {stages.map((stage, i) => {
                 const done = i < currentIdx;
                 const active = i === currentIdx;
                 const Icon = STAGE_ICON[stage] ?? Circle;
                 return (
                   <div key={stage} className="relative z-10 flex flex-1 flex-col items-center gap-2">
-                    <div className={`flex h-8 w-8 items-center justify-center rounded-full ${done ? "bg-primary text-white" : active ? "bg-warning text-white ring-4 ring-warning/20" : "border border-neutral-border bg-neutral-surface2 text-content-muted"}`}>
+                    <div className={`flex h-8 w-8 items-center justify-center rounded-full ${done ? "bg-primary text-white" : active ? "bg-warning text-white ring-4 ring-warning/20" : "border border-white/[0.06] bg-white/[0.02] text-white/45"}`}>
                       {done ? <Check size={16} strokeWidth={2.5} /> : <Icon size={16} />}
                     </div>
-                    <span className={`text-center text-[11px] ${active ? "font-bold text-ink" : done ? "font-medium text-primary" : "text-content-muted"}`}>{stage}</span>
+                    <span className={`text-center text-[11px] ${active ? "font-bold text-white" : done ? "font-medium text-primary" : "text-white/45"}`}>{stage}</span>
                   </div>
                 );
               })}
@@ -274,30 +274,30 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
 
       {/* Right column */}
       <div className="space-y-6">
-        <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-6">
+        <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-6">
           <div className="mb-4 flex items-center gap-4">
-            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-bg font-mono text-[15px] font-semibold text-primary">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/[0.08] font-mono text-[15px] font-semibold text-primary">
               {(customer.name ?? "?").trim().split(/\s+/).slice(0, 2).map((w) => w[0]?.toUpperCase()).join("") || "?"}
             </span>
-            <h3 className="text-[15px] font-medium text-ink">{customer.name ?? "—"}</h3>
+            <h3 className="text-[15px] font-medium text-white">{customer.name ?? "—"}</h3>
           </div>
-          <div className="space-y-3 border-t border-neutral-border pt-4">
-            <div className="flex items-center gap-3 text-content-secondary"><Phone size={16} className="shrink-0 text-content-muted" /><span className="font-mono text-[13px]">{customer.phone ?? "—"}</span></div>
-            <div className="flex items-center gap-3 text-content-secondary"><Mail size={16} className="shrink-0 text-content-muted" /><span className="truncate text-[13px]">{customer.email ?? "—"}</span></div>
+          <div className="space-y-3 border-t border-white/[0.06] pt-4">
+            <div className="flex items-center gap-3 text-white/65"><Phone size={16} className="shrink-0 text-white/45" /><span className="font-mono text-[13px]">{customer.phone ?? "—"}</span></div>
+            <div className="flex items-center gap-3 text-white/65"><Mail size={16} className="shrink-0 text-white/45" /><span className="truncate text-[13px]">{customer.email ?? "—"}</span></div>
           </div>
           {canIssueOffer && (
             <div className="mt-4 space-y-2">
               <button
                 type="button"
                 onClick={() => setIssueOpen(true)}
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-primary/30 bg-primary-bg px-3 py-2 text-[13px] font-medium text-primary transition-colors hover:bg-primary hover:text-white"
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-primary/30 bg-primary/[0.08] px-3 py-2 text-[13px] font-medium text-primary transition-colors hover:bg-primary hover:text-white"
               >
                 <Gift size={14} /> Issue refill offer
               </button>
               <button
                 type="button"
                 onClick={() => setFollowupOpen(true)}
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-neutral-border bg-neutral-surface px-3 py-2 text-[13px] font-medium text-content-secondary transition-colors hover:border-primary hover:text-primary"
+                className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-white/[0.06] bg-cinema-elev px-3 py-2 text-[13px] font-medium text-white/65 transition-colors hover:border-primary hover:text-primary"
               >
                 <ListChecks size={14} /> Schedule follow-up
               </button>
@@ -305,19 +305,19 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
           )}
         </div>
 
-        <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-6">
-          <h3 className="mb-4 text-[16px] font-medium text-ink">Billing Summary</h3>
+        <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-6">
+          <h3 className="mb-4 text-[16px] font-medium text-white">Billing Summary</h3>
           <div className="mb-5 space-y-2">
-            <div className="flex justify-between text-[13px]"><span className="text-content-secondary">Total Amount</span><span className="font-mono font-medium text-ink">{naira(o.billing.total)}</span></div>
-            <div className="flex justify-between text-[13px]"><span className="text-content-secondary">Deposit Paid</span><span className="font-mono text-success">{naira(o.billing.deposit)}</span></div>
-            <div className="mt-2 flex items-center justify-between border-t border-dashed border-neutral-border pt-3"><span className="text-[14px] font-medium text-ink">Balance Due</span><span className="font-mono text-[18px] font-bold text-warning">{naira(o.billing.balance)}</span></div>
+            <div className="flex justify-between text-[13px]"><span className="text-white/65">Total Amount</span><span className="font-mono font-medium text-white">{naira(o.billing.total)}</span></div>
+            <div className="flex justify-between text-[13px]"><span className="text-white/65">Deposit Paid</span><span className="font-mono text-emerald-300">{naira(o.billing.deposit)}</span></div>
+            <div className="mt-2 flex items-center justify-between border-t border-dashed border-white/[0.06] pt-3"><span className="text-[14px] font-medium text-white">Balance Due</span><span className="font-mono text-[18px] font-bold text-amber-300">{naira(o.billing.balance)}</span></div>
           </div>
           <div className="space-y-2">
             <Button variant="secondary" size="md" className="w-full" onClick={() => setPayOpen(true)}>Record Payment</Button>
             <button
               onClick={sendReminder}
               disabled={reminding}
-              className="w-full rounded-md border border-primary-border bg-neutral-surface py-2.5 text-[14px] font-medium text-primary transition-colors hover:bg-primary-bg disabled:opacity-50"
+              className="w-full rounded-md border border-primary/20 bg-cinema-elev py-2.5 text-[14px] font-medium text-primary transition-colors hover:bg-primary/[0.08] disabled:opacity-50"
             >
               {reminding ? "Sending…" : "Send Reminder"}
             </button>
@@ -325,26 +325,26 @@ function Detail({ o, onChanged }: { o: OrderDetail; onChanged: () => void }) {
         </div>
 
         {measurements.length > 0 && (
-          <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-6">
-            <div className="mb-4 flex items-center justify-between"><h3 className="text-[16px] font-medium text-ink">Measurements</h3><Ruler size={18} className="text-content-muted" /></div>
+          <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-6">
+            <div className="mb-4 flex items-center justify-between"><h3 className="text-[16px] font-medium text-white">Measurements</h3><Ruler size={18} className="text-white/45" /></div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-4">
               {measurements.map(([label, value]) => (
-                <div key={label} className="rounded-lg bg-neutral-surface2 px-3 py-2.5">
-                  <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">{label}</p>
-                  <p className="font-mono text-[15px] text-ink">{String(value)}</p>
+                <div key={label} className="rounded-lg bg-white/[0.02] px-3 py-2.5">
+                  <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">{label}</p>
+                  <p className="font-mono text-[15px] text-white">{String(value)}</p>
                 </div>
               ))}
             </div>
           </div>
         )}
 
-        <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-6">
-          <h3 className="mb-3 text-[16px] font-medium text-ink">Internal Notes</h3>
+        <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-6">
+          <h3 className="mb-3 text-[16px] font-medium text-white">Internal Notes</h3>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Add a private note about this order…"
-            className="h-28 w-full resize-none rounded-lg border border-neutral-border bg-neutral-bg p-3 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className="h-28 w-full resize-none rounded-lg border border-white/[0.06] bg-cinema-base p-3 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none focus:ring-1 focus:ring-primary"
           />
           {notesDirty && (
             <div className="mt-2 flex justify-end gap-2">

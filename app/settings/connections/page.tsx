@@ -140,16 +140,16 @@ function ConnectionSettingsInner() {
   return (
     <SettingsShell active="connections" title="Connected Accounts" description="Connect the tools you already use — your dashboard scheduling, marketing, and customer messaging will pull through them.">
       {gateError ? (
-        <div className="mb-5 rounded-xl border border-warning/20 bg-warning-bg px-4 py-3 text-[13px] text-warning">
-          <strong className="font-medium text-ink">Social scheduling is a Growth feature.</strong>{" "}
+        <div className="mb-5 rounded-xl border border-warning/20 bg-amber-500/15 px-4 py-3 text-[13px] text-amber-300">
+          <strong className="font-medium text-white">Social scheduling is a Growth feature.</strong>{" "}
           {gateHint?.requiredPlan && gateHint.requiredPlanPrice && (
             <>{gateHint.requiredPlan} unlocks Facebook + Instagram + LinkedIn + X + TikTok from ₦{gateHint.requiredPlanPrice.toLocaleString("en-NG")}/month. </>
           )}
           <a href={gateHint?.upgradeUrl ?? "/settings/billing"} className="font-medium underline hover:no-underline">Upgrade your plan</a> to enable.
         </div>
       ) : (
-        <div className="mb-5 rounded-xl border border-neutral-border bg-neutral-surface px-4 py-3 text-[13px] text-content-secondary">
-          <strong className="font-medium text-ink">Connect once, post everywhere.</strong>{" "}
+        <div className="mb-5 rounded-xl border border-white/[0.06] bg-cinema-elev px-4 py-3 text-[13px] text-white/65">
+          <strong className="font-medium text-white">Connect once, post everywhere.</strong>{" "}
           We use a single gateway for all your social channels. Click Connect on any platform → authorise in the hosted dialog → return here. Sessions are shared across all your devices.
         </div>
       )}
@@ -157,11 +157,11 @@ function ConnectionSettingsInner() {
       <div className="space-y-6">
         {groups.map((group) => (
           <div key={group.id}>
-            <p className="mb-2 px-1 text-[11px] font-medium uppercase tracking-[0.06em] text-content-muted">
+            <p className="mb-2 px-1 text-[11px] font-medium uppercase tracking-[0.06em] text-white/45">
               {GROUP_LABELS[group.id]}
             </p>
-            <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-              <ul className="divide-y divide-neutral-border">
+            <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+              <ul className="divide-y divide-white/[0.06]">
                 {group.rows.map((p) => {
                   const live = accountByProvider.get(p.key);
                   const connected = live?.connected ?? false;
@@ -172,12 +172,12 @@ function ConnectionSettingsInner() {
                   return (
                     <li key={p.key} className="flex flex-col gap-3 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
                       <div className="flex min-w-0 items-start gap-4">
-                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-neutral-surface2 text-content-secondary">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-white/[0.02] text-white/65">
                           <p.icon size={20} />
                         </span>
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
-                            <p className="text-[14px] font-medium text-ink">{fmtProvider(p)}</p>
+                            <p className="text-[14px] font-medium text-white">{fmtProvider(p)}</p>
                             {isLive ? (
                               connected ? (
                                 <Chip tone="success">
@@ -192,9 +192,9 @@ function ConnectionSettingsInner() {
                               <Chip tone="neutral">Coming soon</Chip>
                             )}
                           </div>
-                          <p className="mt-0.5 truncate text-[13px] text-content-muted">{p.desc}</p>
+                          <p className="mt-0.5 truncate text-[13px] text-white/45">{p.desc}</p>
                           {connected && externalName && (
-                            <p className="mt-1 inline-flex items-center gap-1 text-[12px] text-content-secondary">
+                            <p className="mt-1 inline-flex items-center gap-1 text-[12px] text-white/65">
                               <ExternalLink size={11} /> {externalName}
                             </p>
                           )}
@@ -236,7 +236,7 @@ function ConnectionSettingsInner() {
       </div>
 
       {/* Tiny help / refresh affordance */}
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-[12px] text-content-muted">
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-[12px] text-white/45">
         <p>
           Need a connection that isn't listed?{" "}
           <a href="mailto:hello@conddo.io?subject=Connection%20request" className="font-medium text-primary hover:underline">
@@ -247,7 +247,7 @@ function ConnectionSettingsInner() {
           type="button"
           onClick={() => accountsQ.refetch()}
           disabled={accountsQ.loading}
-          className="inline-flex items-center gap-1 rounded-md border border-neutral-border px-2.5 py-1 hover:bg-neutral-surface2 hover:text-ink disabled:opacity-50"
+          className="inline-flex items-center gap-1 rounded-md border border-white/[0.06] px-2.5 py-1 hover:bg-white/[0.02] hover:text-white disabled:opacity-50"
         >
           {accountsQ.loading ? <Loader2 size={11} className="animate-spin" /> : <AlertCircle size={11} />} Refresh
         </button>

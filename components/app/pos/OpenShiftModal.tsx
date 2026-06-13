@@ -105,7 +105,7 @@ export function OpenShiftModal({
           />
         </Field>
 
-        <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-3 py-2 text-[11px] text-content-muted">
+        <p className="flex items-start gap-1.5 rounded-md bg-white/[0.02] px-3 py-2 text-[11px] text-white/45">
           <Wallet size={11} className="mt-0.5 shrink-0" />
           At close-of-shift we'll subtract sales totals and ask you to count
           the cash again. Any difference shows up as a variance.

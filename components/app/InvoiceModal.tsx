@@ -73,47 +73,47 @@ export function InvoiceModal({
       <div className="conddo-invoice-page w-full max-w-2xl rounded-lg bg-white p-10 shadow-xl">
         {/* Header */}
         <div className="conddo-invoice-no-print mb-6 flex items-center justify-between">
-          <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-content-muted">Invoice preview</p>
+          <p className="font-mono text-[11px] uppercase tracking-[0.06em] text-white/45">Invoice preview</p>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="rounded-md p-1 text-content-muted hover:bg-neutral-surface2 hover:text-ink"
+            className="rounded-md p-1 text-white/45 hover:bg-white/[0.02] hover:text-white"
           >
             <X size={18} />
           </button>
         </div>
 
         {/* Business header */}
-        <div className="mb-8 flex items-start justify-between border-b border-neutral-border pb-6">
+        <div className="mb-8 flex items-start justify-between border-b border-white/[0.06] pb-6">
           <div>
-            <h1 className="text-[26px] font-semibold tracking-[-0.01em] text-ink">{tenant?.name ?? "Your business"}</h1>
-            <p className="mt-0.5 font-mono text-[12px] text-content-muted">
+            <h1 className="text-[26px] font-semibold tracking-[-0.01em] text-white">{tenant?.name ?? "Your business"}</h1>
+            <p className="mt-0.5 font-mono text-[12px] text-white/45">
               {tenant?.subdomain ? `${tenant.subdomain}.conddo.io` : ""}
             </p>
           </div>
           <div className="text-right">
             <p className="text-[20px] font-bold uppercase tracking-[0.1em] text-primary">INVOICE</p>
-            <p className="mt-1 font-mono text-[12px] text-content-secondary">{order.reference}</p>
-            <p className="mt-0.5 font-mono text-[12px] text-content-muted">{fmtDate(order.orderedAt)}</p>
+            <p className="mt-1 font-mono text-[12px] text-white/65">{order.reference}</p>
+            <p className="mt-0.5 font-mono text-[12px] text-white/45">{fmtDate(order.orderedAt)}</p>
           </div>
         </div>
 
         {/* Bill-to + meta */}
         <div className="mb-8 grid grid-cols-2 gap-8">
           <div>
-            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-content-muted">Bill to</p>
-            <p className="text-[14px] font-medium text-ink">{customer.name ?? "—"}</p>
-            {customer.phone && <p className="text-[13px] text-content-secondary">{customer.phone}</p>}
-            {customer.email && <p className="text-[13px] text-content-secondary">{customer.email}</p>}
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-white/45">Bill to</p>
+            <p className="text-[14px] font-medium text-white">{customer.name ?? "—"}</p>
+            {customer.phone && <p className="text-[13px] text-white/65">{customer.phone}</p>}
+            {customer.email && <p className="text-[13px] text-white/65">{customer.email}</p>}
           </div>
           <div className="text-right">
-            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-content-muted">Status</p>
-            <p className="text-[14px] font-medium text-ink">{order.stage}</p>
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-white/45">Status</p>
+            <p className="text-[14px] font-medium text-white">{order.stage}</p>
             {order.dueDate && (
               <>
-                <p className="mt-3 mb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-content-muted">Due</p>
-                <p className="text-[14px] font-medium text-ink">{fmtDate(order.dueDate)}</p>
+                <p className="mt-3 mb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-white/45">Due</p>
+                <p className="text-[14px] font-medium text-white">{fmtDate(order.dueDate)}</p>
               </>
             )}
           </div>
@@ -122,15 +122,15 @@ export function InvoiceModal({
         {/* Service */}
         {order.service && (
           <div className="mb-6">
-            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-content-muted">Service</p>
-            <p className="text-[14px] text-ink">{order.service}</p>
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-white/45">Service</p>
+            <p className="text-[14px] text-white">{order.service}</p>
           </div>
         )}
 
         {/* Line items */}
         <table className="mb-8 w-full text-left">
           <thead>
-            <tr className="border-b border-neutral-border text-[11px] uppercase tracking-[0.05em] text-content-muted">
+            <tr className="border-b border-white/[0.06] text-[11px] uppercase tracking-[0.05em] text-white/45">
               <th className="py-2 pr-3 font-medium">Description</th>
               <th className="py-2 pr-3 text-right font-medium">Qty</th>
               <th className="py-2 pr-3 text-right font-medium">Unit</th>
@@ -144,22 +144,22 @@ export function InvoiceModal({
                 const p = Number(it.unitPrice ?? 0);
                 const total = it.total != null ? Number(it.total) : q * p;
                 return (
-                  <tr key={it.id ?? i} className="border-b border-neutral-border/50">
-                    <td className="py-2.5 pr-3 text-[13px] text-ink">{it.description ?? it.name ?? "Item"}</td>
-                    <td className="py-2.5 pr-3 text-right font-mono text-[13px] text-content-secondary">{q}</td>
-                    <td className="py-2.5 pr-3 text-right font-mono text-[13px] text-content-secondary">{p > 0 ? naira(p) : "—"}</td>
-                    <td className="py-2.5 text-right font-mono text-[13px] text-ink">{naira(total)}</td>
+                  <tr key={it.id ?? i} className="border-b border-white/[0.06]/50">
+                    <td className="py-2.5 pr-3 text-[13px] text-white">{it.description ?? it.name ?? "Item"}</td>
+                    <td className="py-2.5 pr-3 text-right font-mono text-[13px] text-white/65">{q}</td>
+                    <td className="py-2.5 pr-3 text-right font-mono text-[13px] text-white/65">{p > 0 ? naira(p) : "—"}</td>
+                    <td className="py-2.5 text-right font-mono text-[13px] text-white">{naira(total)}</td>
                   </tr>
                 );
               })
             ) : (
               // No itemised lines on this order — render a single-row summary so
               // the invoice still has a body to show.
-              <tr className="border-b border-neutral-border/50">
-                <td className="py-2.5 pr-3 text-[13px] text-ink">{order.service ?? "Service"}</td>
-                <td className="py-2.5 pr-3 text-right font-mono text-[13px] text-content-secondary">1</td>
-                <td className="py-2.5 pr-3 text-right font-mono text-[13px] text-content-secondary">{naira(order.billing.total)}</td>
-                <td className="py-2.5 text-right font-mono text-[13px] text-ink">{naira(order.billing.total)}</td>
+              <tr className="border-b border-white/[0.06]/50">
+                <td className="py-2.5 pr-3 text-[13px] text-white">{order.service ?? "Service"}</td>
+                <td className="py-2.5 pr-3 text-right font-mono text-[13px] text-white/65">1</td>
+                <td className="py-2.5 pr-3 text-right font-mono text-[13px] text-white/65">{naira(order.billing.total)}</td>
+                <td className="py-2.5 text-right font-mono text-[13px] text-white">{naira(order.billing.total)}</td>
               </tr>
             )}
           </tbody>
@@ -168,39 +168,39 @@ export function InvoiceModal({
         {/* Totals */}
         <div className="ml-auto w-full max-w-xs space-y-2 text-[13px]">
           <div className="flex justify-between">
-            <span className="text-content-secondary">Subtotal</span>
-            <span className="font-mono text-ink">{naira(subtotal)}</span>
+            <span className="text-white/65">Subtotal</span>
+            <span className="font-mono text-white">{naira(subtotal)}</span>
           </div>
           <div className="flex justify-between">
-            <span className="text-content-secondary">Deposit paid</span>
-            <span className="font-mono text-success">{naira(order.billing.deposit)}</span>
+            <span className="text-white/65">Deposit paid</span>
+            <span className="font-mono text-emerald-300">{naira(order.billing.deposit)}</span>
           </div>
-          <div className="flex justify-between border-t border-neutral-border pt-2 text-[15px] font-medium">
-            <span className="text-ink">Balance due</span>
-            <span className="font-mono text-warning">{naira(order.billing.balance)}</span>
+          <div className="flex justify-between border-t border-white/[0.06] pt-2 text-[15px] font-medium">
+            <span className="text-white">Balance due</span>
+            <span className="font-mono text-amber-300">{naira(order.billing.balance)}</span>
           </div>
         </div>
 
         {order.notes && (
-          <div className="mt-8 border-t border-neutral-border pt-5">
-            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-content-muted">Notes</p>
-            <p className="text-[13px] leading-relaxed text-content-secondary">{order.notes}</p>
+          <div className="mt-8 border-t border-white/[0.06] pt-5">
+            <p className="mb-1 text-[11px] font-medium uppercase tracking-[0.06em] text-white/45">Notes</p>
+            <p className="text-[13px] leading-relaxed text-white/65">{order.notes}</p>
           </div>
         )}
 
-        <p className="mt-10 text-center font-mono text-[10px] uppercase tracking-[0.1em] text-content-muted">
+        <p className="mt-10 text-center font-mono text-[10px] uppercase tracking-[0.1em] text-white/45">
           Thank you for your business — Powered by Conddo.io
         </p>
 
         {/* Action bar (hidden when printing) */}
-        <div className="conddo-invoice-no-print mt-8 flex justify-end gap-2 border-t border-neutral-border pt-5">
+        <div className="conddo-invoice-no-print mt-8 flex justify-end gap-2 border-t border-white/[0.06] pt-5">
           <Button variant="secondary" size="md" onClick={onClose}>
             Close
           </Button>
           <Button variant="primary" size="md" onClick={() => window.print()}>
             <Printer size={15} /> Print / Save as PDF
           </Button>
-          <span className="hidden items-center gap-1 text-[11px] text-content-muted sm:inline-flex">
+          <span className="hidden items-center gap-1 text-[11px] text-white/45 sm:inline-flex">
             <Download size={12} /> Choose "Save as PDF" in the print dialog
           </span>
         </div>

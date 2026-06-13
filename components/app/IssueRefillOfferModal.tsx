@@ -124,25 +124,25 @@ export function IssueRefillOfferModal({
     >
       {claim ? (
         <div className="space-y-4">
-          <div className="rounded-xl border border-success/20 bg-success-bg p-5 text-center">
-            <p className="text-[11px] uppercase tracking-[0.06em] text-success">Redemption code</p>
-            <p className="mt-2 font-mono text-[24px] font-bold tracking-[0.05em] text-ink">
+          <div className="rounded-xl border border-success/20 bg-emerald-500/15 p-5 text-center">
+            <p className="text-[11px] uppercase tracking-[0.06em] text-emerald-300">Redemption code</p>
+            <p className="mt-2 font-mono text-[24px] font-bold tracking-[0.05em] text-white">
               {claim.offerCode}
             </p>
             <button
               type="button"
               onClick={copy}
-              className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-success/30 bg-neutral-surface px-3 py-1.5 text-[12px] font-medium text-success hover:bg-success hover:text-white"
+              className="mt-3 inline-flex items-center gap-1.5 rounded-md border border-success/30 bg-cinema-elev px-3 py-1.5 text-[12px] font-medium text-emerald-300 hover:bg-success hover:text-white"
             >
               {copied ? <><Check size={13} /> Copied</> : <><Copy size={13} /> Copy code</>}
             </button>
           </div>
-          <div className="rounded-md bg-neutral-surface2 px-3 py-2 text-[12px] text-content-secondary">
+          <div className="rounded-md bg-white/[0.02] px-3 py-2 text-[12px] text-white/65">
             <p className="flex items-center gap-1.5">
               <ExternalLink size={11} />
-              Expires <strong className="font-medium text-ink">{fmtExpiry(claim.expiresAt)}</strong>
+              Expires <strong className="font-medium text-white">{fmtExpiry(claim.expiresAt)}</strong>
             </p>
-            <p className="mt-1 flex items-start gap-1.5 text-content-muted">
+            <p className="mt-1 flex items-start gap-1.5 text-white/45">
               <AlertCircle size={11} className="mt-0.5 shrink-0" />
               {sendSms
                 ? "We sent the customer an SMS with this code and a link to redeem online."
@@ -151,14 +151,14 @@ export function IssueRefillOfferModal({
           </div>
         </div>
       ) : offersQ.loading ? (
-        <div className="flex items-center justify-center py-8 text-content-muted">
+        <div className="flex items-center justify-center py-8 text-white/45">
           <Loader2 size={18} className="animate-spin" />
         </div>
       ) : offers.length === 0 ? (
-        <div className="rounded-lg border border-neutral-border bg-neutral-surface2 p-5 text-center">
-          <Gift size={20} className="mx-auto mb-2 text-content-muted" />
-          <p className="text-[14px] font-medium text-ink">No active refill offers</p>
-          <p className="mt-1 text-[13px] text-content-muted">
+        <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-5 text-center">
+          <Gift size={20} className="mx-auto mb-2 text-white/45" />
+          <p className="text-[14px] font-medium text-white">No active refill offers</p>
+          <p className="mt-1 text-[13px] text-white/45">
             Create one on the Refill offers page first, then issue it from here.
           </p>
           <a
@@ -171,9 +171,9 @@ export function IssueRefillOfferModal({
       ) : (
         <div className="space-y-4">
           <div>
-            <p className="mb-2 text-[12px] font-medium text-content-secondary">Offer</p>
-            <div className="overflow-hidden rounded-lg border border-neutral-border">
-              <ul className="max-h-64 divide-y divide-neutral-border overflow-y-auto bg-neutral-surface">
+            <p className="mb-2 text-[12px] font-medium text-white/65">Offer</p>
+            <div className="overflow-hidden rounded-lg border border-white/[0.06]">
+              <ul className="max-h-64 divide-y divide-white/[0.06] overflow-y-auto bg-cinema-elev">
                 {offers.map((o) => {
                   const isSelected = selected === o.id;
                   return (
@@ -182,19 +182,19 @@ export function IssueRefillOfferModal({
                         type="button"
                         onClick={() => setSelected(o.id)}
                         className={`flex w-full items-start gap-3 px-4 py-3 text-left transition-colors ${
-                          isSelected ? "bg-primary-bg" : "hover:bg-neutral-surface2"
+                          isSelected ? "bg-primary/[0.08]" : "hover:bg-white/[0.02]"
                         }`}
                       >
                         <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
-                          isSelected ? "border-primary bg-primary text-white" : "border-neutral-border"
+                          isSelected ? "border-primary bg-primary text-white" : "border-white/[0.06]"
                         }`}>
                           {isSelected && <Check size={10} />}
                         </span>
                         <div className="min-w-0 flex-1">
-                          <p className="truncate text-[13px] font-medium text-ink">
+                          <p className="truncate text-[13px] font-medium text-white">
                             {refillProductName(o.product)}
                           </p>
-                          <p className="mt-0.5 text-[11px] text-content-muted">{summariseOffer(o)}</p>
+                          <p className="mt-0.5 text-[11px] text-white/45">{summariseOffer(o)}</p>
                         </div>
                       </button>
                     </li>
@@ -204,27 +204,27 @@ export function IssueRefillOfferModal({
             </div>
           </div>
 
-          <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-neutral-border bg-neutral-surface px-4 py-3">
+          <label className="flex cursor-pointer items-start gap-3 rounded-lg border border-white/[0.06] bg-cinema-elev px-4 py-3">
             <input
               type="checkbox"
               checked={sendSms}
               onChange={(e) => setSendSms(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-neutral-border text-primary focus:ring-primary"
+              className="mt-0.5 h-4 w-4 rounded border-white/[0.06] text-primary focus:ring-primary"
             />
             <div>
-              <p className="text-[13px] font-medium text-ink">Send SMS to the customer</p>
-              <p className="mt-0.5 text-[12px] text-content-muted">
+              <p className="text-[13px] font-medium text-white">Send SMS to the customer</p>
+              <p className="mt-0.5 text-[12px] text-white/45">
                 Uses your Brevo sender. Untick to share the code in person.
               </p>
             </div>
           </label>
 
           {selectedOffer && (
-            <div className="rounded-md bg-neutral-surface2 px-3 py-2 text-[12px] text-content-secondary">
+            <div className="rounded-md bg-white/[0.02] px-3 py-2 text-[12px] text-white/65">
               <p className="flex items-start gap-1.5">
-                <Gift size={12} className="mt-0.5 shrink-0 text-content-muted" />
+                <Gift size={12} className="mt-0.5 shrink-0 text-white/45" />
                 <span>
-                  After issuing, we'll generate a short code (e.g. <code className="rounded bg-neutral-surface px-1 font-mono">REFILL-XY7Z</code>)
+                  After issuing, we'll generate a short code (e.g. <code className="rounded bg-cinema-elev px-1 font-mono">REFILL-XY7Z</code>)
                   valid for {selectedOffer.validDays} day{selectedOffer.validDays === 1 ? "" : "s"}. The customer redeems it at checkout.
                 </span>
               </p>

@@ -134,17 +134,17 @@ export function UploadEmrDocumentModal({
               className="hidden"
             />
             {file ? (
-              <div className="flex items-center justify-between gap-2 rounded-lg border border-neutral-border bg-neutral-surface2 px-3 py-2">
-                <span className="flex min-w-0 items-center gap-2 text-[13px] text-ink">
-                  <FileText size={14} className="shrink-0 text-content-muted" />
+              <div className="flex items-center justify-between gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+                <span className="flex min-w-0 items-center gap-2 text-[13px] text-white">
+                  <FileText size={14} className="shrink-0 text-white/45" />
                   <span className="truncate">{file.name}</span>
-                  <span className="text-content-muted">· {fmtSize(file.size)}</span>
+                  <span className="text-white/45">· {fmtSize(file.size)}</span>
                 </span>
                 <button
                   type="button"
                   onClick={() => setFile(null)}
                   aria-label="Remove file"
-                  className="inline-flex h-6 w-6 items-center justify-center rounded-md text-content-muted hover:bg-danger-bg hover:text-danger"
+                  className="inline-flex h-6 w-6 items-center justify-center rounded-md text-white/45 hover:bg-rose-500/[0.06] hover:text-rose-200"
                 >
                   <X size={13} />
                 </button>
@@ -153,7 +153,7 @@ export function UploadEmrDocumentModal({
               <button
                 type="button"
                 onClick={pick}
-                className="flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-neutral-border bg-neutral-surface px-3 py-6 text-[13px] text-content-secondary hover:border-primary hover:bg-primary-bg hover:text-primary"
+                className="flex items-center justify-center gap-1.5 rounded-lg border border-dashed border-white/[0.06] bg-cinema-elev px-3 py-6 text-[13px] text-white/65 hover:border-primary hover:bg-primary/[0.08] hover:text-primary"
               >
                 <Upload size={14} /> Choose a PDF or image
               </button>

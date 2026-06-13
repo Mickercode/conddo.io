@@ -108,27 +108,27 @@ export default function NotificationsPage() {
           />
         }
       >
-        <div className="mx-auto max-w-2xl overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-          <ul className="divide-y divide-neutral-border">
+        <div className="mx-auto max-w-2xl overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+          <ul className="divide-y divide-white/[0.06]">
             {items.map((n) => {
               const Icon = (n.type && typeIcon[n.type]) || Bell;
               const isUnread = !n.read && !optimisticRead.has(n.id);
               return (
                 <li
                   key={n.id}
-                  className={`group flex gap-3 px-5 py-4 transition-colors hover:bg-neutral-surface2 ${
-                    isUnread ? "bg-primary-bg/30" : ""
+                  className={`group flex gap-3 px-5 py-4 transition-colors hover:bg-white/[0.02] ${
+                    isUnread ? "bg-primary/[0.08]/30" : ""
                   }`}
                 >
-                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-bg text-primary">
+                  <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-primary">
                     <Icon size={17} />
                   </span>
                   <div className="min-w-0 flex-1">
                     <div className="flex items-start justify-between gap-3">
-                      <p className="text-[14px] font-medium text-ink">{n.title}</p>
-                      <span className="shrink-0 text-[12px] text-content-muted">{fmtTime(n)}</span>
+                      <p className="text-[14px] font-medium text-white">{n.title}</p>
+                      <span className="shrink-0 text-[12px] text-white/45">{fmtTime(n)}</span>
                     </div>
-                    <p className="mt-0.5 text-[13px] text-content-secondary">{n.body}</p>
+                    <p className="mt-0.5 text-[13px] text-white/65">{n.body}</p>
                   </div>
                   {isUnread ? (
                     <button

@@ -112,9 +112,9 @@ export function OrderItemsCard({
   const isAdding = editingKey === "__new__";
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-neutral-border bg-neutral-surface">
-      <div className="flex items-center justify-between border-b border-neutral-border p-6">
-        <h3 className="text-[16px] font-medium text-ink">Order Items</h3>
+    <div className="overflow-hidden rounded-2xl border border-white/[0.06] bg-cinema-elev">
+      <div className="flex items-center justify-between border-b border-white/[0.06] p-6">
+        <h3 className="text-[16px] font-medium text-white">Order Items</h3>
         {!isAdding && (
           <Button variant="secondary" size="md" onClick={openAdd} disabled={busy}>
             <Plus size={14} /> Add item
@@ -124,7 +124,7 @@ export function OrderItemsCard({
       <div className="overflow-x-auto">
         <table className="w-full min-w-[600px] text-left">
           <thead>
-            <tr className="bg-neutral-surface2 text-[11px] uppercase tracking-[0.05em] text-content-muted">
+            <tr className="bg-white/[0.02] text-[11px] uppercase tracking-[0.05em] text-white/45">
               <th className="px-6 py-3 font-medium">Description</th>
               <th className="px-6 py-3 text-right font-medium">Qty</th>
               <th className="px-6 py-3 text-right font-medium">Unit Price</th>
@@ -132,7 +132,7 @@ export function OrderItemsCard({
               <th className="px-6 py-3 text-right font-medium">{/* actions */}</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-neutral-border">
+          <tbody className="divide-y divide-white/[0.06]">
             {items.map((it, i) => {
               const editingThis = editingKey === it.id && it.id != null;
               const lineTotal = (it.quantity ?? 1) * (it.unitPrice ?? 0);
@@ -150,10 +150,10 @@ export function OrderItemsCard({
               }
               return (
                 <tr key={it.id ?? i} className="group">
-                  <td className="px-6 py-4 text-[14px] text-ink">{it.description ?? it.name ?? "—"}</td>
-                  <td className="px-6 py-4 text-right font-mono text-[14px] text-ink">{it.quantity ?? 1}</td>
-                  <td className="px-6 py-4 text-right font-mono text-[14px] text-ink">{naira(it.unitPrice ?? 0)}</td>
-                  <td className="px-6 py-4 text-right font-mono text-[14px] text-ink">{naira(it.total ?? lineTotal)}</td>
+                  <td className="px-6 py-4 text-[14px] text-white">{it.description ?? it.name ?? "—"}</td>
+                  <td className="px-6 py-4 text-right font-mono text-[14px] text-white">{it.quantity ?? 1}</td>
+                  <td className="px-6 py-4 text-right font-mono text-[14px] text-white">{naira(it.unitPrice ?? 0)}</td>
+                  <td className="px-6 py-4 text-right font-mono text-[14px] text-white">{naira(it.total ?? lineTotal)}</td>
                   <td className="px-6 py-4 text-right">
                     <div className="inline-flex items-center gap-1 opacity-0 transition-opacity group-hover:opacity-100">
                       <button
@@ -161,7 +161,7 @@ export function OrderItemsCard({
                         onClick={() => openEdit(it)}
                         disabled={busy || !it.id}
                         aria-label="Edit"
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-content-muted hover:bg-primary-bg hover:text-primary disabled:opacity-40"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white/45 hover:bg-primary/[0.08] hover:text-primary disabled:opacity-40"
                       >
                         <Pencil size={13} />
                       </button>
@@ -170,7 +170,7 @@ export function OrderItemsCard({
                         onClick={() => remove(it)}
                         disabled={busy || !it.id}
                         aria-label="Delete"
-                        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-content-muted hover:bg-danger-bg hover:text-danger disabled:opacity-40"
+                        className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white/45 hover:bg-rose-500/[0.06] hover:text-rose-200 disabled:opacity-40"
                       >
                         <Trash2 size={13} />
                       </button>
@@ -191,7 +191,7 @@ export function OrderItemsCard({
             )}
             {items.length === 0 && !isAdding && (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-[14px] text-content-secondary">
+                <td colSpan={5} className="px-6 py-8 text-center text-[14px] text-white/65">
                   No items on this order yet.{" "}
                   <button
                     type="button"
@@ -229,7 +229,7 @@ function EditRow({
   const price = Number(draft.unitPrice);
   const preview = Number.isFinite(qty) && Number.isFinite(price) ? qty * price : 0;
   return (
-    <tr className={isNew ? "bg-primary-bg/30" : "bg-neutral-surface2"}>
+    <tr className={isNew ? "bg-primary/[0.08]/30" : "bg-white/[0.02]"}>
       <td className="px-6 py-3">
         <input
           value={draft.description}
@@ -240,7 +240,7 @@ function EditRow({
           }}
           autoFocus
           placeholder="What's on this line?"
-          className="h-9 w-full rounded-md border border-neutral-strong bg-neutral-bg px-3 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none"
+          className="h-9 w-full rounded-md border border-white/10 bg-cinema-base px-3 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none"
         />
       </td>
       <td className="px-6 py-3">
@@ -248,7 +248,7 @@ function EditRow({
           inputMode="numeric"
           value={draft.quantity}
           onChange={(e) => setDraft({ ...draft, quantity: e.target.value })}
-          className="h-9 w-20 rounded-md border border-neutral-strong bg-neutral-bg px-2 text-right font-mono text-[13px] text-ink focus:border-primary focus:outline-none"
+          className="h-9 w-20 rounded-md border border-white/10 bg-cinema-base px-2 text-right font-mono text-[13px] text-white focus:border-primary-light focus:outline-none"
         />
       </td>
       <td className="px-6 py-3">
@@ -256,10 +256,10 @@ function EditRow({
           inputMode="decimal"
           value={draft.unitPrice}
           onChange={(e) => setDraft({ ...draft, unitPrice: e.target.value })}
-          className="h-9 w-28 rounded-md border border-neutral-strong bg-neutral-bg px-2 text-right font-mono text-[13px] text-ink focus:border-primary focus:outline-none"
+          className="h-9 w-28 rounded-md border border-white/10 bg-cinema-base px-2 text-right font-mono text-[13px] text-white focus:border-primary-light focus:outline-none"
         />
       </td>
-      <td className="px-6 py-3 text-right font-mono text-[13px] text-content-secondary">{naira(preview)}</td>
+      <td className="px-6 py-3 text-right font-mono text-[13px] text-white/65">{naira(preview)}</td>
       <td className="px-6 py-3 text-right">
         <div className="inline-flex items-center gap-1">
           <button
@@ -267,7 +267,7 @@ function EditRow({
             onClick={onSave}
             disabled={busy}
             aria-label="Save"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-success hover:bg-success-bg disabled:opacity-50"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-emerald-300 hover:bg-emerald-500/15 disabled:opacity-50"
           >
             {busy ? <Loader2 size={13} className="animate-spin" /> : <Check size={14} />}
           </button>
@@ -276,7 +276,7 @@ function EditRow({
             onClick={onCancel}
             disabled={busy}
             aria-label="Cancel"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-content-muted hover:bg-neutral-surface hover:text-ink"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white/45 hover:bg-cinema-elev hover:text-white"
           >
             <X size={14} />
           </button>

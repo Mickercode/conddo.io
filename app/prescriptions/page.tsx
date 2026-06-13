@@ -75,19 +75,19 @@ function PrescriptionRow({ rx, onChanged }: { rx: Prescription; onChanged: () =>
   }
 
   return (
-    <li className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+    <li className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex min-w-0 items-start gap-3">
-          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-bg text-primary">
+          <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-primary">
             <Pill size={18} />
           </span>
           <div className="min-w-0">
             <div className="mb-1 flex flex-wrap items-center gap-2">
-              <p className="text-[15px] font-medium text-ink">{rx.medication}</p>
+              <p className="text-[15px] font-medium text-white">{rx.medication}</p>
               <Chip tone={chip.tone}>{chip.label}</Chip>
             </div>
-            <p className="flex items-center gap-1.5 text-[13px] text-content-secondary">
-              <User size={13} className="text-content-muted" />
+            <p className="flex items-center gap-1.5 text-[13px] text-white/65">
+              <User size={13} className="text-white/45" />
               {rx.customerId ? (
                 <Link href={`/customers/${rx.customerId}`} className="hover:text-primary hover:underline">
                   {rx.customerName}
@@ -96,26 +96,26 @@ function PrescriptionRow({ rx, onChanged }: { rx: Prescription; onChanged: () =>
                 rx.customerName
               )}
             </p>
-            {rx.dosage && <p className="mt-1 text-[13px] text-content-muted">{rx.dosage}{rx.quantity ? ` · ${rx.quantity} dispensed` : ""}</p>}
-            {rx.notes && <p className="mt-1 text-[12px] text-content-muted">{rx.notes}</p>}
+            {rx.dosage && <p className="mt-1 text-[13px] text-white/45">{rx.dosage}{rx.quantity ? ` · ${rx.quantity} dispensed` : ""}</p>}
+            {rx.notes && <p className="mt-1 text-[12px] text-white/45">{rx.notes}</p>}
           </div>
         </div>
         <div className="grid shrink-0 grid-cols-2 gap-x-6 gap-y-1 text-[12px] sm:text-right">
-          <span className="uppercase tracking-[0.05em] text-content-muted">Issued</span>
-          <span className="font-mono text-ink">{fmtDate(rx.issuedAt)}</span>
+          <span className="uppercase tracking-[0.05em] text-white/45">Issued</span>
+          <span className="font-mono text-white">{fmtDate(rx.issuedAt)}</span>
           {rx.refillIntervalDays && (
             <>
-              <span className="uppercase tracking-[0.05em] text-content-muted">Last filled</span>
-              <span className="font-mono text-ink">{fmtDate(rx.lastFilledAt)}</span>
-              <span className="uppercase tracking-[0.05em] text-content-muted">Next refill</span>
-              <span className={`font-mono ${status === "overdue" ? "text-danger" : status === "due_soon" ? "text-warning" : "text-ink"}`}>
+              <span className="uppercase tracking-[0.05em] text-white/45">Last filled</span>
+              <span className="font-mono text-white">{fmtDate(rx.lastFilledAt)}</span>
+              <span className="uppercase tracking-[0.05em] text-white/45">Next refill</span>
+              <span className={`font-mono ${status === "overdue" ? "text-rose-200" : status === "due_soon" ? "text-amber-300" : "text-white"}`}>
                 {fmtDate(rx.nextRefillDue)}
               </span>
             </>
           )}
         </div>
       </div>
-      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-neutral-border pt-3">
+      <div className="mt-4 flex flex-wrap items-center gap-2 border-t border-white/[0.06] pt-3">
         <Button variant="secondary" size="md" onClick={markFilled} disabled={busy !== null}>
           <CheckCircle2 size={15} /> {busy === "fill" ? "Marking…" : "Mark as filled"}
         </Button>
@@ -142,14 +142,14 @@ function SummaryCard({
 }) {
   const toneCls =
     tone === "danger"
-      ? "text-danger"
+      ? "text-rose-200"
       : tone === "warning"
-      ? "text-warning"
-      : "text-ink";
+      ? "text-amber-300"
+      : "text-white";
   return (
-    <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+    <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
       <div className="mb-2 flex items-center justify-between">
-        <p className="text-[12px] uppercase tracking-[0.05em] text-content-muted">{label}</p>
+        <p className="text-[12px] uppercase tracking-[0.05em] text-white/45">{label}</p>
         <Icon size={18} className={`${toneCls} opacity-80`} />
       </div>
       <p className={`font-mono text-[24px] ${toneCls}`}>{value}</p>
@@ -227,20 +227,20 @@ export default function PrescriptionsPage() {
           on it without hunting through the sidebar. */}
       <Link
         href="/prescriptions/review"
-        className="mb-5 flex items-center justify-between rounded-xl border border-neutral-border bg-neutral-surface p-4 transition-colors hover:border-primary-light"
+        className="mb-5 flex items-center justify-between rounded-xl border border-white/[0.06] bg-cinema-elev p-4 transition-colors hover:border-primary-light"
       >
         <div className="flex items-center gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-bg text-primary">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
             <FileText size={18} />
           </span>
           <div>
-            <p className="text-[14px] font-medium text-ink">Customer-uploaded prescriptions</p>
-            <p className="text-[12px] text-content-secondary">
+            <p className="text-[14px] font-medium text-white">Customer-uploaded prescriptions</p>
+            <p className="text-[12px] text-white/65">
               Review prescriptions customers submit through your website
             </p>
           </div>
         </div>
-        <ChevronRight size={18} className="text-content-muted" />
+        <ChevronRight size={18} className="text-white/45" />
       </Link>
 
       {/* Filters + search */}
@@ -255,8 +255,8 @@ export default function PrescriptionsPage() {
                 onClick={() => setActiveFilter(f.key)}
                 className={`rounded-full px-3.5 py-1.5 text-[13px] transition-colors ${
                   active
-                    ? "border border-primary bg-neutral-surface font-medium text-primary"
-                    : "border border-transparent text-content-secondary hover:text-primary"
+                    ? "border border-primary bg-cinema-elev font-medium text-primary"
+                    : "border border-transparent text-white/65 hover:text-primary"
                 }`}
               >
                 {f.label}
@@ -265,13 +265,13 @@ export default function PrescriptionsPage() {
           })}
         </div>
         <div className="relative sm:w-72">
-          <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-content-muted" />
+          <Search size={18} className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/45" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search medication or customer"
-            className="w-full rounded-lg border border-neutral-border bg-neutral-surface py-2.5 pl-11 pr-4 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-lg border border-white/[0.06] bg-cinema-elev py-2.5 pl-11 pr-4 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
       </div>

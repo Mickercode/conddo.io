@@ -104,25 +104,25 @@ function DiscountRow({
   }
 
   return (
-    <li className="flex flex-col gap-3 px-5 py-4 hover:bg-neutral-surface2 sm:flex-row sm:items-center sm:justify-between">
+    <li className="flex flex-col gap-3 px-5 py-4 hover:bg-white/[0.02] sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-start gap-3">
-        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary-bg text-primary">
+        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/[0.08] text-primary">
           <Tag size={15} />
         </span>
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="truncate text-[14px] font-medium text-ink">{productDisplayName(d.product)}</p>
+            <p className="truncate text-[14px] font-medium text-white">{productDisplayName(d.product)}</p>
             <Chip tone={STATUS_TONES[d.status]}>{STATUS_LABELS[d.status]}</Chip>
             <Chip tone="primary">{discountChipLabel(d)}</Chip>
           </div>
-          <p className="mt-0.5 font-mono text-[12px] text-content-muted">
+          <p className="mt-0.5 font-mono text-[12px] text-white/45">
             <span className="line-through">{naira(d.product.price)}</span>
-            <span className="ml-2 text-ink">→ {naira(effectivePrice(d))}</span>
+            <span className="ml-2 text-white">→ {naira(effectivePrice(d))}</span>
             <span className="ml-2">·</span>
             <span className="ml-2">{fmtWhen(d.startsAt)} → {fmtWhen(d.endsAt) || "no expiry"}</span>
           </p>
           {d.createdBy?.name && (
-            <p className="mt-0.5 text-[11px] text-content-muted">
+            <p className="mt-0.5 text-[11px] text-white/45">
               Created by {d.createdBy.name}
               {d.approvedBy?.name && d.status === "APPROVED" && ` · approved by ${d.approvedBy.name}`}
               {d.status === "REJECTED" && d.rejectionNote && ` · rejected: ${d.rejectionNote}`}
@@ -142,7 +142,7 @@ function DiscountRow({
           </>
         )}
         {d.status === "PENDING_APPROVAL" && !isAdmin && (
-          <span className="inline-flex items-center gap-1 text-[11px] text-content-muted">
+          <span className="inline-flex items-center gap-1 text-[11px] text-white/45">
             <Lock size={11} /> Awaiting admin
           </span>
         )}
@@ -152,7 +152,7 @@ function DiscountRow({
             onClick={remove}
             disabled={busy !== null}
             aria-label="Delete"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-content-muted hover:bg-danger-bg hover:text-danger disabled:opacity-50"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md text-white/45 hover:bg-rose-500/[0.06] hover:text-rose-200 disabled:opacity-50"
           >
             {busy === "delete" ? <Loader2 size={13} className="animate-spin" /> : <Trash2 size={13} />}
           </button>
@@ -196,7 +196,7 @@ export default function DiscountsPage() {
     >
       <Link
         href="/marketing"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         <ArrowLeft size={14} /> Back to Marketing
       </Link>
@@ -210,7 +210,7 @@ export default function DiscountsPage() {
       ) : (
         <>
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="inline-flex items-center gap-1 rounded-lg border border-neutral-border bg-neutral-surface p-0.5">
+            <div className="inline-flex items-center gap-1 rounded-lg border border-white/[0.06] bg-cinema-elev p-0.5">
               {FILTERS.map((f) => {
                 const active = filter === f.id;
                 return (
@@ -219,7 +219,7 @@ export default function DiscountsPage() {
                     type="button"
                     onClick={() => setFilter(f.id)}
                     className={`rounded-md px-3 py-1 text-[12px] font-medium transition-colors ${
-                      active ? "bg-primary-bg text-primary" : "text-content-secondary hover:text-ink"
+                      active ? "bg-primary/[0.08] text-primary" : "text-white/65 hover:text-white"
                     }`}
                     aria-pressed={active}
                   >
@@ -236,7 +236,7 @@ export default function DiscountsPage() {
           </div>
 
           {pendingCount > 0 && filter === "ALL" && (
-            <div className="mb-4 flex items-center gap-2 rounded-lg border border-warning/30 bg-warning-bg px-4 py-3 text-[13px] text-warning">
+            <div className="mb-4 flex items-center gap-2 rounded-lg border border-warning/30 bg-amber-500/15 px-4 py-3 text-[13px] text-amber-300">
               <AlertCircle size={15} />
               {pendingCount} discount{pendingCount === 1 ? "" : "s"} awaiting{" "}
               {isAdmin ? <>your approval. <button type="button" onClick={() => setFilter("PENDING_APPROVAL")} className="font-medium underline hover:no-underline">Review them</button></> : "admin approval."}
@@ -269,8 +269,8 @@ export default function DiscountsPage() {
               />
             }
           >
-            <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-              <ul className="divide-y divide-neutral-border">
+            <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+              <ul className="divide-y divide-white/[0.06]">
                 {discounts.map((d) => (
                   <DiscountRow
                     key={d.id}

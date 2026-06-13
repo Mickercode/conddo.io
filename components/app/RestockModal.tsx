@@ -111,7 +111,7 @@ export function RestockModal({
           {lines.map((line, idx) => (
             <div
               key={idx}
-              className="grid grid-cols-1 gap-3 rounded-lg border border-neutral-border bg-neutral-surface2 p-3 sm:grid-cols-[1fr_120px_auto]"
+              className="grid grid-cols-1 gap-3 rounded-lg border border-white/[0.06] bg-white/[0.02] p-3 sm:grid-cols-[1fr_120px_auto]"
             >
               <Field label={idx === 0 ? "Product" : ""} htmlFor={`rs-p-${idx}`}>
                 <Select
@@ -142,7 +142,7 @@ export function RestockModal({
                   onClick={() => removeLine(idx)}
                   disabled={lines.length === 1}
                   aria-label="Remove line"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-md text-content-muted hover:bg-danger-bg hover:text-danger disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-content-muted"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-md text-white/45 hover:bg-rose-500/[0.06] hover:text-rose-200 disabled:cursor-not-allowed disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-white/45"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -153,7 +153,7 @@ export function RestockModal({
           <button
             type="button"
             onClick={addLine}
-            className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-neutral-border px-3 py-1.5 text-[12px] font-medium text-content-secondary hover:border-primary hover:bg-primary-bg hover:text-primary"
+            className="inline-flex items-center gap-1.5 rounded-md border border-dashed border-white/[0.06] px-3 py-1.5 text-[12px] font-medium text-white/65 hover:border-primary hover:bg-primary/[0.08] hover:text-primary"
           >
             <Plus size={13} /> Add another line
           </button>
@@ -168,7 +168,7 @@ export function RestockModal({
           />
         </Field>
 
-        <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-3 py-2 text-[11px] text-content-muted">
+        <p className="flex items-start gap-1.5 rounded-md bg-white/[0.02] px-3 py-2 text-[11px] text-white/45">
           <AlertCircle size={11} className="mt-0.5 shrink-0" />
           Stock levels update immediately. Subscribe to the dashboard live-stock events for real-time updates across devices.
         </p>

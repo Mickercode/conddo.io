@@ -69,11 +69,11 @@ export default function StaffPage() {
           />
         }
       >
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[640px] text-left">
               <thead>
-                <tr className="border-b border-neutral-border bg-neutral-surface2 text-[11px] uppercase tracking-[0.05em] text-content-secondary">
+                <tr className="border-b border-white/[0.06] bg-white/[0.02] text-[11px] uppercase tracking-[0.05em] text-white/65">
                   <th className="px-5 py-3 font-medium">Member</th>
                   <th className="px-5 py-3 font-medium">Role</th>
                   <th className="px-5 py-3 font-medium">Status</th>
@@ -81,17 +81,17 @@ export default function StaffPage() {
                   <th className="px-5 py-3 text-right font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-border">
+              <tbody className="divide-y divide-white/[0.06]">
                 {staff.map((m) => (
-                  <tr key={m.id} className="group transition-colors hover:bg-neutral-surface2">
+                  <tr key={m.id} className="group transition-colors hover:bg-white/[0.02]">
                     <td className="px-5 py-3.5">
                       <div className="flex items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-bg font-mono text-[12px] font-medium text-primary">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] font-mono text-[12px] font-medium text-primary">
                           {initialsOf(m.name || m.email)}
                         </span>
                         <div className="min-w-0">
-                          <p className="text-[14px] text-ink">{m.name || m.email}</p>
-                          <p className="truncate text-[12px] text-content-muted">{m.email}</p>
+                          <p className="text-[14px] text-white">{m.name || m.email}</p>
+                          <p className="truncate text-[12px] text-white/45">{m.email}</p>
                         </div>
                       </div>
                     </td>
@@ -101,7 +101,7 @@ export default function StaffPage() {
                     <td className="px-5 py-3.5">
                       <Chip tone={statusChip[m.status].tone}>{statusChip[m.status].label}</Chip>
                     </td>
-                    <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-content-secondary">{fmtLastActive(m.lastActive)}</td>
+                    <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-white/65">{fmtLastActive(m.lastActive)}</td>
                     <td className="px-5 py-3.5 text-right">
                       <button
                         onClick={() => setManaging(m)}

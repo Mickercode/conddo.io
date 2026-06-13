@@ -121,13 +121,13 @@ function WebsiteContent({ site, onChanged }: { site: Website; onChanged: () => v
   return (
     <div className="space-y-6">
       {/* Status hero */}
-      <div className="flex flex-col gap-4 rounded-xl border border-neutral-border bg-neutral-surface p-6 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-xl border border-white/[0.06] bg-cinema-elev p-6 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <div className="mb-2 flex items-center gap-2">
             <Chip tone={chip.tone}>{chip.label}</Chip>
-            {site.publishedAt && <span className="text-[12px] text-content-muted">Published {site.publishedAt}</span>}
+            {site.publishedAt && <span className="text-[12px] text-white/45">Published {site.publishedAt}</span>}
           </div>
-          <p className="font-mono text-[18px] text-ink">{domain}</p>
+          <p className="font-mono text-[18px] text-white">{domain}</p>
         </div>
         <div className="flex gap-2">
           <Button href={`https://${domain}`} variant="secondary" size="md">
@@ -142,51 +142,51 @@ function WebsiteContent({ site, onChanged }: { site: Website; onChanged: () => v
 
       {/* Traffic — today (from /website/status) + 30-day rollup (from /website/analytics) */}
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+        <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-[13px] text-content-secondary">Visits today</p>
-            <Eye size={18} className="text-content-muted" />
+            <p className="text-[13px] text-white/65">Visits today</p>
+            <Eye size={18} className="text-white/45" />
           </div>
-          <p className="font-mono text-[24px] font-medium leading-none text-ink">{site.visitsToday}</p>
+          <p className="font-mono text-[24px] font-medium leading-none text-white">{site.visitsToday}</p>
         </div>
-        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+        <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-[13px] text-content-secondary">New enquiries</p>
-            <MailQuestion size={18} className="text-content-muted" />
+            <p className="text-[13px] text-white/65">New enquiries</p>
+            <MailQuestion size={18} className="text-white/45" />
           </div>
-          <p className="font-mono text-[24px] font-medium leading-none text-ink">{site.enquiries}</p>
+          <p className="font-mono text-[24px] font-medium leading-none text-white">{site.enquiries}</p>
         </div>
-        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+        <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-[13px] text-content-secondary">Visits (30d)</p>
-            <BarChart3 size={18} className="text-content-muted" />
+            <p className="text-[13px] text-white/65">Visits (30d)</p>
+            <BarChart3 size={18} className="text-white/45" />
           </div>
-          <p className="font-mono text-[24px] font-medium leading-none text-ink">
+          <p className="font-mono text-[24px] font-medium leading-none text-white">
             {analyticsQ.data?.visits ?? "—"}
           </p>
         </div>
-        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+        <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
           <div className="mb-3 flex items-center justify-between">
-            <p className="text-[13px] text-content-secondary">Enquiries (30d)</p>
-            <MailQuestion size={18} className="text-content-muted" />
+            <p className="text-[13px] text-white/65">Enquiries (30d)</p>
+            <MailQuestion size={18} className="text-white/45" />
           </div>
-          <p className="font-mono text-[24px] font-medium leading-none text-ink">
+          <p className="font-mono text-[24px] font-medium leading-none text-white">
             {analyticsQ.data?.enquiries ?? "—"}
           </p>
         </div>
       </div>
 
       {/* Sections */}
-      <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-        <div className="border-b border-neutral-border px-6 py-4">
-          <h2 className="text-[15px] font-medium text-ink">Pages &amp; sections</h2>
+      <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+        <div className="border-b border-white/[0.06] px-6 py-4">
+          <h2 className="text-[15px] font-medium text-white">Pages &amp; sections</h2>
         </div>
         {site.sections.length > 0 ? (
-          <ul className="divide-y divide-neutral-border">
+          <ul className="divide-y divide-white/[0.06]">
             {site.sections.map((s) => (
               <li key={s.id} className="flex items-center justify-between px-6 py-3.5">
-                <span className="flex items-center gap-3 text-[14px] text-ink">
-                  <LayoutTemplate size={16} className="text-content-muted" />
+                <span className="flex items-center gap-3 text-[14px] text-white">
+                  <LayoutTemplate size={16} className="text-white/45" />
                   {s.name}
                 </span>
                 <Chip tone={s.configured ? "success" : "neutral"}>{s.configured ? "Configured" : "Default"}</Chip>
@@ -194,20 +194,20 @@ function WebsiteContent({ site, onChanged }: { site: Website; onChanged: () => v
             ))}
           </ul>
         ) : (
-          <p className="px-6 py-8 text-center text-[14px] text-content-secondary">No sections configured yet.</p>
+          <p className="px-6 py-8 text-center text-[14px] text-white/65">No sections configured yet.</p>
         )}
       </div>
 
       {/* Recent change requests — from /website/change-requests */}
       {changeRequestsQ.data && changeRequestsQ.data.length > 0 && (
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-          <div className="border-b border-neutral-border px-6 py-4">
-            <h2 className="text-[15px] font-medium text-ink">Recent change requests</h2>
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+          <div className="border-b border-white/[0.06] px-6 py-4">
+            <h2 className="text-[15px] font-medium text-white">Recent change requests</h2>
           </div>
-          <ul className="divide-y divide-neutral-border">
+          <ul className="divide-y divide-white/[0.06]">
             {changeRequestsQ.data.slice(0, 8).map((cr) => (
               <li key={cr.id} className="flex items-start gap-3 px-6 py-3.5">
-                <Clock size={14} className="mt-1 shrink-0 text-content-muted" />
+                <Clock size={14} className="mt-1 shrink-0 text-white/45" />
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2">
                     {cr.area && <Chip tone="neutral">{cr.area}</Chip>}
@@ -223,9 +223,9 @@ function WebsiteContent({ site, onChanged }: { site: Website; onChanged: () => v
                       {cr.status}
                     </Chip>
                   </div>
-                  <p className="mt-1 text-[13px] text-content-secondary">{cr.details}</p>
+                  <p className="mt-1 text-[13px] text-white/65">{cr.details}</p>
                 </div>
-                <span className="shrink-0 font-mono text-[11px] text-content-muted">
+                <span className="shrink-0 font-mono text-[11px] text-white/45">
                   {new Date(cr.createdAt).toLocaleDateString("en-NG", { day: "numeric", month: "short" })}
                 </span>
               </li>
@@ -242,27 +242,27 @@ function WebsiteContent({ site, onChanged }: { site: Website; onChanged: () => v
       {/* Custom domain — wired to POST /website/domain. BE 403s if the
           tenant's plan doesn't include custom-domain support (FE catches
           and surfaces the BE message). */}
-      <div className="rounded-xl border border-neutral-border bg-neutral-surface p-6">
+      <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-6">
         <div className="mb-3 flex items-center gap-2">
-          <h2 className="text-[15px] font-medium text-ink">Custom domain</h2>
+          <h2 className="text-[15px] font-medium text-white">Custom domain</h2>
           {site.customDomain ? (
             <Chip tone="success">{site.customDomain}</Chip>
           ) : (
-            <span className="rounded bg-primary-bg px-1.5 py-0.5 text-[10px] font-bold text-primary">SCALER</span>
+            <span className="rounded bg-primary/[0.08] px-1.5 py-0.5 text-[10px] font-bold text-primary">SCALER</span>
           )}
         </div>
-        <p className="mb-4 text-[14px] text-content-secondary">
+        <p className="mb-4 text-[14px] text-white/65">
           Point your own domain (e.g. yourbusiness.com) at your conddo.io website. Growth tenants get a free .com.ng via 9stacks; Scaler unlocks any custom domain.
         </p>
         <form onSubmit={connectDomain} className="flex flex-col gap-2 sm:flex-row">
           <div className="relative flex-1">
-            <AtSign size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-content-muted" />
+            <AtSign size={14} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/45" />
             <input
               value={domainInput}
               onChange={(e) => setDomainInput(e.target.value)}
               placeholder="yourbusiness.com"
               disabled={connectingDomain}
-              className="h-10 w-full rounded-md border border-neutral-strong bg-neutral-bg pl-9 pr-3 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none"
+              className="h-10 w-full rounded-md border border-white/10 bg-cinema-base pl-9 pr-3 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none"
             />
           </div>
           <Button variant="primary" size="md" type="submit" disabled={connectingDomain || !domainInput.trim()}>

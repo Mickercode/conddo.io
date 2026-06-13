@@ -246,14 +246,14 @@ function PickStage({
         onDrop={onDrop}
         className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors ${
           isDragging
-            ? "border-primary bg-primary-bg"
-            : "border-neutral-border bg-neutral-surface2 hover:border-primary hover:bg-primary-bg/30"
+            ? "border-primary bg-primary/[0.08]"
+            : "border-white/[0.06] bg-white/[0.02] hover:border-primary hover:bg-primary/[0.08]/30"
         }`}
         onClick={() => fileInputRef.current?.click()}
       >
         <Upload size={28} className="text-primary" />
-        <p className="text-[14px] font-medium text-ink">Drop a CSV here, or click to browse</p>
-        <p className="text-[12px] text-content-muted">Up to {fmtSize(MAX_FILE_SIZE)}</p>
+        <p className="text-[14px] font-medium text-white">Drop a CSV here, or click to browse</p>
+        <p className="text-[12px] text-white/45">Up to {fmtSize(MAX_FILE_SIZE)}</p>
         <input
           ref={fileInputRef}
           type="file"
@@ -267,17 +267,17 @@ function PickStage({
         />
       </div>
 
-      <div className="rounded-md border border-neutral-border bg-neutral-surface2 px-4 py-3 text-[12px]">
-        <p className="mb-2 font-medium text-ink">CSV format</p>
-        <ul className="space-y-1 text-content-secondary">
+      <div className="rounded-md border border-white/[0.06] bg-white/[0.02] px-4 py-3 text-[12px]">
+        <p className="mb-2 font-medium text-white">CSV format</p>
+        <ul className="space-y-1 text-white/65">
           <li className="flex items-start gap-2">
             <Chip tone="primary">Required</Chip>
-            <code className="rounded bg-neutral-surface px-1 font-mono">sku</code>
-            <code className="rounded bg-neutral-surface px-1 font-mono">stock</code>
+            <code className="rounded bg-cinema-elev px-1 font-mono">sku</code>
+            <code className="rounded bg-cinema-elev px-1 font-mono">stock</code>
           </li>
           <li className="flex items-start gap-2">
             <Chip tone="neutral">Optional</Chip>
-            <span className="font-mono text-[11px] text-content-muted">
+            <span className="font-mono text-[11px] text-white/45">
               name · price · reorder_threshold · batch_number · expiry_date (yyyy-MM-dd)
             </span>
           </li>
@@ -291,7 +291,7 @@ function PickStage({
         </button>
       </div>
 
-      <p className="flex items-start gap-1.5 rounded-md bg-warning-bg/50 px-3 py-2 text-[11px] text-warning">
+      <p className="flex items-start gap-1.5 rounded-md bg-amber-500/15/50 px-3 py-2 text-[11px] text-amber-300">
         <AlertCircle size={11} className="mt-0.5 shrink-0" />
         Existing SKUs have their stock <strong>set absolute</strong> (not added — it's a replacement). New SKUs create a Product. Every change is logged in the movement log so you can audit later.
       </p>
@@ -303,7 +303,7 @@ function BusyStage({ label }: { label: string }) {
   return (
     <div className="flex flex-col items-center justify-center gap-3 py-12 text-center">
       <Loader2 size={28} className="animate-spin text-primary" />
-      <p className="text-[13px] text-content-secondary">{label}</p>
+      <p className="text-[13px] text-white/65">{label}</p>
     </div>
   );
 }
@@ -323,17 +323,17 @@ function PreviewStage({
   return (
     <div className="space-y-4">
       {/* File chip */}
-      <div className="flex items-center justify-between gap-2 rounded-lg border border-neutral-border bg-neutral-surface2 px-3 py-2">
-        <span className="flex min-w-0 items-center gap-2 text-[13px] text-ink">
-          <FileText size={14} className="shrink-0 text-content-muted" />
+      <div className="flex items-center justify-between gap-2 rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+        <span className="flex min-w-0 items-center gap-2 text-[13px] text-white">
+          <FileText size={14} className="shrink-0 text-white/45" />
           <span className="truncate">{file.name}</span>
-          <span className="font-mono text-[11px] text-content-muted">· {fmtSize(file.size)}</span>
+          <span className="font-mono text-[11px] text-white/45">· {fmtSize(file.size)}</span>
         </span>
         <button
           type="button"
           onClick={onClear}
           aria-label="Remove"
-          className="inline-flex h-6 w-6 items-center justify-center rounded-md text-content-muted hover:bg-danger-bg hover:text-danger"
+          className="inline-flex h-6 w-6 items-center justify-center rounded-md text-white/45 hover:bg-rose-500/[0.06] hover:text-rose-200"
         >
           <Trash2 size={11} />
         </button>
@@ -350,23 +350,23 @@ function PreviewStage({
       {/* Errors */}
       {hasErrors && (
         <div className="overflow-hidden rounded-lg border border-danger/30">
-          <div className="border-b border-danger/30 bg-danger-bg px-3 py-2 text-[12px] font-medium text-danger">
+          <div className="border-b border-danger/30 bg-rose-500/[0.06] px-3 py-2 text-[12px] font-medium text-rose-200">
             {preview.errors.length} error{preview.errors.length === 1 ? "" : "s"} — fix and re-upload
           </div>
-          <ul className="max-h-40 divide-y divide-danger/15 overflow-y-auto bg-neutral-surface">
+          <ul className="max-h-40 divide-y divide-danger/15 overflow-y-auto bg-cinema-elev">
             {preview.errors.slice(0, 20).map((e, i) => (
               <li key={i} className="flex items-start gap-2 px-3 py-2 text-[12px]">
-                <span className="inline-flex h-5 shrink-0 items-center rounded bg-danger-bg px-1.5 font-mono text-[10px] text-danger">
+                <span className="inline-flex h-5 shrink-0 items-center rounded bg-rose-500/[0.06] px-1.5 font-mono text-[10px] text-rose-200">
                   L{e.line}
                 </span>
                 <div className="min-w-0">
-                  {e.sku && <p className="font-mono text-[11px] text-content-muted">{e.sku}</p>}
-                  <p className="text-content-secondary">{e.message}</p>
+                  {e.sku && <p className="font-mono text-[11px] text-white/45">{e.sku}</p>}
+                  <p className="text-white/65">{e.message}</p>
                 </div>
               </li>
             ))}
             {preview.errors.length > 20 && (
-              <li className="px-3 py-2 text-center text-[11px] text-content-muted">
+              <li className="px-3 py-2 text-center text-[11px] text-white/45">
                 + {preview.errors.length - 20} more
               </li>
             )}
@@ -376,8 +376,8 @@ function PreviewStage({
 
       {/* Preview rows */}
       {preview.preview.length > 0 && (
-        <div className="overflow-hidden rounded-lg border border-neutral-border">
-          <div className="border-b border-neutral-border bg-neutral-surface2 px-3 py-2 text-[12px] font-medium text-ink">
+        <div className="overflow-hidden rounded-lg border border-white/[0.06]">
+          <div className="border-b border-white/[0.06] bg-white/[0.02] px-3 py-2 text-[12px] font-medium text-white">
             Preview ({preview.preview.length} of {preview.totalRows} rows)
           </div>
           <PreviewTable rows={preview.preview} />
@@ -385,7 +385,7 @@ function PreviewStage({
       )}
 
       {!hasErrors && totalChanges === 0 && (
-        <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-3 py-2 text-[12px] text-content-muted">
+        <p className="flex items-start gap-1.5 rounded-md bg-white/[0.02] px-3 py-2 text-[12px] text-white/45">
           <AlertCircle size={11} className="mt-0.5 shrink-0" />
           Nothing to commit — every row was skipped (already at the right stock level). Re-upload if that's wrong.
         </p>
@@ -402,7 +402,7 @@ function PreviewTable({ rows }: { rows: BulkUploadPreviewRow[] }) {
   const cols = priorityOrder.filter((k) => allKeys.includes(k));
 
   function formatCell(col: string, value: unknown): React.ReactNode {
-    if (value == null || value === "") return <span className="text-content-muted">—</span>;
+    if (value == null || value === "") return <span className="text-white/45">—</span>;
     if (col === "action" && typeof value === "string") {
       return <Chip tone={actionTone(value)}>{value}</Chip>;
     }
@@ -419,7 +419,7 @@ function PreviewTable({ rows }: { rows: BulkUploadPreviewRow[] }) {
     <div className="max-h-72 overflow-auto">
       <table className="w-full text-left text-[12px]">
         <thead>
-          <tr className="bg-neutral-surface2 text-[10px] uppercase tracking-[0.05em] text-content-muted">
+          <tr className="bg-white/[0.02] text-[10px] uppercase tracking-[0.05em] text-white/45">
             {cols.map((c) => (
               <th key={c} className="whitespace-nowrap px-3 py-2 font-medium">
                 {c.replace(/_/g, " ")}
@@ -427,11 +427,11 @@ function PreviewTable({ rows }: { rows: BulkUploadPreviewRow[] }) {
             ))}
           </tr>
         </thead>
-        <tbody className="divide-y divide-neutral-border">
+        <tbody className="divide-y divide-white/[0.06]">
           {rows.map((r, i) => (
-            <tr key={i} className="hover:bg-neutral-surface2">
+            <tr key={i} className="hover:bg-white/[0.02]">
               {cols.map((c) => (
-                <td key={c} className="whitespace-nowrap px-3 py-1.5 text-ink">
+                <td key={c} className="whitespace-nowrap px-3 py-1.5 text-white">
                   {formatCell(c, r[c])}
                 </td>
               ))}
@@ -445,13 +445,13 @@ function PreviewTable({ rows }: { rows: BulkUploadPreviewRow[] }) {
 
 function StatTile({ label, value, tone }: { label: string; value: number; tone: "success" | "warning" | "neutral" }) {
   const toneText: Record<typeof tone, string> = {
-    success: "text-success",
-    warning: "text-warning",
-    neutral: "text-ink",
+    success: "text-emerald-300",
+    warning: "text-amber-300",
+    neutral: "text-white",
   };
   return (
-    <div className="rounded-lg border border-neutral-border bg-neutral-surface p-3">
-      <p className="text-[10px] uppercase tracking-[0.05em] text-content-muted">{label}</p>
+    <div className="rounded-lg border border-white/[0.06] bg-cinema-elev p-3">
+      <p className="text-[10px] uppercase tracking-[0.05em] text-white/45">{label}</p>
       <p className={`mt-0.5 font-mono text-[18px] font-medium leading-none ${toneText[tone]}`}>{value}</p>
     </div>
   );
@@ -461,15 +461,15 @@ function DoneStage({ committed }: { committed: BulkUploadSummary }) {
   return (
     <div className="space-y-4">
       <div className="flex flex-col items-center gap-2 py-4 text-center">
-        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-success-bg text-success">
+        <span className="flex h-12 w-12 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-300">
           <CheckCircle2 size={26} />
         </span>
-        <p className="text-[15px] font-medium text-ink">Inventory updated</p>
-        <p className="text-[13px] text-content-secondary">
+        <p className="text-[15px] font-medium text-white">Inventory updated</p>
+        <p className="text-[13px] text-white/65">
           {committed.created} created · {committed.updated} updated · {committed.skipped} skipped
         </p>
       </div>
-      <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-3 py-2 text-[11px] text-content-muted">
+      <p className="flex items-start gap-1.5 rounded-md bg-white/[0.02] px-3 py-2 text-[11px] text-white/45">
         <AlertCircle size={11} className="mt-0.5 shrink-0" />
         Each row generated a movement-log entry (RESTOCK for new products, ADJUSTMENT for stock changes) — audit them on the Movements page anytime.
       </p>

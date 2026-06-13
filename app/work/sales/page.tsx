@@ -38,11 +38,11 @@ export default function CashierLanding() {
       <div className="space-y-6">
         {/* Open-shift / continue-shift card */}
         {session ? (
-          <div className="rounded-2xl border border-success/30 bg-success-bg/40 p-6">
+          <div className="rounded-2xl border border-success/30 bg-emerald-500/15/40 p-6">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.05em] text-success">Shift open</p>
-                <p className="mt-1 text-[16px] font-medium text-ink">
+                <p className="text-[11px] uppercase tracking-[0.05em] text-emerald-300">Shift open</p>
+                <p className="mt-1 text-[16px] font-medium text-white">
                   Opened {fmtTime(session.openedAt)} · {session.summary?.salesCount ?? 0} sale{session.summary?.salesCount === 1 ? "" : "s"} so far
                 </p>
               </div>
@@ -61,11 +61,11 @@ export default function CashierLanding() {
             )}
           </div>
         ) : (
-          <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-6">
+          <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-6">
             <div className="flex items-center justify-between gap-3">
               <div>
-                <p className="text-[16px] font-medium text-ink">Ready to start your shift?</p>
-                <p className="mt-1 text-[13px] text-content-secondary">
+                <p className="text-[16px] font-medium text-white">Ready to start your shift?</p>
+                <p className="mt-1 text-[13px] text-white/65">
                   Count the cash in the till, then open your shift to start ringing up sales.
                 </p>
               </div>
@@ -94,7 +94,7 @@ export default function CashierLanding() {
           />
         </div>
 
-        <p className="rounded-md bg-neutral-surface2 px-4 py-3 text-[12px] text-content-muted">
+        <p className="rounded-md bg-white/[0.02] px-4 py-3 text-[12px] text-white/45">
           <Chip tone="neutral">Tip</Chip>{" "}
           Plug in a barcode scanner and the picker accepts scanned codes — straight from your scanner to the cart.
         </p>
@@ -106,8 +106,8 @@ export default function CashierLanding() {
 function Stat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">{label}</p>
-      <p className="mt-1 font-mono text-[16px] font-medium text-ink">{value}</p>
+      <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">{label}</p>
+      <p className="mt-1 font-mono text-[16px] font-medium text-white">{value}</p>
     </div>
   );
 }
@@ -126,16 +126,16 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="group flex items-start gap-3 rounded-xl border border-neutral-border bg-neutral-surface p-5 transition-colors hover:border-primary hover:bg-primary-bg/30"
+      className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 transition-colors hover:border-primary hover:bg-primary/[0.08]/30"
     >
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-bg text-primary">
+      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
         <Icon size={18} />
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[15px] font-medium text-ink">{title}</p>
-        <p className="mt-0.5 text-[13px] text-content-secondary">{description}</p>
+        <p className="text-[15px] font-medium text-white">{title}</p>
+        <p className="mt-0.5 text-[13px] text-white/65">{description}</p>
       </div>
-      <ArrowRight size={16} className="mt-1 shrink-0 text-content-muted transition-colors group-hover:text-primary" />
+      <ArrowRight size={16} className="mt-1 shrink-0 text-white/45 transition-colors group-hover:text-primary" />
     </Link>
   );
 }

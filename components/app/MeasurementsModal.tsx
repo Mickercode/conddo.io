@@ -160,7 +160,7 @@ export function MeasurementsModal({
                 type="button"
                 onClick={() => setRows((prev) => (prev.length > 1 ? prev.filter((_, idx) => idx !== i) : prev))}
                 aria-label="Remove"
-                className="shrink-0 rounded-md p-2 text-content-muted hover:bg-neutral-surface2 hover:text-danger"
+                className="shrink-0 rounded-md p-2 text-white/45 hover:bg-white/[0.02] hover:text-rose-200"
               >
                 <Trash2 size={16} />
               </button>
@@ -169,7 +169,7 @@ export function MeasurementsModal({
         })}
 
         {missingFields.length > 0 && (
-          <div className="rounded-md border border-primary/20 bg-primary-bg/30 p-3">
+          <div className="rounded-md border border-primary/20 bg-primary/[0.08]/30 p-3">
             <p className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.04em] text-primary">
               <Sparkles size={11} /> Quick add for {verticalQ.data?.name ?? "your vertical"}
             </p>
@@ -179,10 +179,10 @@ export function MeasurementsModal({
                   key={f.key}
                   type="button"
                   onClick={() => addField(f.label)}
-                  className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-neutral-surface px-2.5 py-0.5 text-[11px] font-medium text-primary hover:bg-primary hover:text-white"
+                  className="inline-flex items-center gap-1 rounded-full border border-primary/30 bg-cinema-elev px-2.5 py-0.5 text-[11px] font-medium text-primary hover:bg-primary hover:text-white"
                 >
                   <Plus size={10} /> {f.label}
-                  {f.unit && <span className="text-content-muted">· {f.unit}</span>}
+                  {f.unit && <span className="text-white/45">· {f.unit}</span>}
                 </button>
               ))}
             </div>

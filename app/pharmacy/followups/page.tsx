@@ -82,30 +82,30 @@ function FollowupRow({
   }
 
   return (
-    <li className="flex flex-col gap-3 px-5 py-4 hover:bg-neutral-surface2 sm:flex-row sm:items-start sm:justify-between">
+    <li className="flex flex-col gap-3 px-5 py-4 hover:bg-white/[0.02] sm:flex-row sm:items-start sm:justify-between">
       <div className="flex min-w-0 items-start gap-3">
         <span className={`mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md ${
-          overdue ? "bg-danger-bg text-danger" : "bg-primary-bg text-primary"
+          overdue ? "bg-rose-500/[0.06] text-rose-200" : "bg-primary/[0.08] text-primary"
         }`}>
           <ListChecks size={15} />
         </span>
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="truncate text-[14px] font-medium text-ink">{f.customer.name || "—"}</p>
+            <p className="truncate text-[14px] font-medium text-white">{f.customer.name || "—"}</p>
             <Chip tone={STATUS_TONES[f.status]}>{FOLLOWUP_STATUS_LABELS[f.status]}</Chip>
             {overdue && <Chip tone="danger">Overdue</Chip>}
             {productName && <Chip tone="neutral">{productName}</Chip>}
           </div>
-          <p className="mt-1 text-[13px] text-content-secondary">{f.checkNote}</p>
-          <p className="mt-1.5 inline-flex items-center gap-1 font-mono text-[11px] text-content-muted">
+          <p className="mt-1 text-[13px] text-white/65">{f.checkNote}</p>
+          <p className="mt-1.5 inline-flex items-center gap-1 font-mono text-[11px] text-white/45">
             <CalendarClock size={11} /> Due {fmtWhen(f.dueDate)}
           </p>
           {f.outcome && (
-            <div className="mt-2 rounded-md bg-success-bg/40 px-3 py-2 text-[12px] text-content-secondary">
-              <p className="font-medium text-success">Outcome: {f.outcomeType}</p>
+            <div className="mt-2 rounded-md bg-emerald-500/15/40 px-3 py-2 text-[12px] text-white/65">
+              <p className="font-medium text-emerald-300">Outcome: {f.outcomeType}</p>
               <p className="mt-0.5">{f.outcome}</p>
               {f.completedBy?.name && (
-                <p className="mt-0.5 text-[10px] text-content-muted">
+                <p className="mt-0.5 text-[10px] text-white/45">
                   Logged by {f.completedBy.name} · {fmtWhen(f.completedAt)}
                 </p>
               )}
@@ -120,7 +120,7 @@ function FollowupRow({
               <a
                 href={`tel:${f.customer.phone}`}
                 aria-label={`Call ${f.customer.name ?? ""}`}
-                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-neutral-border bg-neutral-surface text-content-secondary hover:border-primary hover:text-primary"
+                className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-white/[0.06] bg-cinema-elev text-white/65 hover:border-primary hover:text-primary"
                 title={f.customer.phone}
               >
                 <Phone size={14} />
@@ -169,7 +169,7 @@ export default function PharmacyFollowupsPage() {
     >
       <Link
         href="/dashboard"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         ← Back to Dashboard
       </Link>
@@ -187,7 +187,7 @@ export default function PharmacyFollowupsPage() {
           description="Schedule a clinical check-in after dispense. Conddo reminds you when it's due; record the outcome on the patient's record."
         >
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="inline-flex items-center gap-1 rounded-lg border border-neutral-border bg-neutral-surface p-0.5">
+            <div className="inline-flex items-center gap-1 rounded-lg border border-white/[0.06] bg-cinema-elev p-0.5">
               {FILTERS.map((f) => {
                 const active = filter === f.id;
                 return (
@@ -196,7 +196,7 @@ export default function PharmacyFollowupsPage() {
                     type="button"
                     onClick={() => setFilter(f.id)}
                     className={`rounded-md px-3 py-1 text-[12px] font-medium transition-colors ${
-                      active ? "bg-primary-bg text-primary" : "text-content-secondary hover:text-ink"
+                      active ? "bg-primary/[0.08] text-primary" : "text-white/65 hover:text-white"
                     }`}
                   >
                     {f.label}
@@ -205,7 +205,7 @@ export default function PharmacyFollowupsPage() {
               })}
             </div>
             {overdueCount > 0 && filter !== "PENDING" && (
-              <p className="text-[12px] text-danger">{overdueCount} overdue</p>
+              <p className="text-[12px] text-rose-200">{overdueCount} overdue</p>
             )}
           </div>
 
@@ -235,8 +235,8 @@ export default function PharmacyFollowupsPage() {
               />
             }
           >
-            <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-              <ul className="divide-y divide-neutral-border">
+            <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+              <ul className="divide-y divide-white/[0.06]">
                 {followups.map((f) => (
                   <FollowupRow
                     key={f.id}

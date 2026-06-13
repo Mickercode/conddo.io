@@ -36,16 +36,16 @@ function AiRow({ label, value, onApply }: { label: string; value?: string | bool
   if (value === undefined || value === null || value === "") return null;
   const text = typeof value === "boolean" ? (value ? "Yes" : "No") : value;
   return (
-    <div className="flex items-start justify-between gap-3 border-t border-neutral-border py-2 first:border-t-0">
+    <div className="flex items-start justify-between gap-3 border-t border-white/[0.06] py-2 first:border-t-0">
       <div className="min-w-0">
-        <p className="text-[11px] font-medium uppercase tracking-[0.04em] text-content-muted">{label}</p>
-        <p className="mt-0.5 text-[13px] text-content-secondary">{text}</p>
+        <p className="text-[11px] font-medium uppercase tracking-[0.04em] text-white/45">{label}</p>
+        <p className="mt-0.5 text-[13px] text-white/65">{text}</p>
       </div>
       {onApply && (
         <button
           type="button"
           onClick={onApply}
-          className="shrink-0 rounded-md border border-primary/30 bg-primary-bg px-2 py-1 text-[11px] font-medium text-primary hover:bg-primary hover:text-white"
+          className="shrink-0 rounded-md border border-primary/30 bg-primary/[0.08] px-2 py-1 text-[11px] font-medium text-primary hover:bg-primary hover:text-white"
         >
           Apply →
         </button>
@@ -230,14 +230,14 @@ export function ProductModal({
     >
       <form id="product-form" onSubmit={submit} className="space-y-4">
         {isPharmacy && (
-          <div className="rounded-lg border border-primary/20 bg-primary-bg/40 p-3">
+          <div className="rounded-lg border border-primary/20 bg-primary/[0.08]/40 p-3">
             {!aiResult ? (
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-start gap-2.5">
                   <Sparkles size={16} className="mt-0.5 shrink-0 text-primary" />
                   <div>
-                    <p className="text-[13px] font-medium text-ink">Scan packaging with AI</p>
-                    <p className="mt-0.5 text-[12px] text-content-muted">
+                    <p className="text-[13px] font-medium text-white">Scan packaging with AI</p>
+                    <p className="mt-0.5 text-[12px] text-white/45">
                       Take a photo and we'll extract the drug name, NAFDAC number, indications, and warnings for you to review.
                     </p>
                   </div>
@@ -246,7 +246,7 @@ export function ProductModal({
                   type="button"
                   onClick={() => fileRef.current?.click()}
                   disabled={aiBusy !== null}
-                  className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-primary/30 bg-neutral-surface px-3 py-1.5 text-[12px] font-medium text-primary hover:bg-primary hover:text-white disabled:opacity-60"
+                  className="inline-flex shrink-0 items-center gap-1.5 rounded-md border border-primary/30 bg-cinema-elev px-3 py-1.5 text-[12px] font-medium text-primary hover:bg-primary hover:text-white disabled:opacity-60"
                 >
                   {aiBusy === "upload" ? (
                     <><Loader2 size={13} className="animate-spin" /> Uploading…</>
@@ -270,14 +270,14 @@ export function ProductModal({
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <div className="flex items-center gap-2">
                     <Sparkles size={14} className="text-primary" />
-                    <p className="text-[13px] font-medium text-ink">AI suggestions</p>
+                    <p className="text-[13px] font-medium text-white">AI suggestions</p>
                     <Chip tone={CONFIDENCE_TONE[aiResult.confidence]}>{aiResult.confidence} confidence</Chip>
                   </div>
                   <div className="flex items-center gap-1">
                     <button
                       type="button"
                       onClick={() => setAiCollapsed((v) => !v)}
-                      className="inline-flex h-7 items-center gap-1 rounded-md px-2 text-[11px] text-content-secondary hover:bg-neutral-surface hover:text-ink"
+                      className="inline-flex h-7 items-center gap-1 rounded-md px-2 text-[11px] text-white/65 hover:bg-cinema-elev hover:text-white"
                     >
                       {aiCollapsed ? (<><ChevronDown size={12} /> Show</>) : (<><ChevronUp size={12} /> Hide</>)}
                     </button>
@@ -285,7 +285,7 @@ export function ProductModal({
                       type="button"
                       onClick={() => setAiResult(null)}
                       aria-label="Dismiss AI suggestions"
-                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-content-muted hover:bg-neutral-surface hover:text-ink"
+                      className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/45 hover:bg-cinema-elev hover:text-white"
                     >
                       <X size={13} />
                     </button>
@@ -293,7 +293,7 @@ export function ProductModal({
                 </div>
                 {!aiCollapsed && (
                   <>
-                    <div className="mt-2 rounded-md border border-neutral-border bg-neutral-surface px-3 py-2">
+                    <div className="mt-2 rounded-md border border-white/[0.06] bg-cinema-elev px-3 py-2">
                       <AiRow
                         label="Name"
                         value={
@@ -317,7 +317,7 @@ export function ProductModal({
                       <AiRow label="Storage" value={aiResult.suggestion.storage} />
                       <AiRow label="Description" value={aiResult.suggestion.description} />
                     </div>
-                    <p className="mt-2 flex items-start gap-1.5 text-[11px] text-content-muted">
+                    <p className="mt-2 flex items-start gap-1.5 text-[11px] text-white/45">
                       <AlertCircle size={11} className="mt-0.5 shrink-0" />
                       {aiResult.note}
                     </p>
@@ -325,7 +325,7 @@ export function ProductModal({
                       type="button"
                       onClick={() => fileRef.current?.click()}
                       disabled={aiBusy !== null}
-                      className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-neutral-border bg-neutral-surface px-2.5 py-1 text-[11px] font-medium text-content-secondary hover:border-primary hover:text-primary disabled:opacity-60"
+                      className="mt-2 inline-flex items-center gap-1.5 rounded-md border border-white/[0.06] bg-cinema-elev px-2.5 py-1 text-[11px] font-medium text-white/65 hover:border-primary hover:text-primary disabled:opacity-60"
                     >
                       {aiBusy ? <Loader2 size={11} className="animate-spin" /> : <Camera size={11} />} Try another photo
                     </button>
@@ -373,8 +373,8 @@ export function ProductModal({
           <TextInput id="pr-expiry" type="date" value={expiryDate} onChange={(e) => setExpiryDate(e.target.value)} />
         </Field>
         <label className="flex items-center gap-2.5">
-          <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} className="h-4 w-4 rounded border-neutral-border text-primary focus:ring-primary" />
-          <span className="text-[14px] text-content-secondary">Active (visible & sellable)</span>
+          <input type="checkbox" checked={active} onChange={(e) => setActive(e.target.checked)} className="h-4 w-4 rounded border-white/[0.06] text-primary focus:ring-primary" />
+          <span className="text-[14px] text-white/65">Active (visible & sellable)</span>
         </label>
       </form>
     </Modal>

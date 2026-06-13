@@ -31,26 +31,26 @@ function OrderCard({ card }: { card: Order }) {
   return (
     <Link
       href={`/orders/${card.id.toLowerCase()}`}
-      className={`block rounded-[10px] border bg-neutral-surface p-4 transition-colors hover:border-primary-light ${
-        flagged ? "border-neutral-border border-l-[3px] border-l-danger" : "border-neutral-border"
+      className={`block rounded-[10px] border bg-cinema-elev p-4 transition-colors hover:border-primary-light ${
+        flagged ? "border-white/[0.06] border-l-[3px] border-l-danger" : "border-white/[0.06]"
       }`}
     >
       <div className="mb-2 flex items-start justify-between">
         {card.flag ? (
-          <span className="font-mono text-[11px] font-bold text-danger">{card.flag}</span>
+          <span className="font-mono text-[11px] font-bold text-rose-200">{card.flag}</span>
         ) : (
-          <span className="font-mono text-[11px] text-content-muted">#{card.reference ?? card.id}</span>
+          <span className="font-mono text-[11px] text-white/45">#{card.reference ?? card.id}</span>
         )}
-        <span className="font-mono text-[13px] text-ink">{naira(card.amount)}</span>
+        <span className="font-mono text-[13px] text-white">{naira(card.amount)}</span>
       </div>
-      <h3 className="mb-1 text-[14px] font-semibold text-ink">{card.customer}</h3>
-      <p className="mb-4 text-[12px] text-content-muted">{card.service}</p>
+      <h3 className="mb-1 text-[14px] font-semibold text-white">{card.customer}</h3>
+      <p className="mb-4 text-[12px] text-white/45">{card.service}</p>
       <div className="flex items-center justify-between">
-        <div className={`flex items-center gap-1.5 ${flagged ? "text-danger" : "text-content-muted"}`}>
+        <div className={`flex items-center gap-1.5 ${flagged ? "text-rose-200" : "text-white/45"}`}>
           {card.flag === "OVERDUE" ? <CalendarX size={14} /> : card.flag === "URGENT" ? <Clock size={14} /> : <CalendarDays size={14} />}
           <span className={`text-[11px] ${flagged ? "font-medium" : ""}`}>{card.date}</span>
         </div>
-        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-neutral-surface2 font-mono text-[10px] font-bold text-content-secondary">
+        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/[0.02] font-mono text-[10px] font-bold text-white/65">
           {card.initials}
         </span>
       </div>
@@ -160,7 +160,7 @@ export default function OrdersPage() {
     >
       {/* Toolbar: segmented filter + search */}
       <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="inline-flex rounded-lg border border-neutral-border bg-neutral-surface2 p-0.5">
+        <div className="inline-flex rounded-lg border border-white/[0.06] bg-white/[0.02] p-0.5">
           {FILTERS.map((f) => {
             const active = f === activeFilter;
             return (
@@ -169,7 +169,7 @@ export default function OrdersPage() {
                 type="button"
                 onClick={() => setActiveFilter(f)}
                 className={`rounded-md px-4 py-1.5 text-[13px] font-medium transition-colors ${
-                  active ? "bg-neutral-surface text-primary" : "text-content-secondary hover:text-ink"
+                  active ? "bg-cinema-elev text-primary" : "text-white/65 hover:text-white"
                 }`}
               >
                 {f}
@@ -178,19 +178,19 @@ export default function OrdersPage() {
           })}
         </div>
         <div className="relative sm:w-64">
-          <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-content-muted" />
+          <Search size={18} className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-white/45" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Search by customer, ref, service…"
-            className="w-full rounded-lg border border-neutral-border bg-neutral-surface py-2 pl-10 pr-4 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-lg border border-white/[0.06] bg-cinema-elev py-2 pl-10 pr-4 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
       </div>
 
       {filtering && !loading && !error && (
-        <p className="mb-3 text-[12px] text-content-muted">
+        <p className="mb-3 text-[12px] text-white/45">
           {totalMatches === 0
             ? "No orders match your filter."
             : `${totalMatches} ${totalMatches === 1 ? "order" : "orders"} match.`}
@@ -229,12 +229,12 @@ export default function OrdersPage() {
               return (
                 <div
                   key={stage.name}
-                  className="flex min-h-[460px] w-72 shrink-0 flex-col rounded-xl border border-neutral-border bg-neutral-surface2 p-3"
+                  className="flex min-h-[460px] w-72 shrink-0 flex-col rounded-xl border border-white/[0.06] bg-white/[0.02] p-3"
                 >
                   <div className="mb-4 flex items-center justify-between px-1">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-[13px] font-bold text-ink">{stage.name}</h2>
-                      <span className="rounded bg-neutral-surface px-1.5 py-0.5 text-[10px] font-bold text-content-muted">
+                      <h2 className="text-[13px] font-bold text-white">{stage.name}</h2>
+                      <span className="rounded bg-cinema-elev px-1.5 py-0.5 text-[10px] font-bold text-white/45">
                         {stage.count}
                       </span>
                     </div>
@@ -256,11 +256,11 @@ export default function OrdersPage() {
 
             {/* Delivered — collapsed */}
             {delivered && (
-              <div className="flex min-h-[460px] w-12 shrink-0 cursor-pointer flex-col items-center rounded-xl border border-neutral-border bg-neutral-surface2 py-3 transition-colors hover:bg-neutral-surface">
-                <ChevronRight size={18} className="mb-4 text-content-muted" />
+              <div className="flex min-h-[460px] w-12 shrink-0 cursor-pointer flex-col items-center rounded-xl border border-white/[0.06] bg-white/[0.02] py-3 transition-colors hover:bg-cinema-elev">
+                <ChevronRight size={18} className="mb-4 text-white/45" />
                 <div className="flex rotate-180 flex-col items-center gap-2 [writing-mode:vertical-lr]">
-                  <h2 className="text-[13px] font-bold text-ink">Delivered</h2>
-                  <span className="rounded bg-neutral-surface px-1 py-1.5 text-[10px] font-bold text-content-muted">{delivered.count}</span>
+                  <h2 className="text-[13px] font-bold text-white">Delivered</h2>
+                  <span className="rounded bg-cinema-elev px-1 py-1.5 text-[10px] font-bold text-white/45">{delivered.count}</span>
                 </div>
               </div>
             )}

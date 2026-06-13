@@ -71,9 +71,9 @@ export function FeatureLockedCard({
   }
 
   return (
-    <div className="flex h-full flex-col gap-3 rounded-xl border border-neutral-border bg-neutral-surface p-5">
+    <div className="flex h-full flex-col gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
       <div className="flex items-start justify-between gap-3">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary-bg text-primary">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
           <Icon size={20} />
         </span>
         <Chip tone={isBeta ? "primary" : "neutral"}>
@@ -84,12 +84,12 @@ export function FeatureLockedCard({
         </Chip>
       </div>
       <div className="flex-1">
-        <p className="text-[15px] font-medium text-ink">{feature.name}</p>
-        <p className="mt-1 text-[13px] text-content-secondary">{feature.description}</p>
+        <p className="text-[15px] font-medium text-white">{feature.name}</p>
+        <p className="mt-1 text-[13px] text-white/65">{feature.description}</p>
       </div>
       <div>
         {isRequested ? (
-          <span className="inline-flex items-center gap-1.5 rounded-md bg-success-bg px-2.5 py-1 text-[12px] font-medium text-success">
+          <span className="inline-flex items-center gap-1.5 rounded-md bg-emerald-500/15 px-2.5 py-1 text-[12px] font-medium text-emerald-300">
             <Check size={13} /> {isBeta ? "Request submitted" : "You're on the list"}
           </span>
         ) : (
@@ -97,7 +97,7 @@ export function FeatureLockedCard({
             type="button"
             onClick={onClick}
             disabled={busy}
-            className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary-bg px-3 py-1.5 text-[12px] font-medium text-primary transition-colors hover:bg-primary hover:text-white disabled:opacity-60"
+            className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-primary/[0.08] px-3 py-1.5 text-[12px] font-medium text-primary transition-colors hover:bg-primary hover:text-white disabled:opacity-60"
           >
             {busy ? (
               <><Loader2 size={12} className="animate-spin" /> Sending…</>

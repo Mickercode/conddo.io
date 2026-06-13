@@ -140,8 +140,8 @@ export function NewFittingModal({
                   key={s.value}
                   className={`flex cursor-pointer items-start gap-2.5 rounded-lg border px-3 py-2.5 transition-colors ${
                     active
-                      ? "border-primary bg-primary-bg"
-                      : "border-neutral-border bg-neutral-surface hover:border-primary-light"
+                      ? "border-primary bg-primary/[0.08]"
+                      : "border-white/[0.06] bg-cinema-elev hover:border-primary-light"
                   }`}
                 >
                   <input
@@ -150,11 +150,11 @@ export function NewFittingModal({
                     value={s.value}
                     checked={active}
                     onChange={() => setStage(s.value)}
-                    className="mt-0.5 h-4 w-4 border-neutral-border text-primary focus:ring-primary"
+                    className="mt-0.5 h-4 w-4 border-white/[0.06] text-primary focus:ring-primary"
                   />
                   <span className="min-w-0">
-                    <span className={`block text-[13px] font-medium ${active ? "text-primary" : "text-ink"}`}>{s.short}</span>
-                    <span className="block text-[12px] text-content-muted">{s.hint}</span>
+                    <span className={`block text-[13px] font-medium ${active ? "text-primary" : "text-white"}`}>{s.short}</span>
+                    <span className="block text-[12px] text-white/45">{s.hint}</span>
                   </span>
                 </label>
               );

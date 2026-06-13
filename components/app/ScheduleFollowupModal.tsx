@@ -170,7 +170,7 @@ export function ScheduleFollowupModal({
                   key={q.label}
                   type="button"
                   onClick={() => setDueDate(inDays(q.days))}
-                  className="rounded-full border border-neutral-border bg-neutral-surface px-2.5 py-0.5 text-[11px] text-content-secondary hover:border-primary hover:text-primary"
+                  className="rounded-full border border-white/[0.06] bg-cinema-elev px-2.5 py-0.5 text-[11px] text-white/65 hover:border-primary hover:text-primary"
                 >
                   {q.label}
                 </button>
@@ -194,7 +194,7 @@ export function ScheduleFollowupModal({
                   key={preset}
                   type="button"
                   onClick={() => setCheckNote(preset)}
-                  className="rounded-full border border-neutral-border bg-neutral-surface px-2.5 py-0.5 text-[11px] text-content-secondary hover:border-primary hover:text-primary"
+                  className="rounded-full border border-white/[0.06] bg-cinema-elev px-2.5 py-0.5 text-[11px] text-white/65 hover:border-primary hover:text-primary"
                 >
                   {preset.length > 40 ? preset.slice(0, 38) + "…" : preset}
                 </button>
@@ -203,7 +203,7 @@ export function ScheduleFollowupModal({
           </div>
         </Field>
 
-        <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-3 py-2 text-[11px] text-content-muted">
+        <p className="flex items-start gap-1.5 rounded-md bg-white/[0.02] px-3 py-2 text-[11px] text-white/45">
           <AlertCircle size={11} className="mt-0.5 shrink-0" />
           You'll see this on the dashboard "Follow-ups Due Today" widget on the due date. Logging the outcome creates an immutable note on the patient's record.
         </p>

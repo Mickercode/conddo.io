@@ -63,17 +63,17 @@ function CurrentSubscriptionCard({
 }) {
   const chip = STATUS_CHIP[subscription.status];
   return (
-    <div className="mb-6 rounded-2xl border border-primary/30 bg-primary-bg/40 p-6">
+    <div className="mb-6 rounded-2xl border border-primary/30 bg-primary/[0.08]/40 p-6">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="mb-1 flex items-center gap-2">
-            <h2 className="text-[18px] font-medium text-ink">{offering.name}</h2>
+            <h2 className="text-[18px] font-medium text-white">{offering.name}</h2>
             <Chip tone={chip.tone}>{chip.label}</Chip>
           </div>
-          <p className="font-mono text-[13px] text-content-secondary">
+          <p className="font-mono text-[13px] text-white/65">
             {naira(koboToNaira(offering.monthlyPriceKobo))}/month
           </p>
-          <p className="mt-1 flex items-center gap-1.5 text-[12px] text-content-muted">
+          <p className="mt-1 flex items-center gap-1.5 text-[12px] text-white/45">
             <Calendar size={12} />
             Renews {fmtDate(subscription.currentPeriodEnd)}
             {subscription.cancelledAt && ` · cancelled ${fmtDate(subscription.cancelledAt)}`}
@@ -84,7 +84,7 @@ function CurrentSubscriptionCard({
             type="button"
             onClick={onCancel}
             disabled={cancelling}
-            className="rounded-md border border-neutral-strong px-3 py-1.5 text-[12px] font-medium text-content-secondary transition-colors hover:bg-neutral-surface2 hover:text-ink disabled:opacity-50"
+            className="rounded-md border border-white/10 px-3 py-1.5 text-[12px] font-medium text-white/65 transition-colors hover:bg-white/[0.02] hover:text-white disabled:opacity-50"
           >
             {cancelling ? "Cancelling…" : "Cancel renewal"}
           </button>
@@ -92,7 +92,7 @@ function CurrentSubscriptionCard({
       </div>
 
       {/* Quota usage — one row per included offering code, with bar */}
-      <p className="mb-2 text-[12px] font-medium uppercase tracking-[0.06em] text-content-muted">This month</p>
+      <p className="mb-2 text-[12px] font-medium uppercase tracking-[0.06em] text-white/45">This month</p>
       <div className="space-y-2.5">
         {Object.entries(offering.includes).map(([code, total]) => {
           const meta = OFFERING_META[code] ?? { label: code, icon: Sparkles };
@@ -100,16 +100,16 @@ function CurrentSubscriptionCard({
           const remaining = Math.max(0, (total ?? 0) - used);
           const pct = total ? Math.min(100, Math.round((used / total) * 100)) : 0;
           return (
-            <div key={code} className="flex items-center gap-3 rounded-lg bg-neutral-surface px-3 py-2">
-              <meta.icon size={14} className="shrink-0 text-content-secondary" />
+            <div key={code} className="flex items-center gap-3 rounded-lg bg-cinema-elev px-3 py-2">
+              <meta.icon size={14} className="shrink-0 text-white/65" />
               <div className="min-w-0 flex-1">
                 <div className="mb-1 flex items-baseline justify-between gap-2">
-                  <span className="text-[13px] text-ink">{meta.label}</span>
-                  <span className="font-mono text-[12px] text-content-secondary">
-                    {used} / {total} <span className="text-content-muted">· {remaining} left</span>
+                  <span className="text-[13px] text-white">{meta.label}</span>
+                  <span className="font-mono text-[12px] text-white/65">
+                    {used} / {total} <span className="text-white/45">· {remaining} left</span>
                   </span>
                 </div>
-                <div className="h-1.5 overflow-hidden rounded-full bg-neutral-surface2">
+                <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.02]">
                   <div
                     className={`h-full ${used >= (total ?? 0) ? "bg-warning" : "bg-primary"}`}
                     style={{ width: `${pct}%` }}
@@ -138,24 +138,24 @@ function OfferingCard({
   return (
     <div
       className={`flex flex-col rounded-2xl border p-6 ${
-        isCurrent ? "border-2 border-primary bg-neutral-surface" : "border-neutral-border bg-neutral-surface"
+        isCurrent ? "border-2 border-primary bg-cinema-elev" : "border-white/[0.06] bg-cinema-elev"
       }`}
     >
       <div className="mb-3">
-        <h3 className="text-[16px] font-medium text-ink">{offering.name}</h3>
-        <p className="mt-1 text-[12px] text-content-muted">{offering.description}</p>
+        <h3 className="text-[16px] font-medium text-white">{offering.name}</h3>
+        <p className="mt-1 text-[12px] text-white/45">{offering.description}</p>
       </div>
-      <p className="mb-4 font-mono text-[24px] text-ink">
+      <p className="mb-4 font-mono text-[24px] text-white">
         {naira(koboToNaira(offering.monthlyPriceKobo))}
-        <span className="text-[12px] text-content-muted"> / month</span>
+        <span className="text-[12px] text-white/45"> / month</span>
       </p>
       <ul className="mb-6 flex-1 space-y-1.5">
         {Object.entries(offering.includes).map(([code, count]) => {
           const meta = OFFERING_META[code] ?? { label: code };
           return (
-            <li key={code} className="flex items-center gap-2 text-[13px] text-content-secondary">
-              <Check size={13} className="shrink-0 text-success" />
-              <span><strong className="text-ink">{count}</strong> {meta.label}/mo</span>
+            <li key={code} className="flex items-center gap-2 text-[13px] text-white/65">
+              <Check size={13} className="shrink-0 text-emerald-300" />
+              <span><strong className="text-white">{count}</strong> {meta.label}/mo</span>
             </li>
           );
         })}
@@ -256,10 +256,10 @@ export default function BrandPackagesPage() {
         )}
 
         {!current && (
-          <div className="mb-6 flex items-start gap-3 rounded-xl border border-primary/20 bg-primary-bg px-5 py-4 text-[13px] text-primary">
+          <div className="mb-6 flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/[0.08] px-5 py-4 text-[13px] text-primary">
             <Sparkles size={16} className="mt-0.5 shrink-0" />
             <p>
-              <span className="font-medium text-ink">Lock in a monthly cadence.</span>{" "}
+              <span className="font-medium text-white">Lock in a monthly cadence.</span>{" "}
               Brand Packages bundle the most-requested creative services into a single
               subscription so you can plan content without per-job pricing surprises.
             </p>
@@ -278,8 +278,8 @@ export default function BrandPackagesPage() {
           ))}
         </div>
 
-        <div className="mt-6 flex items-start gap-2 rounded-lg border border-neutral-border bg-neutral-surface px-4 py-3 text-[12px] text-content-secondary">
-          <AlertTriangle size={14} className="mt-0.5 shrink-0 text-content-muted" />
+        <div className="mt-6 flex items-start gap-2 rounded-lg border border-white/[0.06] bg-cinema-elev px-4 py-3 text-[12px] text-white/65">
+          <AlertTriangle size={14} className="mt-0.5 shrink-0 text-white/45" />
           <p>
             Unused quota doesn't roll over to the next month. Cancel anytime — your package
             stays active until the period ends.

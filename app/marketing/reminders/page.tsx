@@ -81,14 +81,14 @@ function ReminderRow({
   }
 
   return (
-    <li className="flex flex-col gap-3 px-5 py-4 hover:bg-neutral-surface2 sm:flex-row sm:items-start sm:justify-between">
+    <li className="flex flex-col gap-3 px-5 py-4 hover:bg-white/[0.02] sm:flex-row sm:items-start sm:justify-between">
       <div className="flex min-w-0 items-start gap-3">
-        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary-bg text-primary">
+        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-md bg-primary/[0.08] text-primary">
           <Bell size={15} />
         </span>
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
-            <p className="truncate text-[14px] font-medium text-ink">
+            <p className="truncate text-[14px] font-medium text-white">
               {r.customer.name || "—"}
             </p>
             <Chip tone={STATUS_TONES[r.status]}>{STATUS_LABELS[r.status]}</Chip>
@@ -102,13 +102,13 @@ function ReminderRow({
             )}
           </div>
           {productName && (
-            <p className="mt-0.5 text-[12px] text-content-muted">{productName}</p>
+            <p className="mt-0.5 text-[12px] text-white/45">{productName}</p>
           )}
-          <p className="mt-1 flex items-start gap-2 text-[13px] text-content-secondary">
-            <MessageSquare size={13} className="mt-0.5 shrink-0 text-content-muted" />
+          <p className="mt-1 flex items-start gap-2 text-[13px] text-white/65">
+            <MessageSquare size={13} className="mt-0.5 shrink-0 text-white/45" />
             <span className="line-clamp-2">{r.message}</span>
           </p>
-          <p className="mt-1 font-mono text-[11px] text-content-muted">
+          <p className="mt-1 font-mono text-[11px] text-white/45">
             {r.status === "SENT" && r.sentAt
               ? `Sent ${fmtWhen(r.sentAt)}`
               : `Next send: ${fmtWhen(r.scheduledAt)}`}
@@ -160,7 +160,7 @@ export default function RemindersPage() {
     >
       <Link
         href="/marketing"
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         <ArrowLeft size={14} /> Back to Marketing
       </Link>
@@ -174,7 +174,7 @@ export default function RemindersPage() {
       ) : (
         <>
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div className="inline-flex items-center gap-1 rounded-lg border border-neutral-border bg-neutral-surface p-0.5">
+            <div className="inline-flex items-center gap-1 rounded-lg border border-white/[0.06] bg-cinema-elev p-0.5">
               {FILTERS.map((f) => {
                 const active = filter === f.id;
                 return (
@@ -183,7 +183,7 @@ export default function RemindersPage() {
                     type="button"
                     onClick={() => setFilter(f.id)}
                     className={`rounded-md px-3 py-1 text-[12px] font-medium transition-colors ${
-                      active ? "bg-primary-bg text-primary" : "text-content-secondary hover:text-ink"
+                      active ? "bg-primary/[0.08] text-primary" : "text-white/65 hover:text-white"
                     }`}
                     aria-pressed={active}
                   >
@@ -193,7 +193,7 @@ export default function RemindersPage() {
               })}
             </div>
             {scheduledCount > 0 && (
-              <p className="text-[12px] text-content-muted">
+              <p className="text-[12px] text-white/45">
                 {scheduledCount} scheduled · waiting to send
               </p>
             )}
@@ -225,8 +225,8 @@ export default function RemindersPage() {
               />
             }
           >
-            <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-              <ul className="divide-y divide-neutral-border">
+            <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+              <ul className="divide-y divide-white/[0.06]">
                 {reminders.map((r) => (
                   <ReminderRow
                     key={r.id}
@@ -238,7 +238,7 @@ export default function RemindersPage() {
             </div>
           </QueryBoundary>
 
-          <p className="mt-4 flex items-center gap-1.5 text-[11px] text-content-muted">
+          <p className="mt-4 flex items-center gap-1.5 text-[11px] text-white/45">
             <AlertCircle size={11} />
             SMS goes out via your verified Brevo sender. Costs apply per message — check your plan limits.
           </p>

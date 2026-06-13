@@ -100,7 +100,7 @@ export function AddEmrNoteModal({
             }
           />
         </Field>
-        <p className="flex items-start gap-1.5 rounded-md bg-warning-bg px-3 py-2 text-[11px] text-warning">
+        <p className="flex items-start gap-1.5 rounded-md bg-amber-500/15 px-3 py-2 text-[11px] text-amber-300">
           <AlertCircle size={11} className="mt-0.5 shrink-0" />
           Once saved, this note cannot be edited or deleted. It will appear timestamped + with your name on the patient's record.
         </p>

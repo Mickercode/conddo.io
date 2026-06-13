@@ -104,14 +104,14 @@ export default function CustomersPage() {
                   }}
                   className={`inline-flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] transition-colors ${
                     active
-                      ? "border border-primary bg-neutral-surface font-medium text-primary"
-                      : "border border-transparent text-content-secondary hover:text-primary"
+                      ? "border border-primary bg-cinema-elev font-medium text-primary"
+                      : "border border-transparent text-white/65 hover:text-primary"
                   }`}
                 >
                   {s.label}
                   {showCount && (
                     <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-mono ${
-                      active ? "bg-primary-bg text-primary" : "bg-neutral-surface2 text-content-muted"
+                      active ? "bg-primary/[0.08] text-primary" : "bg-white/[0.02] text-white/45"
                     }`}>
                       {s.count}
                     </span>
@@ -132,14 +132,14 @@ export default function CustomersPage() {
         >
           <Search
             size={18}
-            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-content-muted"
+            className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-white/45"
           />
           <input
             type="text"
             value={searchInput}
             onChange={(e) => setSearchInput(e.target.value)}
             placeholder="Search by name, phone, or email"
-            className="w-full rounded-lg border border-neutral-border bg-neutral-surface py-2.5 pl-11 pr-4 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-lg border border-white/[0.06] bg-cinema-elev py-2.5 pl-11 pr-4 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </form>
       </div>
@@ -170,11 +170,11 @@ export default function CustomersPage() {
         }
       >
         {/* Table */}
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[760px] text-left">
               <thead>
-                <tr className="border-b border-neutral-border text-[11px] uppercase tracking-[0.05em] text-content-muted">
+                <tr className="border-b border-white/[0.06] text-[11px] uppercase tracking-[0.05em] text-white/45">
                   <th className="py-3 pl-5 pr-5 font-medium">Customer</th>
                   <th className="py-3 pr-5 font-medium">Phone</th>
                   <th className="py-3 pr-5 font-medium">Total Spent</th>
@@ -184,22 +184,22 @@ export default function CustomersPage() {
                   <th className="py-3 pr-5 text-right font-medium">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-neutral-border">
+              <tbody className="divide-y divide-white/[0.06]">
                 {customers.map((c) => (
-                  <tr key={c.id} className="group transition-colors hover:bg-neutral-surface2">
+                  <tr key={c.id} className="group transition-colors hover:bg-white/[0.02]">
                     <td className="py-3 pl-5 pr-5">
                       <div className="flex items-center gap-3">
-                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-bg font-mono text-[12px] font-medium text-primary">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] font-mono text-[12px] font-medium text-primary">
                           {c.initials}
                         </span>
-                        <span className="whitespace-nowrap text-[14px] text-ink">{c.name}</span>
+                        <span className="whitespace-nowrap text-[14px] text-white">{c.name}</span>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap py-3 pr-5 text-[14px] text-content-secondary">{c.phone}</td>
-                    <td className="whitespace-nowrap py-3 pr-5 font-mono text-[13px] text-ink">{naira(c.totalSpent)}</td>
-                    <td className="py-3 pr-5 text-center text-[14px] text-content-secondary">{c.orders}</td>
-                    <td className="whitespace-nowrap py-3 pr-5 text-[14px] text-content-secondary">
-                      {c.lastActive === "Never" ? <span className="italic text-content-muted">Never</span> : c.lastActive}
+                    <td className="whitespace-nowrap py-3 pr-5 text-[14px] text-white/65">{c.phone}</td>
+                    <td className="whitespace-nowrap py-3 pr-5 font-mono text-[13px] text-white">{naira(c.totalSpent)}</td>
+                    <td className="py-3 pr-5 text-center text-[14px] text-white/65">{c.orders}</td>
+                    <td className="whitespace-nowrap py-3 pr-5 text-[14px] text-white/65">
+                      {c.lastActive === "Never" ? <span className="italic text-white/45">Never</span> : c.lastActive}
                     </td>
                     <td className="py-3 pr-5">{c.tag && <Chip tone={tagTone[c.tag]}>{c.tag}</Chip>}</td>
                     <td className="py-3 pr-5 text-right">
@@ -219,21 +219,21 @@ export default function CustomersPage() {
 
         {/* Pagination */}
         <div className="mt-5 flex items-center justify-between">
-          <span className="text-[13px] text-content-secondary">
+          <span className="text-[13px] text-white/65">
             Showing {from}–{to} of {total}
           </span>
           <div className="flex gap-1.5">
             <button
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-neutral-border text-content-muted hover:bg-neutral-surface2 disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-white/[0.06] text-white/45 hover:bg-white/[0.02] disabled:opacity-40"
             >
               <ChevronLeft size={16} />
             </button>
             <button
               onClick={() => setPage((p) => (to < total ? p + 1 : p))}
               disabled={to >= total}
-              className="flex h-8 w-8 items-center justify-center rounded-md border border-neutral-border text-content-muted hover:bg-neutral-surface2 disabled:opacity-40"
+              className="flex h-8 w-8 items-center justify-center rounded-md border border-white/[0.06] text-white/45 hover:bg-white/[0.02] disabled:opacity-40"
             >
               <ChevronRight size={16} />
             </button>

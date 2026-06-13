@@ -99,19 +99,19 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,320px)_1fr]">
       {/* Left: identity + notes */}
       <div className="space-y-6">
-        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-6 text-center">
-          <span className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary-bg font-mono text-[32px] font-semibold text-primary">
+        <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-6 text-center">
+          <span className="mx-auto mb-4 flex h-24 w-24 items-center justify-center rounded-full bg-primary/[0.08] font-mono text-[32px] font-semibold text-primary">
             {initialsOf(display)}
           </span>
-          <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-ink">{display}</h2>
+          <h2 className="text-[20px] font-semibold tracking-[-0.01em] text-white">{display}</h2>
           <div className="mt-3 flex flex-wrap justify-center gap-1.5">
             {(c.tags ?? []).map((t) => (
               <span
                 key={t}
-                className="inline-flex items-center gap-1 rounded-full border border-neutral-border bg-neutral-surface2 px-2.5 py-1 text-[12px] text-content-secondary"
+                className="inline-flex items-center gap-1 rounded-full border border-white/[0.06] bg-white/[0.02] px-2.5 py-1 text-[12px] text-white/65"
               >
                 {t}
-                <button onClick={() => removeTag(t)} aria-label={`Remove ${t}`} className="text-content-muted hover:text-danger">
+                <button onClick={() => removeTag(t)} aria-label={`Remove ${t}`} className="text-white/45 hover:text-rose-200">
                   <X size={12} />
                 </button>
               </span>
@@ -125,27 +125,27 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
               value={tagInput}
               onChange={(e) => setTagInput(e.target.value)}
               placeholder="Add tag"
-              className="w-28 rounded-md border border-neutral-border bg-neutral-surface px-2.5 py-1 text-[12px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none"
+              className="w-28 rounded-md border border-white/[0.06] bg-cinema-elev px-2.5 py-1 text-[12px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none"
             />
             <button
               type="submit"
               disabled={tagBusy || !tagInput.trim()}
-              className="rounded-md p-1.5 text-primary hover:bg-primary-bg disabled:opacity-40"
+              className="rounded-md p-1.5 text-primary hover:bg-primary/[0.08] disabled:opacity-40"
               aria-label="Add tag"
             >
               <Plus size={15} />
             </button>
           </form>
-          <div className="mt-5 space-y-2.5 border-t border-neutral-border pt-5 text-left">
-            <div className="flex items-center gap-2.5 text-content-secondary">
-              <Phone size={16} className="shrink-0 text-content-muted" />
+          <div className="mt-5 space-y-2.5 border-t border-white/[0.06] pt-5 text-left">
+            <div className="flex items-center gap-2.5 text-white/65">
+              <Phone size={16} className="shrink-0 text-white/45" />
               <span className="text-[14px]">{c.phone ?? "—"}</span>
             </div>
-            <div className="flex items-center gap-2.5 text-content-secondary">
-              <Mail size={16} className="shrink-0 text-content-muted" />
+            <div className="flex items-center gap-2.5 text-white/65">
+              <Mail size={16} className="shrink-0 text-white/45" />
               <span className="truncate text-[14px]">{c.email ?? "—"}</span>
             </div>
-            <div className="flex items-center gap-2.5 text-content-muted">
+            <div className="flex items-center gap-2.5 text-white/45">
               <CalendarDays size={16} className="shrink-0" />
               <span className="text-[14px]">{fmtDate(c.memberSince)}</span>
             </div>
@@ -159,13 +159,13 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
           </div>
         </div>
 
-        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-6">
-          <h3 className="mb-3 text-[11px] uppercase tracking-[0.05em] text-content-muted">Internal Notes</h3>
+        <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-6">
+          <h3 className="mb-3 text-[11px] uppercase tracking-[0.05em] text-white/45">Internal Notes</h3>
           <textarea
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Enter customer specific notes here..."
-            className="h-32 w-full resize-none rounded-lg border border-neutral-border bg-neutral-bg p-3 text-[14px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
+            className="h-32 w-full resize-none rounded-lg border border-white/[0.06] bg-cinema-base p-3 text-[14px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none focus:ring-1 focus:ring-primary"
           />
           <Button variant="secondary" size="md" className="mt-3 w-full" onClick={saveNotes} disabled={savingNotes || !notesDirty}>
             {savingNotes ? "Saving…" : notesDirty ? "Save Notes" : "Saved"}
@@ -181,9 +181,9 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
             { label: "Orders", value: String(c.orders), accent: false },
             { label: "Avg Order Value", value: naira(c.avgOrderValue), accent: false },
           ].map((m) => (
-            <div key={m.label} className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
-              <p className="mb-2 text-[11px] uppercase tracking-[0.05em] text-content-muted">{m.label}</p>
-              <p className={`font-mono text-[22px] font-medium leading-none ${m.accent ? "text-primary" : "text-ink"}`}>{m.value}</p>
+            <div key={m.label} className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
+              <p className="mb-2 text-[11px] uppercase tracking-[0.05em] text-white/45">{m.label}</p>
+              <p className={`font-mono text-[22px] font-medium leading-none ${m.accent ? "text-primary" : "text-white"}`}>{m.value}</p>
             </div>
           ))}
         </div>
@@ -193,19 +193,19 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
 
         {/* Medical record (pharmacy only — full EMR lives at /pharmacy/emr) */}
         {isPharmacy && (
-          <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary-bg/30 px-5 py-4">
+          <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/[0.08]/30 px-5 py-4">
             <div className="flex items-center gap-3">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary-bg text-primary">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
                 <Activity size={16} />
               </span>
               <div>
-                <p className="text-[14px] font-medium text-ink">Medical record</p>
-                <p className="text-[12px] text-content-muted">Demographics, allergies, conditions, vaccinations, clinical notes, documents.</p>
+                <p className="text-[14px] font-medium text-white">Medical record</p>
+                <p className="text-[12px] text-white/45">Demographics, allergies, conditions, vaccinations, clinical notes, documents.</p>
               </div>
             </div>
             <Link
               href={`/pharmacy/emr/${c.id}`}
-              className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-neutral-surface px-3 py-1.5 text-[12px] font-medium text-primary hover:bg-primary hover:text-white"
+              className="inline-flex items-center gap-1.5 rounded-md border border-primary/30 bg-cinema-elev px-3 py-1.5 text-[12px] font-medium text-primary hover:bg-primary hover:text-white"
             >
               View EMR →
             </Link>
@@ -216,45 +216,45 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
         {isPharmacy && <CustomerCashbackCard customerId={c.id} />}
 
         {/* Measurement Profile */}
-        <div className="rounded-xl border border-neutral-border bg-neutral-surface">
-          <div className="flex items-center justify-between border-b border-neutral-border px-6 py-4">
-            <h3 className="text-[15px] font-medium text-ink">Measurement Profile</h3>
+        <div className="rounded-xl border border-white/[0.06] bg-cinema-elev">
+          <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-4">
+            <h3 className="text-[15px] font-medium text-white">Measurement Profile</h3>
             <button onClick={() => setMeasureOpen(true)} className="text-[12px] font-semibold text-primary hover:underline">Update measurements</button>
           </div>
           {measurements.length > 0 ? (
             <div className="grid grid-cols-2 gap-x-8 gap-y-5 px-6 py-5 sm:grid-cols-3">
               {measurements.map(([label, value]) => (
                 <div key={label} className="space-y-1">
-                  <p className="text-[11px] uppercase tracking-[0.05em] text-content-muted">{label}</p>
-                  <p className="font-mono text-[17px] text-ink">{String(value)}</p>
+                  <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">{label}</p>
+                  <p className="font-mono text-[17px] text-white">{String(value)}</p>
                 </div>
               ))}
             </div>
           ) : (
             <div className="flex flex-col items-center px-6 py-10 text-center">
-              <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-bg text-primary"><Ruler size={22} /></span>
-              <p className="text-[14px] text-content-secondary">No measurements on file yet.</p>
+              <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/[0.08] text-primary"><Ruler size={22} /></span>
+              <p className="text-[14px] text-white/65">No measurements on file yet.</p>
             </div>
           )}
         </div>
 
         {/* Order History */}
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-          <div className="border-b border-neutral-border px-6 py-4">
-            <h3 className="text-[15px] font-medium text-ink">Order History</h3>
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+          <div className="border-b border-white/[0.06] px-6 py-4">
+            <h3 className="text-[15px] font-medium text-white">Order History</h3>
           </div>
           {orders.length > 0 ? (
-            <ul className="divide-y divide-neutral-border">
+            <ul className="divide-y divide-white/[0.06]">
               {orders.map((o) => (
                 <li key={o.id}>
-                  <Link href={`/orders/${o.id}`} className="flex items-center justify-between px-6 py-4 transition-colors hover:bg-neutral-surface2">
+                  <Link href={`/orders/${o.id}`} className="flex items-center justify-between px-6 py-4 transition-colors hover:bg-white/[0.02]">
                     <div className="min-w-0">
-                      <p className="font-mono text-[13px] text-ink">#{o.reference ?? o.id}</p>
-                      <p className="truncate text-[12px] text-content-muted">{o.service ?? "—"}{o.stage ? ` · ${o.stage}` : ""}</p>
+                      <p className="font-mono text-[13px] text-white">#{o.reference ?? o.id}</p>
+                      <p className="truncate text-[12px] text-white/45">{o.service ?? "—"}{o.stage ? ` · ${o.stage}` : ""}</p>
                     </div>
                     <div className="text-right">
-                      <p className="font-mono text-[14px] text-ink">{naira(o.amount)}</p>
-                      <p className="text-[12px] text-content-muted">{fmtShort(o.date)}</p>
+                      <p className="font-mono text-[14px] text-white">{naira(o.amount)}</p>
+                      <p className="text-[12px] text-white/45">{fmtShort(o.date)}</p>
                     </div>
                   </Link>
                 </li>
@@ -262,36 +262,36 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
             </ul>
           ) : (
             <div className="flex flex-col items-center px-6 py-10 text-center">
-              <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-bg text-primary"><ShoppingBag size={22} /></span>
-              <p className="text-[14px] text-content-secondary">{history.loading ? "Loading orders…" : "No orders yet."}</p>
+              <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/[0.08] text-primary"><ShoppingBag size={22} /></span>
+              <p className="text-[14px] text-white/65">{history.loading ? "Loading orders…" : "No orders yet."}</p>
             </div>
           )}
         </div>
 
         {/* Payment History */}
-        <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-          <div className="border-b border-neutral-border px-6 py-4">
-            <h3 className="text-[15px] font-medium text-ink">Payment History</h3>
+        <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+          <div className="border-b border-white/[0.06] px-6 py-4">
+            <h3 className="text-[15px] font-medium text-white">Payment History</h3>
           </div>
           {pays.length > 0 ? (
-            <ul className="divide-y divide-neutral-border">
+            <ul className="divide-y divide-white/[0.06]">
               {pays.map((p) => (
                 <li key={p.id} className="flex items-center justify-between px-6 py-4">
                   <div className="min-w-0">
-                    <p className="text-[14px] text-ink">{p.method ?? "Payment"}</p>
-                    {p.note && <p className="truncate text-[12px] text-content-muted">{p.note}</p>}
+                    <p className="text-[14px] text-white">{p.method ?? "Payment"}</p>
+                    {p.note && <p className="truncate text-[12px] text-white/45">{p.note}</p>}
                   </div>
                   <div className="text-right">
-                    <p className="font-mono text-[14px] text-success">{naira(p.amount)}</p>
-                    <p className="text-[12px] text-content-muted">{fmtShort(p.paidAt)}</p>
+                    <p className="font-mono text-[14px] text-emerald-300">{naira(p.amount)}</p>
+                    <p className="text-[12px] text-white/45">{fmtShort(p.paidAt)}</p>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
             <div className="flex flex-col items-center px-6 py-10 text-center">
-              <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary-bg text-primary"><ReceiptText size={22} /></span>
-              <p className="text-[14px] text-content-secondary">{payments.loading ? "Loading payments…" : "No payments recorded yet."}</p>
+              <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/[0.08] text-primary"><ReceiptText size={22} /></span>
+              <p className="text-[14px] text-white/65">{payments.loading ? "Loading payments…" : "No payments recorded yet."}</p>
             </div>
           )}
         </div>

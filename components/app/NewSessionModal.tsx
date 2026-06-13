@@ -220,7 +220,7 @@ export function NewSessionModal({
 
         <Field label="Studio / room" required error={errors.resource}>
           {resources.length === 0 ? (
-            <p className="rounded-md border border-warning/30 bg-warning-bg px-3 py-2 text-[12px] text-warning">
+            <p className="rounded-md border border-warning/30 bg-amber-500/15 px-3 py-2 text-[12px] text-amber-300">
               No rooms set up yet. Add studios to <a className="font-medium underline" href="/inventory">Inventory</a> first — each row's price becomes the hourly rate.
             </p>
           ) : (
@@ -245,7 +245,7 @@ export function NewSessionModal({
                   type="button"
                   onClick={() => setSessionType(s.value)}
                   className={`flex items-center gap-1.5 rounded-md border px-2.5 py-1.5 text-[12px] transition-colors ${
-                    on ? "border-primary bg-primary-bg font-medium text-primary" : "border-neutral-border text-content-secondary hover:bg-neutral-surface2"
+                    on ? "border-primary bg-primary/[0.08] font-medium text-primary" : "border-white/[0.06] text-white/65 hover:bg-white/[0.02]"
                   }`}
                 >
                   <s.icon size={13} />
@@ -272,31 +272,31 @@ export function NewSessionModal({
 
         {/* Cost summary — updates live as the user picks room + duration. */}
         {resource && (
-          <div className="flex items-center justify-between rounded-lg border border-neutral-border bg-neutral-surface2 px-3 py-2 text-[13px]">
-            <span className="text-content-secondary">
+          <div className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-[13px]">
+            <span className="text-white/65">
               {durationHours}h × {naira(hourlyRate)}/hr
             </span>
-            <span className="font-mono text-ink">{naira(sessionTotal)}</span>
+            <span className="font-mono text-white">{naira(sessionTotal)}</span>
           </div>
         )}
 
         {/* Deposit toggle + amount */}
         <Field label="Deposit">
-          <label className="mb-3 flex items-start gap-2.5 rounded-lg border border-neutral-border bg-neutral-surface px-3 py-2.5 hover:bg-neutral-surface2">
+          <label className="mb-3 flex items-start gap-2.5 rounded-lg border border-white/[0.06] bg-cinema-elev px-3 py-2.5 hover:bg-white/[0.02]">
             <input
               type="checkbox"
               checked={collectDeposit}
               onChange={(e) => setCollectDeposit(e.target.checked)}
-              className="mt-0.5 h-4 w-4 rounded border-neutral-border text-primary focus:ring-primary"
+              className="mt-0.5 h-4 w-4 rounded border-white/[0.06] text-primary focus:ring-primary"
             />
             <span>
-              <span className="block text-[13px] font-medium text-ink">Collect a deposit before reserving the slot</span>
-              <span className="block text-[12px] text-content-muted">Customer pays via RoutePay; the room is locked once payment confirms. Recommended — it's how studios stop ghost bookings.</span>
+              <span className="block text-[13px] font-medium text-white">Collect a deposit before reserving the slot</span>
+              <span className="block text-[12px] text-white/45">Customer pays via RoutePay; the room is locked once payment confirms. Recommended — it's how studios stop ghost bookings.</span>
             </span>
           </label>
           {collectDeposit && (
             <div className="flex items-center gap-2">
-              <span className="text-[14px] text-content-muted">₦</span>
+              <span className="text-[14px] text-white/45">₦</span>
               <TextInput
                 id="ns-deposit"
                 inputMode="numeric"
@@ -309,7 +309,7 @@ export function NewSessionModal({
                 <button
                   type="button"
                   onClick={() => setDepositAmount(String(suggestedDeposit))}
-                  className="whitespace-nowrap rounded-md border border-neutral-border px-2.5 py-1.5 text-[11px] font-medium text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+                  className="whitespace-nowrap rounded-md border border-white/[0.06] px-2.5 py-1.5 text-[11px] font-medium text-white/65 hover:bg-white/[0.02] hover:text-white"
                   title="Set to 50% of the session total"
                 >
                   50% of total
@@ -318,7 +318,7 @@ export function NewSessionModal({
             </div>
           )}
           {collectDeposit && (
-            <p className="mt-2 flex items-start gap-1.5 text-[11px] text-content-muted">
+            <p className="mt-2 flex items-start gap-1.5 text-[11px] text-white/45">
               <Wallet size={12} className="mt-0.5 shrink-0" />
               On Submit, you'll be sent to RoutePay's hosted checkout. The customer pays from there.
             </p>

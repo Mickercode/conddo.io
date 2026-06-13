@@ -121,7 +121,7 @@ export function InviteStaffModal({
         {/* Role picker — cards instead of <Select> so the description is
             visible inline rather than tucked into a hint */}
         <div>
-          <label className="mb-2 block text-[12px] font-medium uppercase tracking-[0.06em] text-content-secondary">
+          <label className="mb-2 block text-[12px] font-medium uppercase tracking-[0.06em] text-white/65">
             Role
           </label>
           <div className="space-y-2">
@@ -134,18 +134,18 @@ export function InviteStaffModal({
                   onClick={() => setSelectedRole(r.key)}
                   className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors ${
                     active
-                      ? "border-primary bg-primary-bg/30"
-                      : "border-neutral-border bg-neutral-surface hover:border-primary-light"
+                      ? "border-primary bg-primary/[0.08]/30"
+                      : "border-white/[0.06] bg-cinema-elev hover:border-primary-light"
                   }`}
                 >
                   <span className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full ${
-                    active ? "bg-primary text-white" : "border border-neutral-border"
+                    active ? "bg-primary text-white" : "border border-white/[0.06]"
                   }`}>
                     {active && <CheckCircle2 size={11} />}
                   </span>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[14px] font-medium text-ink">{r.label}</p>
-                    <p className="mt-0.5 text-[12px] text-content-secondary">{r.description}</p>
+                    <p className="text-[14px] font-medium text-white">{r.label}</p>
+                    <p className="mt-0.5 text-[12px] text-white/65">{r.description}</p>
                   </div>
                 </button>
               );
@@ -154,22 +154,22 @@ export function InviteStaffModal({
         </div>
 
         {/* Selected role's permission preview */}
-        <div className="rounded-xl border border-primary/20 bg-primary-bg/30 p-3">
+        <div className="rounded-xl border border-primary/20 bg-primary/[0.08]/30 p-3">
           <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.05em] text-primary">
             What {roleDef.label}s can do
           </p>
           <ul className="space-y-1">
             {roleDef.access.map((line, i) => (
-              <li key={i} className="flex items-start gap-2 text-[12px] text-content-secondary">
-                <CheckCircle2 size={11} className="mt-0.5 shrink-0 text-success" />
+              <li key={i} className="flex items-start gap-2 text-[12px] text-white/65">
+                <CheckCircle2 size={11} className="mt-0.5 shrink-0 text-emerald-300" />
                 <span>{line}</span>
               </li>
             ))}
           </ul>
         </div>
 
-        <p className="flex items-start gap-1.5 text-[11px] text-content-muted">
-          <Crown size={11} className="mt-0.5 shrink-0 text-warning" />
+        <p className="flex items-start gap-1.5 text-[11px] text-white/45">
+          <Crown size={11} className="mt-0.5 shrink-0 text-amber-300" />
           You can change someone's role anytime from this page. To make
           someone a second owner, change their role to Manager and contact
           support.

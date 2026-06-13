@@ -150,7 +150,7 @@ export function NewProgramModal({
                   key={c}
                   type="button"
                   onClick={() => setTargetCondition(c)}
-                  className="rounded-full border border-neutral-border bg-neutral-surface px-2.5 py-0.5 text-[11px] text-content-secondary hover:border-primary hover:text-primary"
+                  className="rounded-full border border-white/[0.06] bg-cinema-elev px-2.5 py-0.5 text-[11px] text-white/65 hover:border-primary hover:text-primary"
                 >
                   {c}
                 </button>
@@ -180,10 +180,10 @@ export function NewProgramModal({
 
         {/* Products */}
         <div>
-          <p className="mb-2 text-[12px] font-medium text-content-secondary">Products included</p>
+          <p className="mb-2 text-[12px] font-medium text-white/65">Products included</p>
           <div className="space-y-2">
             {lines.map((line, i) => (
-              <div key={i} className="grid grid-cols-[1fr_70px_120px_auto] gap-2 rounded-md bg-neutral-surface2 p-2">
+              <div key={i} className="grid grid-cols-[1fr_70px_120px_auto] gap-2 rounded-md bg-white/[0.02] p-2">
                 <Select value={line.productId} onChange={(e) => patchLine(i, { productId: e.target.value })}>
                   <option value="">Pick a product…</option>
                   {products.map((p) => (
@@ -207,7 +207,7 @@ export function NewProgramModal({
                   onClick={() => setLines((prev) => prev.length === 1 ? prev : prev.filter((_, j) => j !== i))}
                   disabled={lines.length === 1}
                   aria-label="Remove"
-                  className="inline-flex h-10 w-10 items-center justify-center rounded-md text-content-muted hover:bg-danger-bg hover:text-danger disabled:opacity-30"
+                  className="inline-flex h-10 w-10 items-center justify-center rounded-md text-white/45 hover:bg-rose-500/[0.06] hover:text-rose-200 disabled:opacity-30"
                 >
                   <Trash2 size={13} />
                 </button>
@@ -216,14 +216,14 @@ export function NewProgramModal({
             <button
               type="button"
               onClick={() => setLines((prev) => [...prev, { productId: "", quantity: "1", frequency: "MONTHLY" }])}
-              className="inline-flex items-center gap-1 rounded-md border border-dashed border-neutral-border px-3 py-1 text-[12px] font-medium text-content-secondary hover:border-primary hover:text-primary"
+              className="inline-flex items-center gap-1 rounded-md border border-dashed border-white/[0.06] px-3 py-1 text-[12px] font-medium text-white/65 hover:border-primary hover:text-primary"
             >
               <Plus size={12} /> Add product
             </button>
           </div>
         </div>
 
-        <p className="flex items-start gap-1.5 rounded-md bg-neutral-surface2 px-3 py-2 text-[11px] text-content-muted">
+        <p className="flex items-start gap-1.5 rounded-md bg-white/[0.02] px-3 py-2 text-[11px] text-white/45">
           <AlertCircle size={11} className="mt-0.5 shrink-0" />
           Programs are draft until you publish them — only then will they appear on your website for customers to enrol.
         </p>

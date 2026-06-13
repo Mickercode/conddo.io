@@ -29,15 +29,15 @@ export function DashboardProgramsWidget() {
   );
 
   return (
-    <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+    <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary-bg text-primary">
+          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-primary/[0.08] text-primary">
             <ClipboardPlus size={15} />
           </span>
           <div>
-            <h3 className="text-[14px] font-medium text-ink">Care programs</h3>
-            <p className="text-[12px] text-content-muted">
+            <h3 className="text-[14px] font-medium text-white">Care programs</h3>
+            <p className="text-[12px] text-white/45">
               {publishedCount === 0 ? "No published programs yet." : (
                 <>{publishedCount} program{publishedCount === 1 ? "" : "s"} live</>
               )}
@@ -53,22 +53,22 @@ export function DashboardProgramsWidget() {
       </div>
 
       {programsQ.loading ? (
-        <p className="py-4 text-center text-[12px] text-content-muted">Loading…</p>
+        <p className="py-4 text-center text-[12px] text-white/45">Loading…</p>
       ) : (
         <div className="grid grid-cols-2 gap-3">
-          <div className="rounded-md bg-neutral-surface2 px-3 py-2.5">
-            <p className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.05em] text-content-muted">
+          <div className="rounded-md bg-white/[0.02] px-3 py-2.5">
+            <p className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.05em] text-white/45">
               <Users size={10} /> Enrolled
             </p>
-            <p className="mt-1 font-mono text-[20px] font-medium leading-none text-ink">
+            <p className="mt-1 font-mono text-[20px] font-medium leading-none text-white">
               {totalEnrolled}
             </p>
           </div>
-          <div className="rounded-md bg-success-bg/50 px-3 py-2.5">
-            <p className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.05em] text-success">
+          <div className="rounded-md bg-emerald-500/15/50 px-3 py-2.5">
+            <p className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.05em] text-emerald-300">
               <TrendingUp size={10} /> MRR
             </p>
-            <p className="mt-1 font-mono text-[20px] font-medium leading-none text-success">
+            <p className="mt-1 font-mono text-[20px] font-medium leading-none text-emerald-300">
               {naira(mrr)}
             </p>
           </div>

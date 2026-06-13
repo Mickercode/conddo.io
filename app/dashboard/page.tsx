@@ -48,10 +48,10 @@ const STAT_META: { key: StatKey; label: string; icon: LucideIcon; href: string; 
 ];
 
 const deltaColor: Record<Tone, string> = {
-  success: "text-success",
-  warning: "text-warning",
-  danger: "text-danger",
-  neutral: "text-content-muted",
+  success: "text-emerald-300",
+  warning: "text-amber-300",
+  danger: "text-rose-200",
+  neutral: "text-white/45",
 };
 
 const stageTone = (stage?: string): "info" | "warning" | "primary" | "success" | "neutral" => {
@@ -100,15 +100,15 @@ function SetupNudge({
   }
 
   return (
-    <div className="mb-6 rounded-lg bg-warning-bg px-5 py-4">
+    <div className="mb-6 rounded-lg bg-amber-500/15 px-5 py-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-warning/15 text-warning">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-warning/15 text-amber-300">
             <Rocket size={18} />
           </span>
           <div>
-            <p className="text-[14px] font-medium text-ink">Finish setting up your business</p>
-            <p className="text-[13px] text-content-secondary">
+            <p className="text-[14px] font-medium text-white">Finish setting up your business</p>
+            <p className="text-[13px] text-white/65">
               {checklist.completed} of {checklist.total} steps complete
             </p>
           </div>
@@ -117,11 +117,11 @@ function SetupNudge({
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="inline-flex items-center gap-1 text-[13px] text-content-secondary hover:text-ink"
+            className="inline-flex items-center gap-1 text-[13px] text-white/65 hover:text-white"
           >
             {expanded ? (<><ChevronUp size={14} /> Hide</>) : (<><ChevronDown size={14} /> Show steps</>)}
           </button>
-          <Link href="/settings" className="text-[14px] font-medium text-warning hover:underline">
+          <Link href="/settings" className="text-[14px] font-medium text-amber-300 hover:underline">
             Continue setup →
           </Link>
         </div>
@@ -131,15 +131,15 @@ function SetupNudge({
           {checklist.steps.map((step) => (
             <li
               key={step.key}
-              className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 hover:bg-warning-bg/60"
+              className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 hover:bg-amber-500/15/60"
             >
               <span className="flex items-center gap-2 text-[13px]">
                 {step.done ? (
-                  <Check size={13} className="text-success" />
+                  <Check size={13} className="text-emerald-300" />
                 ) : (
                   <span className="block h-3 w-3 rounded-full border border-content-muted" />
                 )}
-                <span className={step.done ? "text-content-muted line-through" : "text-content-secondary"}>
+                <span className={step.done ? "text-white/45 line-through" : "text-white/65"}>
                   {step.label}
                 </span>
               </span>
@@ -150,7 +150,7 @@ function SetupNudge({
                   disabled={dismissingKey !== null}
                   aria-label={`Dismiss ${step.label}`}
                   title="Skip this step"
-                  className="inline-flex h-6 w-6 items-center justify-center rounded-md text-content-muted hover:bg-warning/20 hover:text-warning disabled:opacity-50"
+                  className="inline-flex h-6 w-6 items-center justify-center rounded-md text-white/45 hover:bg-warning/20 hover:text-amber-300 disabled:opacity-50"
                 >
                   {dismissingKey === step.key ? (
                     <Loader2 size={11} className="animate-spin" />
@@ -220,16 +220,16 @@ export default function DashboardPage() {
           const inner = (
             <>
               <div className="mb-3 flex items-start justify-between">
-                <p className="text-[13px] text-content-secondary">{label}</p>
-                <Icon size={18} className="text-content-muted" />
+                <p className="text-[13px] text-white/65">{label}</p>
+                <Icon size={18} className="text-white/45" />
               </div>
-              <p className="font-mono text-[24px] font-medium leading-none text-ink">{value}</p>
+              <p className="font-mono text-[24px] font-medium leading-none text-white">{value}</p>
               <p className={`mt-2 text-[12px] ${deltaColor[tone]}`}>{s?.delta ?? " "}</p>
             </>
           );
-          const base = "rounded-lg border border-neutral-border bg-neutral-surface p-5";
+          const base = "rounded-lg border border-white/[0.06] bg-cinema-elev p-5";
           return (
-            <Link key={key} href={href} className={`${base} block transition-colors hover:border-primary hover:bg-neutral-surface2/40`}>
+            <Link key={key} href={href} className={`${base} block transition-colors hover:border-primary hover:bg-white/[0.02]/40`}>
               {inner}
             </Link>
           );
@@ -249,9 +249,9 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         {/* Recent orders */}
         {showOrders && (
-        <div className="rounded-lg border border-neutral-border bg-neutral-surface lg:col-span-2">
-          <div className="flex items-center justify-between border-b border-neutral-border px-5 py-4">
-            <h2 className="text-[15px] font-medium text-ink">Recent Orders</h2>
+        <div className="rounded-lg border border-white/[0.06] bg-cinema-elev lg:col-span-2">
+          <div className="flex items-center justify-between border-b border-white/[0.06] px-5 py-4">
+            <h2 className="text-[15px] font-medium text-white">Recent Orders</h2>
             <a href="/orders" className="text-[13px] font-medium text-primary hover:underline">
               View all orders
             </a>
@@ -259,26 +259,26 @@ export default function DashboardPage() {
           <div className="overflow-x-auto">
           <table className="w-full min-w-[540px] text-left">
             <thead>
-              <tr className="border-b border-neutral-border text-[11px] uppercase tracking-[0.05em] text-content-muted">
+              <tr className="border-b border-white/[0.06] text-[11px] uppercase tracking-[0.05em] text-white/45">
                 <th className="whitespace-nowrap px-5 py-2.5 font-medium">Order ID</th>
                 <th className="whitespace-nowrap px-5 py-2.5 font-medium">Customer</th>
                 <th className="whitespace-nowrap px-5 py-2.5 font-medium">Status</th>
                 <th className="whitespace-nowrap px-5 py-2.5 text-right font-medium">Amount</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-neutral-border">
+            <tbody className="divide-y divide-white/[0.06]">
               {recent.length > 0 ? (
                 recent.map((o) => (
                   <tr key={o.id}>
-                    <td className="whitespace-nowrap px-5 py-3 font-mono text-[13px] text-content-secondary">{o.id}</td>
-                    <td className="whitespace-nowrap px-5 py-3 text-[14px] text-ink">{o.customer}</td>
+                    <td className="whitespace-nowrap px-5 py-3 font-mono text-[13px] text-white/65">{o.id}</td>
+                    <td className="whitespace-nowrap px-5 py-3 text-[14px] text-white">{o.customer}</td>
                     <td className="whitespace-nowrap px-5 py-3"><Chip tone={stageTone(o.stage)}>{o.stage ?? "—"}</Chip></td>
-                    <td className="whitespace-nowrap px-5 py-3 text-right font-mono text-[13px] text-ink">{naira(o.amount)}</td>
+                    <td className="whitespace-nowrap px-5 py-3 text-right font-mono text-[13px] text-white">{naira(o.amount)}</td>
                   </tr>
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4} className="px-5 py-10 text-center text-[14px] text-content-secondary">No orders yet</td>
+                  <td colSpan={4} className="px-5 py-10 text-center text-[14px] text-white/65">No orders yet</td>
                 </tr>
               )}
             </tbody>
@@ -292,29 +292,29 @@ export default function DashboardPage() {
         <div className={`space-y-6 ${showOrders ? "" : "lg:col-span-3"}`}>
           {/* Website status */}
           {showWebsite && (
-          <div className="rounded-lg border border-neutral-border bg-neutral-surface p-5">
+          <div className="rounded-lg border border-white/[0.06] bg-cinema-elev p-5">
             <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-[15px] font-medium text-ink">Website Status</h2>
+              <h2 className="text-[15px] font-medium text-white">Website Status</h2>
               {website?.subdomain ? <Chip tone="success">● Live</Chip> : <Chip tone="warning">In progress</Chip>}
             </div>
             {website?.subdomain ? (
               <>
-                <div className="mb-4 rounded-md bg-neutral-surface2 px-3 py-2 font-mono text-[12px] text-content-secondary">
+                <div className="mb-4 rounded-md bg-white/[0.02] px-3 py-2 font-mono text-[12px] text-white/65">
                   {website.subdomain}.conddo.io
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <p className="font-mono text-[20px] font-medium leading-none text-ink">{website.visitsToday ?? 0}</p>
-                    <p className="mt-1 text-[12px] text-content-muted">Visits today</p>
+                    <p className="font-mono text-[20px] font-medium leading-none text-white">{website.visitsToday ?? 0}</p>
+                    <p className="mt-1 text-[12px] text-white/45">Visits today</p>
                   </div>
                   <div>
-                    <p className="font-mono text-[20px] font-medium leading-none text-ink">{website.enquiries ?? 0}</p>
-                    <p className="mt-1 text-[12px] text-content-muted">New enquiries</p>
+                    <p className="font-mono text-[20px] font-medium leading-none text-white">{website.enquiries ?? 0}</p>
+                    <p className="mt-1 text-[12px] text-white/45">New enquiries</p>
                   </div>
                 </div>
               </>
             ) : (
-              <p className="text-[13px] leading-relaxed text-content-secondary">
+              <p className="text-[13px] leading-relaxed text-white/65">
                 Your website is being set up. Its status and traffic will appear here once it&apos;s live.
               </p>
             )}
@@ -323,27 +323,27 @@ export default function DashboardPage() {
 
           {/* Today's bookings */}
           {showBookings && (
-          <div className="rounded-lg border border-neutral-border bg-neutral-surface">
-            <div className="border-b border-neutral-border px-5 py-4">
-              <h2 className="text-[15px] font-medium text-ink">Today&apos;s Bookings</h2>
+          <div className="rounded-lg border border-white/[0.06] bg-cinema-elev">
+            <div className="border-b border-white/[0.06] px-5 py-4">
+              <h2 className="text-[15px] font-medium text-white">Today&apos;s Bookings</h2>
             </div>
             {todays.length > 0 ? (
-              <ul className="divide-y divide-neutral-border">
+              <ul className="divide-y divide-white/[0.06]">
                 {todays.map((b) => (
                   <li key={b.id} className="flex items-center gap-3 px-5 py-3">
-                    <span className="shrink-0 rounded-md bg-primary-bg px-2 py-1 font-mono text-[11px] font-medium text-primary">
+                    <span className="shrink-0 rounded-md bg-primary/[0.08] px-2 py-1 font-mono text-[11px] font-medium text-primary">
                       {fmtTime(b.start)}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[14px] text-ink">{b.customer}</p>
-                      <p className="truncate text-[12px] text-content-muted">{b.service}</p>
+                      <p className="truncate text-[14px] text-white">{b.customer}</p>
+                      <p className="truncate text-[12px] text-white/45">{b.service}</p>
                     </div>
-                    <ChevronRight size={16} className="text-content-muted" />
+                    <ChevronRight size={16} className="text-white/45" />
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="px-5 py-8 text-center text-[14px] text-content-secondary">No bookings today</p>
+              <p className="px-5 py-8 text-center text-[14px] text-white/65">No bookings today</p>
             )}
             <div className="px-5 py-4">
               <Button href="/bookings" variant="secondary" size="md" className="w-full">

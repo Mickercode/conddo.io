@@ -62,7 +62,7 @@ export default function EmrPage({ params }: { params: { customerId: string } }) 
     <AppShell title="Medical record" subtitle="Patient EMR">
       <Link
         href={`/customers/${customerId}`}
-        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-content-secondary hover:text-ink"
+        className="mb-4 inline-flex items-center gap-1.5 text-[13px] text-white/65 hover:text-white"
       >
         <ArrowLeft size={14} /> Back to patient
       </Link>
@@ -151,14 +151,14 @@ function EmrBody({ customerId }: { customerId: string }) {
   return (
     <>
       {/* Patient identity strip */}
-      <div className="mb-6 flex flex-col items-start justify-between gap-3 rounded-2xl border border-neutral-border bg-neutral-surface p-5 sm:flex-row sm:items-center">
+      <div className="mb-6 flex flex-col items-start justify-between gap-3 rounded-2xl border border-white/[0.06] bg-cinema-elev p-5 sm:flex-row sm:items-center">
         <div className="flex items-center gap-4">
-          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary-bg font-mono text-[15px] font-semibold text-primary">
+          <span className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/[0.08] font-mono text-[15px] font-semibold text-primary">
             {(customer?.name ?? "?").trim().split(/\s+/).slice(0, 2).map((s) => s[0]?.toUpperCase()).join("") || "?"}
           </span>
           <div>
-            <p className="text-[16px] font-medium text-ink">{customer?.name ?? "Loading…"}</p>
-            <p className="text-[13px] text-content-muted">{customer?.phone ?? "—"} · {customer?.email ?? "—"}</p>
+            <p className="text-[16px] font-medium text-white">{customer?.name ?? "Loading…"}</p>
+            <p className="text-[13px] text-white/45">{customer?.phone ?? "—"} · {customer?.email ?? "—"}</p>
           </div>
         </div>
         <div className="flex gap-2">
@@ -175,10 +175,10 @@ function EmrBody({ customerId }: { customerId: string }) {
         {/* Main column */}
         <div className="space-y-6">
           {/* Demographics */}
-          <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-5">
             <div className="mb-4 flex items-center gap-2">
               <Heart size={16} className="text-primary" />
-              <h2 className="text-[15px] font-medium text-ink">Demographics & vitals</h2>
+              <h2 className="text-[15px] font-medium text-white">Demographics & vitals</h2>
             </div>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
               <Field label="Blood group" htmlFor="d-blood">
@@ -230,9 +230,9 @@ function EmrBody({ customerId }: { customerId: string }) {
             keyOf={(a) => a.substance}
             render={(a: EmrAllergy) => (
               <>
-                <span className="font-medium text-ink">{a.substance}</span>
+                <span className="font-medium text-white">{a.substance}</span>
                 {a.severity && <Chip tone="danger">{a.severity}</Chip>}
-                {a.reaction && <span className="text-[12px] text-content-muted">— {a.reaction}</span>}
+                {a.reaction && <span className="text-[12px] text-white/45">— {a.reaction}</span>}
               </>
             )}
             onChange={async (next) => {
@@ -260,9 +260,9 @@ function EmrBody({ customerId }: { customerId: string }) {
             keyOf={(c) => c.name}
             render={(c: EmrCondition) => (
               <>
-                <span className="font-medium text-ink">{c.name}</span>
+                <span className="font-medium text-white">{c.name}</span>
                 {c.status && <Chip tone={c.status === "Resolved" ? "success" : "neutral"}>{c.status}</Chip>}
-                {c.diagnosedAt && <span className="text-[12px] text-content-muted">since {fmtDate(c.diagnosedAt)}</span>}
+                {c.diagnosedAt && <span className="text-[12px] text-white/45">since {fmtDate(c.diagnosedAt)}</span>}
               </>
             )}
             onChange={async (next) => {
@@ -290,9 +290,9 @@ function EmrBody({ customerId }: { customerId: string }) {
             keyOf={(i) => `${i.vaccine}-${i.administeredAt}`}
             render={(i: EmrImmunization) => (
               <>
-                <span className="font-medium text-ink">{i.vaccine}</span>
+                <span className="font-medium text-white">{i.vaccine}</span>
                 {typeof i.doseNumber === "number" && <Chip tone="primary">Dose {i.doseNumber}</Chip>}
-                <span className="text-[12px] text-content-muted">{fmtDate(i.administeredAt)}</span>
+                <span className="text-[12px] text-white/45">{fmtDate(i.administeredAt)}</span>
               </>
             )}
             onChange={async (next) => {
@@ -315,11 +315,11 @@ function EmrBody({ customerId }: { customerId: string }) {
         {/* Right column */}
         <div className="space-y-6">
           {/* Documents */}
-          <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-5">
             <div className="mb-3 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <FileText size={16} className="text-primary" />
-                <h3 className="text-[15px] font-medium text-ink">Documents</h3>
+                <h3 className="text-[15px] font-medium text-white">Documents</h3>
               </div>
               <button
                 type="button"
@@ -330,13 +330,13 @@ function EmrBody({ customerId }: { customerId: string }) {
               </button>
             </div>
             {docs.length === 0 ? (
-              <p className="text-[12px] text-content-muted">No documents yet.</p>
+              <p className="text-[12px] text-white/45">No documents yet.</p>
             ) : (
               <ul className="space-y-2">
                 {docs.map((d) => (
-                  <li key={d.id} className="rounded-md bg-neutral-surface2 px-3 py-2">
+                  <li key={d.id} className="rounded-md bg-white/[0.02] px-3 py-2">
                     <div className="flex items-center justify-between gap-2">
-                      <p className="truncate text-[13px] font-medium text-ink">
+                      <p className="truncate text-[13px] font-medium text-white">
                         {d.label ?? DOC_TYPE_LABELS[d.docType]}
                       </p>
                       <a
@@ -344,12 +344,12 @@ function EmrBody({ customerId }: { customerId: string }) {
                         target="_blank"
                         rel="noreferrer"
                         aria-label="Open document"
-                        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-content-muted hover:bg-primary-bg hover:text-primary"
+                        className="inline-flex h-7 w-7 items-center justify-center rounded-md text-white/45 hover:bg-primary/[0.08] hover:text-primary"
                       >
                         <ExternalLink size={12} />
                       </a>
                     </div>
-                    <p className="mt-0.5 text-[11px] text-content-muted">
+                    <p className="mt-0.5 text-[11px] text-white/45">
                       {DOC_TYPE_LABELS[d.docType]} · {fmtWhen(d.uploadedAt)}
                     </p>
                   </li>
@@ -359,11 +359,11 @@ function EmrBody({ customerId }: { customerId: string }) {
           </div>
 
           {/* Clinical notes timeline */}
-          <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-5">
+          <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-5">
             <div className="mb-3 flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <ClipboardList size={16} className="text-primary" />
-                <h3 className="text-[15px] font-medium text-ink">Clinical notes</h3>
+                <h3 className="text-[15px] font-medium text-white">Clinical notes</h3>
               </div>
               <button
                 type="button"
@@ -381,23 +381,23 @@ function EmrBody({ customerId }: { customerId: string }) {
               onRetry={emrQ.refetch}
               loadingLabel="Loading…"
               empty={
-                <p className="text-[12px] text-content-muted">No clinical notes yet.</p>
+                <p className="text-[12px] text-white/45">No clinical notes yet.</p>
               }
             >
               <ol className="relative space-y-4 before:absolute before:bottom-2 before:left-[11px] before:top-2 before:w-px before:bg-neutral-border">
                 {notes.map((n, i) => (
                   <li key={n.id} className="relative flex gap-3">
-                    <span className={`z-10 mt-1 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border bg-neutral-surface ${i === 0 ? "border-primary" : "border-neutral-border"}`}>
+                    <span className={`z-10 mt-1 flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full border bg-cinema-elev ${i === 0 ? "border-primary" : "border-white/[0.06]"}`}>
                       <span className={`h-1.5 w-1.5 rounded-full ${i === 0 ? "bg-primary" : "bg-neutral-strong"}`} />
                     </span>
                     <div className="min-w-0 flex-1">
                       <div className="mb-0.5 flex flex-wrap items-center gap-1.5">
                         <Chip tone={noteTone(n.noteType)}>{NOTE_TYPE_LABELS[n.noteType]}</Chip>
-                        <span className="font-mono text-[10px] text-content-muted">{fmtWhen(n.createdAt)}</span>
+                        <span className="font-mono text-[10px] text-white/45">{fmtWhen(n.createdAt)}</span>
                       </div>
-                      <p className="whitespace-pre-line text-[13px] text-content-secondary">{n.note}</p>
+                      <p className="whitespace-pre-line text-[13px] text-white/65">{n.note}</p>
                       {n.createdBy?.name && (
-                        <p className="mt-0.5 text-[10px] text-content-muted">By {n.createdBy.name}</p>
+                        <p className="mt-0.5 text-[10px] text-white/45">By {n.createdBy.name}</p>
                       )}
                     </div>
                   </li>
@@ -408,7 +408,7 @@ function EmrBody({ customerId }: { customerId: string }) {
         </div>
       </div>
 
-      <p className="mt-6 flex items-center gap-1.5 text-[11px] text-content-muted">
+      <p className="mt-6 flex items-center gap-1.5 text-[11px] text-white/45">
         <AlertCircle size={11} />
         Clinical notes are immutable. Documents are stored privately — pre-signed URLs only.
       </p>
@@ -478,17 +478,17 @@ function ListSection<T>({
   }
 
   const toneClass: Record<typeof tone, string> = {
-    danger: "text-danger",
-    warning: "text-warning",
+    danger: "text-rose-200",
+    warning: "text-amber-300",
     primary: "text-primary",
   };
 
   return (
-    <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-5">
+    <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-5">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Icon size={16} className={toneClass[tone]} />
-          <h2 className="text-[15px] font-medium text-ink">{title}</h2>
+          <h2 className="text-[15px] font-medium text-white">{title}</h2>
         </div>
         {!adding && (
           <button
@@ -502,9 +502,9 @@ function ListSection<T>({
       </div>
 
       {items.length === 0 && !adding && (
-        <div className="rounded-md bg-neutral-surface2 px-4 py-6 text-center">
-          <p className="text-[13px] font-medium text-ink">{emptyTitle}</p>
-          <p className="mt-0.5 text-[12px] text-content-muted">{emptyDesc}</p>
+        <div className="rounded-md bg-white/[0.02] px-4 py-6 text-center">
+          <p className="text-[13px] font-medium text-white">{emptyTitle}</p>
+          <p className="mt-0.5 text-[12px] text-white/45">{emptyDesc}</p>
         </div>
       )}
 
@@ -512,14 +512,14 @@ function ListSection<T>({
         {items.map((it, idx) => (
           <li
             key={keyOf(it)}
-            className="group flex items-center justify-between gap-3 rounded-md bg-neutral-surface2 px-3 py-2"
+            className="group flex items-center justify-between gap-3 rounded-md bg-white/[0.02] px-3 py-2"
           >
             <span className="flex min-w-0 flex-wrap items-center gap-2 text-[13px]">{render(it)}</span>
             <button
               type="button"
               onClick={() => remove(idx)}
               aria-label="Remove"
-              className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-content-muted opacity-0 transition-opacity hover:bg-danger-bg hover:text-danger group-hover:opacity-100"
+              className="inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-white/45 opacity-0 transition-opacity hover:bg-rose-500/[0.06] hover:text-rose-200 group-hover:opacity-100"
             >
               <Trash2 size={12} />
             </button>
@@ -528,7 +528,7 @@ function ListSection<T>({
       </ul>
 
       {adding && (
-        <div className="mt-3 rounded-md border border-primary/20 bg-primary-bg/30 p-3">
+        <div className="mt-3 rounded-md border border-primary/20 bg-primary/[0.08]/30 p-3">
           {editor(adding, setAdding)}
           <div className="mt-3 flex items-center justify-end gap-2">
             <Button variant="secondary" size="md" onClick={() => setAdding(null)} disabled={saving}>

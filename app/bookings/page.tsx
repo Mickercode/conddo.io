@@ -129,24 +129,24 @@ export default function BookingsPage() {
         {/* Calendar + upcoming */}
         <div className="min-w-0 space-y-6">
           {/* Toolbar */}
-          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-neutral-border bg-neutral-surface p-3">
+          <div className="flex flex-wrap items-center justify-between gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-3">
             <div className="flex flex-wrap items-center gap-4">
-              <span className="rounded-md bg-neutral-surface2 px-3 py-1.5 text-[13px] font-bold text-primary">Week</span>
+              <span className="rounded-md bg-white/[0.02] px-3 py-1.5 text-[13px] font-bold text-primary">Week</span>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
                   aria-label="Previous week"
                   onClick={() => setWeekOffset((n) => n - 1)}
-                  className="rounded-full p-1 text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+                  className="rounded-full p-1 text-white/65 hover:bg-white/[0.02] hover:text-white"
                 >
                   <ChevronLeft size={20} />
                 </button>
-                <span className="px-1 text-[15px] font-medium text-ink">{monthLabel}</span>
+                <span className="px-1 text-[15px] font-medium text-white">{monthLabel}</span>
                 <button
                   type="button"
                   aria-label="Next week"
                   onClick={() => setWeekOffset((n) => n + 1)}
-                  className="rounded-full p-1 text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+                  className="rounded-full p-1 text-white/65 hover:bg-white/[0.02] hover:text-white"
                 >
                   <ChevronRight size={20} />
                 </button>
@@ -156,23 +156,23 @@ export default function BookingsPage() {
               type="button"
               onClick={() => setWeekOffset(0)}
               disabled={weekOffset === 0}
-              className="rounded-lg border border-neutral-border px-4 py-1.5 text-[13px] font-medium text-ink hover:bg-neutral-surface2 disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent"
+              className="rounded-lg border border-white/[0.06] px-4 py-1.5 text-[13px] font-medium text-white hover:bg-white/[0.02] disabled:cursor-default disabled:opacity-40 disabled:hover:bg-transparent"
             >
               Today
             </button>
           </div>
 
           {/* Week grid */}
-          <div className="overflow-x-auto rounded-xl border border-neutral-border bg-neutral-surface">
+          <div className="overflow-x-auto rounded-xl border border-white/[0.06] bg-cinema-elev">
             <div className="min-w-[720px]">
-              <div className="grid grid-cols-[64px_repeat(7,1fr)] border-b border-neutral-border bg-neutral-surface2">
-                <div className="border-r border-neutral-border" />
+              <div className="grid grid-cols-[64px_repeat(7,1fr)] border-b border-white/[0.06] bg-white/[0.02]">
+                <div className="border-r border-white/[0.06]" />
                 {dates.map((d, i) => {
                   const isToday = sameDay(d, today);
                   return (
-                    <div key={i} className={`border-r border-neutral-border p-3 text-center last:border-r-0 ${isToday ? "bg-primary-bg/40" : ""}`}>
-                      <div className={`text-[11px] uppercase tracking-[0.05em] ${isToday ? "font-bold text-primary" : "text-content-muted"}`}>{DOW[i]}</div>
-                      <div className={`text-[16px] ${isToday ? "font-bold text-primary" : "text-ink"}`}>{d.getDate()}</div>
+                    <div key={i} className={`border-r border-white/[0.06] p-3 text-center last:border-r-0 ${isToday ? "bg-primary/[0.08]/40" : ""}`}>
+                      <div className={`text-[11px] uppercase tracking-[0.05em] ${isToday ? "font-bold text-primary" : "text-white/45"}`}>{DOW[i]}</div>
+                      <div className={`text-[16px] ${isToday ? "font-bold text-primary" : "text-white"}`}>{d.getDate()}</div>
                     </div>
                   );
                 })}
@@ -182,19 +182,19 @@ export default function BookingsPage() {
                 <div>
                   {HOURS.map((h) => (
                     <div key={h} className="relative h-[60px]">
-                      <span className="absolute -top-2 right-2 font-mono text-[11px] text-content-muted">{pad(h)}</span>
+                      <span className="absolute -top-2 right-2 font-mono text-[11px] text-white/45">{pad(h)}</span>
                     </div>
                   ))}
                 </div>
                 <div className="relative" style={{ height: GRID_HEIGHT }}>
                   <div className="absolute inset-0 grid grid-cols-7">
                     {dates.map((d, i) => (
-                      <div key={i} className={`border-r border-neutral-border last:border-r-0 ${sameDay(d, today) ? "bg-primary-bg/10" : ""}`} />
+                      <div key={i} className={`border-r border-white/[0.06] last:border-r-0 ${sameDay(d, today) ? "bg-primary/[0.08]/10" : ""}`} />
                     ))}
                   </div>
                   <div className="absolute inset-0">
                     {HOURS.map((h) => (
-                      <div key={h} className="h-[60px] border-b border-neutral-border/60" />
+                      <div key={h} className="h-[60px] border-b border-white/[0.06]/60" />
                     ))}
                   </div>
                   {evs.map((ev) => {
@@ -206,7 +206,7 @@ export default function BookingsPage() {
                         className="absolute p-1"
                         style={{ left: `${(pos.dayIdx / 7) * 100}%`, width: `${100 / 7}%`, top: pos.top, height: pos.height }}
                       >
-                        <div className="flex h-full w-full cursor-pointer flex-col justify-center overflow-hidden rounded-r-md border-l-4 border-primary bg-primary-bg p-2 transition-all hover:brightness-105">
+                        <div className="flex h-full w-full cursor-pointer flex-col justify-center overflow-hidden rounded-r-md border-l-4 border-primary bg-primary/[0.08] p-2 transition-all hover:brightness-105">
                           <div className="truncate text-[11px] font-bold text-primary">{ev.customer}</div>
                           <div className="truncate text-[10px] text-primary/80">{ev.service}</div>
                         </div>
@@ -220,20 +220,20 @@ export default function BookingsPage() {
 
           {/* Upcoming */}
           <div>
-            <h2 className="mb-4 text-[18px] font-medium tracking-[-0.01em] text-ink">Upcoming this week</h2>
+            <h2 className="mb-4 text-[18px] font-medium tracking-[-0.01em] text-white">Upcoming this week</h2>
             {upcomingList.length > 0 ? (
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {upcomingList.map((u) => (
-                  <div key={u.id} className="flex flex-col gap-3 rounded-xl border border-neutral-border bg-neutral-surface p-5">
+                  <div key={u.id} className="flex flex-col gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
                     <div className="flex items-start justify-between">
-                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary-bg text-primary"><User size={20} /></span>
-                      {u.when && <span className="rounded bg-neutral-surface2 px-2 py-1 text-[11px] text-content-secondary">{u.when}</span>}
+                      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/[0.08] text-primary"><User size={20} /></span>
+                      {u.when && <span className="rounded bg-white/[0.02] px-2 py-1 text-[11px] text-white/65">{u.when}</span>}
                     </div>
                     <div>
-                      <p className="text-[15px] font-bold text-ink">{u.customer}</p>
-                      <p className="text-[14px] text-content-secondary">{u.service}</p>
+                      <p className="text-[15px] font-bold text-white">{u.customer}</p>
+                      <p className="text-[14px] text-white/65">{u.service}</p>
                     </div>
-                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-neutral-border pt-3 text-[11px] text-content-muted">
+                    <div className="flex flex-wrap items-center gap-x-4 gap-y-1 border-t border-white/[0.06] pt-3 text-[11px] text-white/45">
                       <span className="flex items-center gap-1 font-mono"><Clock size={14} /> {fmtTime(u.start)}</span>
                       {u.mode && <span className="flex items-center gap-1">{u.mode === "in-person" ? <MapPin size={14} /> : <Video size={14} />} {u.mode}</span>}
                     </div>
@@ -241,7 +241,7 @@ export default function BookingsPage() {
                 ))}
               </div>
             ) : (
-              <div className="rounded-xl border border-neutral-border bg-neutral-surface px-6 py-10 text-center text-[14px] text-content-secondary">
+              <div className="rounded-xl border border-white/[0.06] bg-cinema-elev px-6 py-10 text-center text-[14px] text-white/65">
                 No upcoming bookings this week.
               </div>
             )}
@@ -249,18 +249,18 @@ export default function BookingsPage() {
         </div>
 
         {/* Availability sidebar */}
-        <aside className="space-y-8 rounded-xl border border-neutral-border bg-neutral-surface p-6">
-          <h3 className="text-[16px] font-medium text-ink">Availability Settings</h3>
+        <aside className="space-y-8 rounded-xl border border-white/[0.06] bg-cinema-elev p-6">
+          <h3 className="text-[16px] font-medium text-white">Availability Settings</h3>
 
           <div>
-            <p className="mb-2 text-[11px] uppercase tracking-[0.05em] text-content-muted">Working Hours</p>
+            <p className="mb-2 text-[11px] uppercase tracking-[0.05em] text-white/45">Working Hours</p>
             <div className="space-y-1.5">
               {DAY_KEYS.map((k, i) => {
                 const h = hours?.[k];
                 return (
-                  <div key={k} className="flex items-center justify-between rounded-lg border border-neutral-border bg-neutral-bg px-3 py-2">
-                    <span className="text-[14px] font-medium text-ink">{DOW[i]}</span>
-                    <span className="font-mono text-[13px] text-content-secondary">
+                  <div key={k} className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-cinema-base px-3 py-2">
+                    <span className="text-[14px] font-medium text-white">{DOW[i]}</span>
+                    <span className="font-mono text-[13px] text-white/65">
                       {h ? (h.open ? `${h.start} - ${h.end}` : "Closed") : "—"}
                     </span>
                   </div>
@@ -272,12 +272,12 @@ export default function BookingsPage() {
 
           <div className="space-y-4">
             <div className="flex items-center justify-between">
-              <span className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Booking Duration</span>
-              <span className="font-mono text-[13px] text-ink">{availability ? `${availability.slotDurationMinutes} min` : "—"}</span>
+              <span className="text-[11px] uppercase tracking-[0.05em] text-white/45">Booking Duration</span>
+              <span className="font-mono text-[13px] text-white">{availability ? `${availability.slotDurationMinutes} min` : "—"}</span>
             </div>
             <div className="flex items-center justify-between">
-              <span className="text-[11px] uppercase tracking-[0.05em] text-content-muted">Buffer Time</span>
-              <span className="font-mono text-[13px] text-ink">
+              <span className="text-[11px] uppercase tracking-[0.05em] text-white/45">Buffer Time</span>
+              <span className="font-mono text-[13px] text-white">
                 {availability ? (availability.bufferMinutes === 0 ? "No buffer" : `${availability.bufferMinutes} min`) : "—"}
               </span>
             </div>
@@ -286,33 +286,33 @@ export default function BookingsPage() {
             </Button>
           </div>
 
-          <div className="border-t border-neutral-border pt-6">
-            <p className="mb-2 text-[11px] uppercase tracking-[0.05em] text-content-muted">Shareable Link</p>
-            <div className="rounded-xl border border-neutral-border bg-neutral-surface2 p-4">
-              <p className="mb-2 text-[12px] text-content-muted">Allow clients to book directly on your calendar.</p>
-              <div className="mb-3 flex items-center gap-2 rounded-lg border border-neutral-border bg-neutral-surface p-2">
-                <span className="flex-1 truncate font-mono text-[11px] text-content-secondary">{bookingLink}</span>
-                <button onClick={copyLink} aria-label="Copy link" className="rounded-md p-1 text-content-muted hover:bg-neutral-surface2 hover:text-ink"><Copy size={14} /></button>
+          <div className="border-t border-white/[0.06] pt-6">
+            <p className="mb-2 text-[11px] uppercase tracking-[0.05em] text-white/45">Shareable Link</p>
+            <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+              <p className="mb-2 text-[12px] text-white/45">Allow clients to book directly on your calendar.</p>
+              <div className="mb-3 flex items-center gap-2 rounded-lg border border-white/[0.06] bg-cinema-elev p-2">
+                <span className="flex-1 truncate font-mono text-[11px] text-white/65">{bookingLink}</span>
+                <button onClick={copyLink} aria-label="Copy link" className="rounded-md p-1 text-white/45 hover:bg-white/[0.02] hover:text-white"><Copy size={14} /></button>
               </div>
-              <button onClick={copyLink} className="w-full rounded-lg border border-primary-border bg-primary-bg py-2 text-[14px] font-bold text-primary transition-colors hover:bg-primary/10">
+              <button onClick={copyLink} className="w-full rounded-lg border border-primary/20 bg-primary/[0.08] py-2 text-[14px] font-bold text-primary transition-colors hover:bg-primary/10">
                 Copy booking link
               </button>
             </div>
           </div>
 
-          <div className="rounded-xl bg-neutral-surface2 p-4">
+          <div className="rounded-xl bg-white/[0.02] p-4">
             <div className="mb-3 flex items-center gap-2">
               <TrendingUp size={18} className="text-primary" />
-              <span className="text-[14px] font-bold text-ink">Weekly Performance</span>
+              <span className="text-[14px] font-bold text-white">Weekly Performance</span>
             </div>
             <div className="space-y-2">
               <div className="flex justify-between text-[12px]">
-                <span className="text-content-secondary">Bookings this week</span>
-                <span className="font-bold text-ink">{performance?.bookingsThisWeek ?? 0}</span>
+                <span className="text-white/65">Bookings this week</span>
+                <span className="font-bold text-white">{performance?.bookingsThisWeek ?? 0}</span>
               </div>
               <div className="flex justify-between text-[12px]">
-                <span className="text-content-secondary">Revenue projected</span>
-                <span className="font-mono font-bold text-ink">{naira(performance?.revenueProjected ?? 0)}</span>
+                <span className="text-white/65">Revenue projected</span>
+                <span className="font-mono font-bold text-white">{naira(performance?.revenueProjected ?? 0)}</span>
               </div>
             </div>
           </div>

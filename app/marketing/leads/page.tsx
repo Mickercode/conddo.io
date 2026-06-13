@@ -72,41 +72,41 @@ export default function LeadsPage() {
           {stages.length > 0 && (
             <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
               {stages.map((s) => (
-                <div key={s.stage} className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
-                  <p className="mb-2 text-[12px] text-content-secondary">{titleCase(s.stage)}</p>
-                  <p className="font-mono text-[24px] font-medium leading-none text-ink">{s.count}</p>
+                <div key={s.stage} className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
+                  <p className="mb-2 text-[12px] text-white/65">{titleCase(s.stage)}</p>
+                  <p className="font-mono text-[24px] font-medium leading-none text-white">{s.count}</p>
                 </div>
               ))}
             </div>
           )}
           {conversionRate != null && (
-            <p className="text-[13px] text-content-secondary">
-              Conversion rate: <span className="font-mono font-medium text-ink">{conversionRate.toFixed(1)}%</span>
+            <p className="text-[13px] text-white/65">
+              Conversion rate: <span className="font-mono font-medium text-white">{conversionRate.toFixed(1)}%</span>
             </p>
           )}
 
           {/* Leads table */}
-          <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
+          <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
             <div className="overflow-x-auto">
               <table className="w-full min-w-[600px] text-left">
                 <thead>
-                  <tr className="border-b border-neutral-border bg-neutral-surface2 text-[11px] uppercase tracking-[0.05em] text-content-secondary">
+                  <tr className="border-b border-white/[0.06] bg-white/[0.02] text-[11px] uppercase tracking-[0.05em] text-white/65">
                     <th className="px-5 py-3 font-medium">Lead</th>
                     <th className="px-5 py-3 font-medium">Source</th>
                     <th className="px-5 py-3 font-medium">Stage</th>
                     <th className="px-5 py-3 font-medium">Added</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-neutral-border">
+                <tbody className="divide-y divide-white/[0.06]">
                   {rows.map((l) => (
-                    <tr key={l.id} className="transition-colors hover:bg-neutral-surface2">
+                    <tr key={l.id} className="transition-colors hover:bg-white/[0.02]">
                       <td className="px-5 py-3.5">
-                        <p className="text-[14px] text-ink">{l.name}</p>
-                        {(l.email || l.phone) && <p className="text-[12px] text-content-muted">{l.phone || l.email}</p>}
+                        <p className="text-[14px] text-white">{l.name}</p>
+                        {(l.email || l.phone) && <p className="text-[12px] text-white/45">{l.phone || l.email}</p>}
                       </td>
-                      <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-content-secondary">{l.source ?? "—"}</td>
+                      <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-white/65">{l.source ?? "—"}</td>
                       <td className="px-5 py-3.5"><Chip tone={stageTone(l.stage)}>{titleCase(l.stage)}</Chip></td>
-                      <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-content-secondary">{fmtDate(l.createdAt)}</td>
+                      <td className="whitespace-nowrap px-5 py-3.5 text-[14px] text-white/65">{fmtDate(l.createdAt)}</td>
                     </tr>
                   ))}
                 </tbody>

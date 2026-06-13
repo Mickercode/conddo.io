@@ -44,7 +44,7 @@ export function SettingsShell({
     <AppShell title="Settings">
       <div className="flex flex-col gap-8 md:flex-row">
         <nav className="shrink-0 md:w-56">
-          <p className="mb-2 px-3 text-[11px] uppercase tracking-[0.05em] text-content-muted">Management</p>
+          <p className="mb-2 px-3 text-[11px] uppercase tracking-[0.05em] text-white/45">Management</p>
           <div className="flex flex-col gap-1">
             {NAV.map((item) => (
               <Link
@@ -52,8 +52,8 @@ export function SettingsShell({
                 href={item.href}
                 className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[14px] transition-colors ${
                   item.key === active
-                    ? "bg-primary-bg font-medium text-primary"
-                    : "text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+                    ? "bg-primary/[0.08] font-medium text-primary"
+                    : "text-white/65 hover:bg-white/[0.02] hover:text-white"
                 }`}
               >
                 <item.icon size={18} />
@@ -64,7 +64,7 @@ export function SettingsShell({
             <Link
               href="/settings/danger"
               className={`flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-[14px] transition-colors ${
-                active === "danger" ? "bg-danger-bg font-medium text-danger" : "text-danger hover:bg-danger-bg"
+                active === "danger" ? "bg-rose-500/[0.06] font-medium text-rose-200" : "text-rose-200 hover:bg-rose-500/[0.06]"
               }`}
             >
               <TriangleAlert size={18} />
@@ -75,8 +75,8 @@ export function SettingsShell({
 
         <div className="min-w-0 max-w-3xl flex-1">
           <div className="mb-6">
-            <h2 className="text-[22px] font-medium tracking-[-0.01em] text-ink">{title}</h2>
-            <p className="mt-1 text-[15px] text-content-secondary">{description}</p>
+            <h2 className="text-[22px] font-medium tracking-[-0.01em] text-white">{title}</h2>
+            <p className="mt-1 text-[15px] text-white/65">{description}</p>
           </div>
           {children}
         </div>

@@ -57,30 +57,30 @@ function FittingRow({ ev }: { ev: BookingEvent }) {
   const { garment, rest } = extractGarment(ev.notes);
   const tone = stageTone[ev.service] ?? "neutral";
   return (
-    <li className="flex flex-col gap-3 rounded-xl border border-neutral-border bg-neutral-surface p-5 sm:flex-row sm:items-center sm:justify-between">
+    <li className="flex flex-col gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 sm:flex-row sm:items-center sm:justify-between">
       <div className="flex min-w-0 items-start gap-4">
-        <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary-bg text-primary">
+        <span className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-primary">
           <User size={20} />
         </span>
         <div className="min-w-0">
           <div className="mb-1 flex flex-wrap items-center gap-2">
-            <p className="text-[15px] font-medium text-ink">{ev.customer}</p>
+            <p className="text-[15px] font-medium text-white">{ev.customer}</p>
             <Chip tone={tone}>{ev.service}</Chip>
           </div>
-          {garment && <p className="text-[13px] text-content-secondary">{garment}</p>}
-          {rest && <p className="mt-0.5 line-clamp-2 text-[12px] text-content-muted">{rest}</p>}
+          {garment && <p className="text-[13px] text-white/65">{garment}</p>}
+          {rest && <p className="mt-0.5 line-clamp-2 text-[12px] text-white/45">{rest}</p>}
         </div>
       </div>
       <div className="flex shrink-0 flex-col items-start gap-0.5 sm:items-end">
         {valid ? (
           <>
-            <p className="text-[13px] font-medium text-ink">{fmtDate(start)}</p>
-            <p className="flex items-center gap-1 font-mono text-[12px] text-content-muted">
+            <p className="text-[13px] font-medium text-white">{fmtDate(start)}</p>
+            <p className="flex items-center gap-1 font-mono text-[12px] text-white/45">
               <Clock size={13} /> {fmtTime(start)}
             </p>
           </>
         ) : (
-          <p className="text-[12px] text-content-muted">No date set</p>
+          <p className="text-[12px] text-white/45">No date set</p>
         )}
         {ev.customerId && (
           <Link
@@ -99,8 +99,8 @@ function Section({ title, items }: { title: string; items: BookingEvent[] }) {
   if (items.length === 0) return null;
   return (
     <div>
-      <h2 className="mb-3 text-[13px] font-medium uppercase tracking-[0.06em] text-content-muted">
-        {title} <span className="text-content-muted/60">· {items.length}</span>
+      <h2 className="mb-3 text-[13px] font-medium uppercase tracking-[0.06em] text-white/45">
+        {title} <span className="text-white/45/60">· {items.length}</span>
       </h2>
       <ul className="space-y-3">
         {items.map((ev) => <FittingRow key={ev.id} ev={ev} />)}
@@ -155,8 +155,8 @@ export default function FittingsPage() {
       {/* Stage legend — shows the available fitting stages even when the
           page is empty, so the owner understands the model before adding
           their first row. */}
-      <div className="mb-6 flex flex-wrap items-center gap-2 rounded-xl border border-neutral-border bg-neutral-surface px-4 py-3">
-        <span className="text-[12px] uppercase tracking-[0.05em] text-content-muted">Stages:</span>
+      <div className="mb-6 flex flex-wrap items-center gap-2 rounded-xl border border-white/[0.06] bg-cinema-elev px-4 py-3">
+        <span className="text-[12px] uppercase tracking-[0.05em] text-white/45">Stages:</span>
         {FITTING_STAGES.map((s) => (
           <Chip key={s.value} tone={stageTone[s.value] ?? "neutral"}>{s.short}</Chip>
         ))}

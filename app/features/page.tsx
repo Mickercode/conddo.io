@@ -65,11 +65,11 @@ export default function FeaturesPage() {
         />
       ) : (
         <>
-          <div className="mb-5 flex flex-wrap items-center gap-2 rounded-lg border border-primary/20 bg-primary-bg/30 px-4 py-3 text-[13px] text-content-secondary">
+          <div className="mb-5 flex flex-wrap items-center gap-2 rounded-lg border border-primary/20 bg-primary/[0.08]/30 px-4 py-3 text-[13px] text-white/65">
             <Sparkles size={15} className="text-primary" />
             <span>
-              <strong className="font-medium text-ink">{betaCount} in beta</strong> · {" "}
-              <strong className="font-medium text-ink">{soonCount} coming soon</strong>.
+              <strong className="font-medium text-white">{betaCount} in beta</strong> · {" "}
+              <strong className="font-medium text-white">{soonCount} coming soon</strong>.
               Click any card to register interest — early-adopter tenants get first access.
             </span>
           </div>
@@ -78,7 +78,7 @@ export default function FeaturesPage() {
             {grouped.map(([area, items]) => (
               <section key={area}>
                 <div className="mb-3 flex items-center gap-2">
-                  <h2 className="text-[12px] font-medium uppercase tracking-[0.06em] text-content-muted">
+                  <h2 className="text-[12px] font-medium uppercase tracking-[0.06em] text-white/45">
                     {area}
                   </h2>
                   <Chip tone="neutral">{items.length}</Chip>
