@@ -2,15 +2,15 @@
 
 import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2 } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Eye, EyeOff, Loader2, AlertCircle, CheckCircle2, ArrowRight } from "lucide-react";
+import {
+  CinematicAuthShell,
+  AuthCard,
+  fieldLabelCls,
+  fieldInputCls,
+} from "@/components/auth/CinematicAuthShell";
 import { resetPassword } from "@/lib/api/account";
-
-const inputCls =
-  "h-11 w-full rounded-md border border-neutral-strong bg-neutral-surface px-3.5 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none";
-const labelCls = "mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-content-secondary";
 
 export default function ResetPasswordPage() {
   return (
@@ -54,93 +54,92 @@ function ResetInner() {
     }
   }
 
+  if (done) {
+    return (
+      <CinematicAuthShell>
+        <div className="cinema-tile p-8 md:p-9 text-center">
+          <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-emerald-500/15 text-emerald-300 border border-emerald-500/25">
+            <CheckCircle2 size={26} strokeWidth={1.5} />
+          </span>
+          <h1 className="text-balance text-[28px] md:text-[32px] font-semibold tracking-tighter text-white leading-[1.1]">
+            Password updated
+          </h1>
+          <p className="mt-3 text-[14.5px] text-white/65">Redirecting you to sign in…</p>
+        </div>
+      </CinematicAuthShell>
+    );
+  }
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
-      <div className="w-full max-w-md">
-        <div className="mb-8 flex justify-center">
-          <Image src="/conddo_logo.png" alt="conddo.io" width={1800} height={480} priority className="h-8 w-auto" />
-        </div>
+    <CinematicAuthShell>
+      <AuthCard title="Set a new password" subtitle="Enter the code from your email and choose a new password.">
+        {error && (
+          <div className="mb-5 flex items-start gap-2 rounded-xl border border-rose-400/20 bg-rose-500/[0.06] px-4 py-3 text-[13.5px] text-rose-200">
+            <AlertCircle size={16} className="mt-0.5 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
-        <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-7 sm:p-8">
-          {done ? (
-            <div className="text-center">
-              <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-success-bg text-success">
-                <CheckCircle2 size={26} />
-              </span>
-              <h1 className="text-[22px] leading-tight tracking-[-0.01em] text-ink">Password updated</h1>
-              <p className="mt-2 text-[15px] text-content-secondary">Redirecting you to sign in…</p>
+        <form onSubmit={onSubmit} className="space-y-5">
+          <div>
+            <label className={fieldLabelCls}>Reset code</label>
+            <input
+              className={`${fieldInputCls} font-mono`}
+              placeholder="Paste the code from your email"
+              value={token}
+              onChange={(e) => setToken(e.target.value)}
+              required
+            />
+          </div>
+          <div>
+            <label className={fieldLabelCls}>New password</label>
+            <div className="relative">
+              <input
+                className={`${fieldInputCls} pr-11`}
+                type={show ? "text" : "password"}
+                placeholder="At least 8 characters"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShow((v) => !v)}
+                aria-label={show ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/80"
+              >
+                {show ? <EyeOff size={17} /> : <Eye size={17} />}
+              </button>
             </div>
-          ) : (
-            <>
-              <header className="mb-6 text-center">
-                <h1 className="text-[24px] leading-tight tracking-[-0.01em] text-ink">Set a new password</h1>
-                <p className="mt-1.5 text-[15px] text-content-secondary">Enter the code from your email and choose a new password.</p>
-              </header>
+          </div>
+          <div>
+            <label className={fieldLabelCls}>Confirm password</label>
+            <input
+              className={fieldInputCls}
+              type={show ? "text" : "password"}
+              placeholder="Re-enter your new password"
+              value={confirm}
+              onChange={(e) => setConfirm(e.target.value)}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-[14.5px] font-medium text-ink transition-all hover:bg-white/90 disabled:opacity-60"
+          >
+            {submitting ? <Loader2 size={16} className="animate-spin" /> : null}
+            {submitting ? "Updating…" : "Update password"}
+            {!submitting && <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />}
+          </button>
+        </form>
 
-              {error && (
-                <div className="mb-5 flex items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
-                  <AlertCircle size={18} className="shrink-0" /> {error}
-                </div>
-              )}
-
-              <form onSubmit={onSubmit} className="space-y-5">
-                <div>
-                  <label className={labelCls}>Reset code</label>
-                  <input
-                    className={`${inputCls} font-mono`}
-                    placeholder="Paste the code from your email"
-                    value={token}
-                    onChange={(e) => setToken(e.target.value)}
-                    required
-                  />
-                </div>
-                <div>
-                  <label className={labelCls}>New password</label>
-                  <div className="relative">
-                    <input
-                      className={`${inputCls} pr-11`}
-                      type={show ? "text" : "password"}
-                      placeholder="At least 8 characters"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      required
-                    />
-                    <button
-                      type="button"
-                      onClick={() => setShow((v) => !v)}
-                      aria-label={show ? "Hide password" : "Show password"}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-content-muted hover:text-content-secondary"
-                    >
-                      {show ? <EyeOff size={18} /> : <Eye size={18} />}
-                    </button>
-                  </div>
-                </div>
-                <div>
-                  <label className={labelCls}>Confirm password</label>
-                  <input
-                    className={inputCls}
-                    type={show ? "text" : "password"}
-                    placeholder="Re-enter your new password"
-                    value={confirm}
-                    onChange={(e) => setConfirm(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button variant="primary" size="lg" className="w-full" disabled={submitting}>
-                  {submitting ? <Loader2 size={18} className="animate-spin" /> : null}
-                  {submitting ? "Updating…" : "Update password"}
-                </Button>
-              </form>
-
-              <div className="mt-6 text-center">
-                <Link href="/login" className="text-[14px] font-medium text-content-secondary hover:text-ink">
-                  Back to sign in
-                </Link>
-              </div>
-            </>
-          )}
+        <div className="mt-6 text-center">
+          <Link href="/login" className="text-[13.5px] font-medium text-white/55 transition-colors hover:text-white">
+            Back to sign in
+          </Link>
         </div>
-      </div>
-    </main>
+      </AuthCard>
+    </CinematicAuthShell>
   );
 }

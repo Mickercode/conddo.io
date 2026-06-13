@@ -1,15 +1,15 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import Link from "next/link";
-import { Loader2, AlertCircle, MailCheck, ArrowLeft } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Loader2, AlertCircle, MailCheck, ArrowLeft, ArrowRight } from "lucide-react";
+import {
+  CinematicAuthShell,
+  AuthCard,
+  fieldLabelCls,
+  fieldInputCls,
+} from "@/components/auth/CinematicAuthShell";
 import { forgotPassword, slugify } from "@/lib/api/account";
-
-const inputCls =
-  "h-11 w-full rounded-md border border-neutral-strong bg-neutral-surface px-3.5 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none";
-const labelCls = "mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-content-secondary";
 
 export default function ForgotPasswordPage() {
   const [workspace, setWorkspace] = useState("");
@@ -32,88 +32,96 @@ export default function ForgotPasswordPage() {
     }
   }
 
+  if (sent) {
+    return (
+      <CinematicAuthShell>
+        <div className="cinema-tile p-8 md:p-9 text-center">
+          <span className="mx-auto mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/15 text-primary-light border border-primary/25">
+            <MailCheck size={26} strokeWidth={1.5} />
+          </span>
+          <h1 className="text-balance text-[28px] md:text-[32px] font-semibold tracking-tighter text-white leading-[1.1]">
+            Check your email
+          </h1>
+          <p className="mt-3 text-[14.5px] text-white/65 leading-relaxed">
+            If an account matches <span className="font-medium text-white">{email}</span>, we&apos;ve sent a reset code. Use it on the reset page to set a new password.
+          </p>
+          <div className="mt-7 flex flex-col gap-3">
+            <Link
+              href="/reset-password"
+              className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-[14.5px] font-medium text-ink transition-all hover:bg-white/90"
+            >
+              Enter reset code
+              <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />
+            </Link>
+            <Link
+              href="/login"
+              className="text-[13.5px] font-medium text-white/55 hover:text-white transition-colors"
+            >
+              Back to sign in
+            </Link>
+          </div>
+        </div>
+      </CinematicAuthShell>
+    );
+  }
+
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
-      <div className="w-full max-w-md">
-        <div className="mb-8 flex justify-center">
-          <Image src="/conddo_logo.png" alt="conddo.io" width={1800} height={480} priority className="h-8 w-auto" />
-        </div>
+    <CinematicAuthShell>
+      <AuthCard title="Reset your password" subtitle="We'll email you a code to reset it.">
+        {error && (
+          <div className="mb-5 flex items-start gap-2 rounded-xl border border-rose-400/20 bg-rose-500/[0.06] px-4 py-3 text-[13.5px] text-rose-200">
+            <AlertCircle size={16} className="mt-0.5 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
 
-        <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-7 sm:p-8">
-          {sent ? (
-            <div className="text-center">
-              <span className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-xl bg-primary-bg text-primary">
-                <MailCheck size={26} />
+        <form onSubmit={onSubmit} className="space-y-5">
+          <div>
+            <label className={fieldLabelCls}>Workspace</label>
+            <div className="flex">
+              <input
+                className={`${fieldInputCls} rounded-r-none`}
+                placeholder="your-business"
+                value={workspace}
+                onChange={(e) => setWorkspace(e.target.value)}
+                required
+              />
+              <span className="inline-flex h-11 items-center rounded-r-lg border border-l-0 border-white/10 bg-white/[0.02] px-3 font-mono text-[12.5px] text-white/45">
+                .conddo.io
               </span>
-              <h1 className="text-[22px] leading-tight tracking-[-0.01em] text-ink">Check your email</h1>
-              <p className="mt-2 text-[15px] leading-relaxed text-content-secondary">
-                If an account matches <span className="font-medium text-ink">{email}</span>, we&apos;ve sent a reset code.
-                Use it on the reset page to set a new password.
-              </p>
-              <div className="mt-6 flex flex-col gap-2">
-                <Button href="/reset-password" variant="primary" size="lg" className="w-full">
-                  Enter reset code
-                </Button>
-                <Link href="/login" className="text-[14px] font-medium text-content-secondary hover:text-ink">
-                  Back to sign in
-                </Link>
-              </div>
             </div>
-          ) : (
-            <>
-              <header className="mb-6 text-center">
-                <h1 className="text-[24px] leading-tight tracking-[-0.01em] text-ink">Reset your password</h1>
-                <p className="mt-1.5 text-[15px] text-content-secondary">We&apos;ll email you a code to reset it.</p>
-              </header>
+          </div>
+          <div>
+            <label className={fieldLabelCls}>Email address</label>
+            <input
+              className={fieldInputCls}
+              type="email"
+              placeholder="you@business.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+          <button
+            type="submit"
+            disabled={submitting}
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-[14.5px] font-medium text-ink transition-all hover:bg-white/90 disabled:opacity-60"
+          >
+            {submitting ? <Loader2 size={16} className="animate-spin" /> : null}
+            {submitting ? "Sending…" : "Send reset code"}
+            {!submitting && <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />}
+          </button>
+        </form>
 
-              {error && (
-                <div className="mb-5 flex items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
-                  <AlertCircle size={18} className="shrink-0" /> {error}
-                </div>
-              )}
-
-              <form onSubmit={onSubmit} className="space-y-5">
-                <div>
-                  <label className={labelCls}>Workspace</label>
-                  <div className="flex">
-                    <input
-                      className={`${inputCls} rounded-r-none`}
-                      placeholder="your-business"
-                      value={workspace}
-                      onChange={(e) => setWorkspace(e.target.value)}
-                      required
-                    />
-                    <span className="inline-flex h-11 items-center rounded-r-md border border-l-0 border-neutral-strong bg-neutral-surface2 px-3 font-mono text-[13px] text-content-muted">
-                      .conddo.io
-                    </span>
-                  </div>
-                </div>
-                <div>
-                  <label className={labelCls}>Email address</label>
-                  <input
-                    className={inputCls}
-                    type="email"
-                    placeholder="you@business.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    required
-                  />
-                </div>
-                <Button variant="primary" size="lg" className="w-full" disabled={submitting}>
-                  {submitting ? <Loader2 size={18} className="animate-spin" /> : null}
-                  {submitting ? "Sending…" : "Send reset code"}
-                </Button>
-              </form>
-
-              <div className="mt-6 text-center">
-                <Link href="/login" className="inline-flex items-center gap-1.5 text-[14px] font-medium text-content-secondary hover:text-ink">
-                  <ArrowLeft size={15} /> Back to sign in
-                </Link>
-              </div>
-            </>
-          )}
+        <div className="mt-6 text-center">
+          <Link
+            href="/login"
+            className="inline-flex items-center gap-1.5 text-[13.5px] font-medium text-white/55 transition-colors hover:text-white"
+          >
+            <ArrowLeft size={14} /> Back to sign in
+          </Link>
         </div>
-      </div>
-    </main>
+      </AuthCard>
+    </CinematicAuthShell>
   );
 }

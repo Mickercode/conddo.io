@@ -2,19 +2,19 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import Link from "next/link";
-import { Eye, EyeOff, Loader2, AlertCircle } from "lucide-react";
-import { Button } from "@/components/ui/Button";
+import { Eye, EyeOff, Loader2, AlertCircle, ArrowRight } from "lucide-react";
+import {
+  CinematicAuthShell,
+  AuthCard,
+  fieldLabelCls,
+  fieldInputCls,
+} from "@/components/auth/CinematicAuthShell";
 import { ContinueWithGoogle } from "@/components/ui/ContinueWithGoogle";
 import { login, slugify } from "@/lib/api/account";
 import { loginWithGoogle, hasGoogleClient } from "@/lib/api/google";
 import { clearAccessToken } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
-
-const inputCls =
-  "h-11 w-full rounded-md border border-neutral-strong bg-neutral-surface px-3.5 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none";
-const labelCls = "mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-content-secondary";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -31,9 +31,8 @@ export default function LoginPage() {
   useEffect(() => { clearAccessToken(); }, []);
 
   /** Route post-login based on top-level role. STAFF land on /work which
-   *  reads me.user.staffRole and forwards to their role-specific landing
-   *  (Cashier → /work/sales, Pharmacist → /work/clinical, etc). Owners
-   *  and Conddo support staff keep the full dashboard. */
+   *  reads me.user.staffRole and forwards to their role-specific landing.
+   *  Owners and Conddo support staff keep the full dashboard. */
   function landingFor(role: string): string {
     if (role === "TENANT_ADMIN" || role === "SUPER_ADMIN") return "/dashboard";
     return "/work";
@@ -46,8 +45,6 @@ export default function LoginPage() {
     try {
       const { role } = await login({ email, password, tenantSlug: slugify(workspace) });
       router.push(landingFor(role));
-      // Note: navigation will unmount this page, but we still clear submitting
-      // in `finally` below so a failed transition can't leave the button stuck.
     } catch (err) {
       setError(err instanceof Error ? err.message : "Sign in failed. Check your details and try again.");
     } finally {
@@ -55,9 +52,6 @@ export default function LoginPage() {
     }
   }
 
-  // Google sign-in. Workspace must already be entered — Google identifies the
-  // user globally, but the backend still needs to know which tenant to scope
-  // them to. Backend contract: ACTION_LIST.md §1a.
   async function onGoogleCredential(idToken: string) {
     setError(null);
     setSubmitting(true);
@@ -78,107 +72,106 @@ export default function LoginPage() {
   const googleReady = hasGoogleClient() && workspace.trim().length > 0;
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-neutral-bg px-4 py-10">
-      <div className="w-full max-w-md">
-        <div className="mb-8 flex justify-center">
-          <Image src="/conddo_logo.png" alt="conddo.io" width={1800} height={480} priority className="h-8 w-auto" />
-        </div>
-
-        <div className="rounded-2xl border border-neutral-border bg-neutral-surface p-7 sm:p-8">
-          <header className="mb-6 text-center">
-            <h1 className="text-[24px] leading-tight tracking-[-0.01em] text-ink">Welcome back</h1>
-            <p className="mt-1.5 text-[15px] text-content-secondary">Sign in to your business workspace.</p>
-          </header>
-
-          {error && (
-            <div className="mb-5 flex items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
-              <AlertCircle size={18} className="shrink-0" /> {error}
-            </div>
-          )}
-
-          <form onSubmit={onSubmit} className="space-y-5">
-            <div>
-              <label className={labelCls}>Workspace</label>
-              <div className="flex">
-                <input
-                  className={`${inputCls} rounded-r-none`}
-                  placeholder="your-business"
-                  value={workspace}
-                  onChange={(e) => setWorkspace(e.target.value)}
-                  required
-                />
-                <span className="inline-flex h-11 items-center rounded-r-md border border-l-0 border-neutral-strong bg-neutral-surface2 px-3 font-mono text-[13px] text-content-muted">
-                  .conddo.io
-                </span>
-              </div>
-            </div>
-            <div>
-              <label className={labelCls}>Email address</label>
-              <input
-                className={inputCls}
-                type="email"
-                placeholder="you@business.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-            <div>
-              <label className={labelCls}>Password</label>
-              <div className="relative">
-                <input
-                  className={`${inputCls} pr-11`}
-                  type={show ? "text" : "password"}
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShow((v) => !v)}
-                  aria-label={show ? "Hide password" : "Show password"}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-content-muted hover:text-content-secondary"
-                >
-                  {show ? <EyeOff size={18} /> : <Eye size={18} />}
-                </button>
-              </div>
-              <div className="mt-1.5 text-right">
-                <Link href="/forgot-password" className="text-[13px] font-medium text-primary hover:underline">
-                  Forgot password?
-                </Link>
-              </div>
-            </div>
-
-            <Button variant="primary" size="lg" className="w-full" disabled={submitting}>
-              {submitting ? <Loader2 size={18} className="animate-spin" /> : null}
-              {submitting ? "Signing in…" : "Sign in"}
-            </Button>
-          </form>
-
-          {hasGoogleClient() && (
-            <>
-              <div className="my-5 flex items-center gap-3">
-                <span className="h-px flex-1 bg-neutral-border" />
-                <span className="text-[12px] uppercase tracking-[0.08em] text-content-muted">or</span>
-                <span className="h-px flex-1 bg-neutral-border" />
-              </div>
-              <ContinueWithGoogle
-                disabled={!googleReady}
-                onCredential={onGoogleCredential}
-                onError={(msg) => setError(msg)}
-              />
-            </>
-          )}
-        </div>
-
-        <p className="mt-6 text-center text-[14px] text-content-secondary">
-          New to conddo.io?{" "}
-          <Link href="/onboarding/create-account" className="font-medium text-primary hover:underline">
+    <CinematicAuthShell
+      footer={
+        <>
+          New to Conddo?{" "}
+          <Link href="/onboarding/create-account" className="font-medium text-primary-light hover:text-white transition-colors">
             Create an account
           </Link>
-        </p>
-      </div>
-    </main>
+        </>
+      }
+    >
+      <AuthCard title="Welcome back" subtitle="Sign in to your business workspace.">
+        {error && (
+          <div className="mb-5 flex items-start gap-2 rounded-xl border border-rose-400/20 bg-rose-500/[0.06] px-4 py-3 text-[13.5px] text-rose-200">
+            <AlertCircle size={16} className="mt-0.5 shrink-0" />
+            <span>{error}</span>
+          </div>
+        )}
+
+        <form onSubmit={onSubmit} className="space-y-5">
+          <div>
+            <label className={fieldLabelCls}>Workspace</label>
+            <div className="flex">
+              <input
+                className={`${fieldInputCls} rounded-r-none`}
+                placeholder="your-business"
+                value={workspace}
+                onChange={(e) => setWorkspace(e.target.value)}
+                required
+              />
+              <span className="inline-flex h-11 items-center rounded-r-lg border border-l-0 border-white/10 bg-white/[0.02] px-3 font-mono text-[12.5px] text-white/45">
+                .conddo.io
+              </span>
+            </div>
+          </div>
+
+          <div>
+            <label className={fieldLabelCls}>Email address</label>
+            <input
+              className={fieldInputCls}
+              type="email"
+              placeholder="you@business.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+          </div>
+
+          <div>
+            <label className={fieldLabelCls}>Password</label>
+            <div className="relative">
+              <input
+                className={`${fieldInputCls} pr-11`}
+                type={show ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShow((v) => !v)}
+                aria-label={show ? "Hide password" : "Show password"}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-white/50 hover:text-white/80"
+              >
+                {show ? <EyeOff size={17} /> : <Eye size={17} />}
+              </button>
+            </div>
+            <div className="mt-2 text-right">
+              <Link href="/forgot-password" className="text-[12.5px] font-medium text-primary-light hover:text-white transition-colors">
+                Forgot password?
+              </Link>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            disabled={submitting}
+            className="group inline-flex w-full items-center justify-center gap-2 rounded-xl bg-white px-4 py-3 text-[14.5px] font-medium text-ink transition-all hover:bg-white/90 disabled:opacity-60 disabled:cursor-not-allowed"
+          >
+            {submitting ? <Loader2 size={16} className="animate-spin" /> : null}
+            {submitting ? "Signing in…" : "Sign in"}
+            {!submitting && <ArrowRight size={14} strokeWidth={2.5} className="transition-transform group-hover:translate-x-0.5" />}
+          </button>
+        </form>
+
+        {hasGoogleClient() && (
+          <>
+            <div className="my-6 flex items-center gap-3">
+              <span className="h-px flex-1 bg-white/10" />
+              <span className="text-[11px] uppercase tracking-loose text-white/40">or</span>
+              <span className="h-px flex-1 bg-white/10" />
+            </div>
+            <ContinueWithGoogle
+              disabled={!googleReady}
+              onCredential={onGoogleCredential}
+              onError={(msg) => setError(msg)}
+            />
+          </>
+        )}
+      </AuthCard>
+    </CinematicAuthShell>
   );
 }
