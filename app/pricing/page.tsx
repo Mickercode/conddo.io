@@ -1,47 +1,51 @@
 import type { Metadata } from "next";
-import { Sparkles } from "lucide-react";
+import { HeroGeometric } from "@/components/marketing/cinematic/HeroGeometric";
+import { CinematicPricing } from "@/components/marketing/cinematic/CinematicPricing";
+import { ComparePlans } from "@/components/marketing/cinematic/ComparePlans";
+import { CinematicFAQ } from "@/components/marketing/cinematic/CinematicFAQ";
+import { CinematicFinalCTA } from "@/components/marketing/cinematic/CinematicFinalCTA";
 import { MarketingShell } from "@/components/marketing/MarketingShell";
-import { Pricing } from "@/components/Pricing";
-import { FAQ } from "@/components/FAQ";
-import { FinalCTA } from "@/components/FinalCTA";
-import { Reveal } from "@/components/ui/Reveal";
 
 export const metadata: Metadata = {
   title: "Pricing — Conddo.io",
   description:
-    "Three plans — Launcher, Growth, Scaler. Naira pricing. 14-day free trial on every plan. Built for Nigerian businesses.",
+    "Simple pricing, built to grow with your business. Start free. Upgrade when you're ready. No contracts. No hidden fees.",
 };
 
-/** /pricing — full tier matrix + FAQ. We reuse the existing Pricing
- *  component (it's already the canonical version with monthly/quarterly
- *  toggle, popular flag, plan-comparison) and FAQ (which is mostly
- *  pricing-adjacent questions). */
+/** /pricing — cinematic redesign on the new copy ladder. UX:
+ *
+ *    Hero (PRICING)
+ *    CinematicPricing      Monthly/Quarterly toggle + 3 plan cards
+ *                          (Launcher, Growth, Scaler). Growth marked
+ *                          as Most Popular.
+ *    ComparePlans          Feature matrix grouped into Core / Growth
+ *                          / Scale tiers.
+ *    CinematicFAQ          Five accordion questions from the brief.
+ *    CinematicFinalCTA     "Run your business from one platform."
+ */
 export default function PricingPage() {
   return (
     <MarketingShell>
-      <section className="marketing-hero-dark relative overflow-hidden">
-        <div className="marketing-hero-dark-grid pointer-events-none absolute inset-0 opacity-60" aria-hidden />
-        <div className="container-x relative py-20 md:py-24">
-          <div className="mx-auto max-w-3xl text-center">
-            <span className="mb-6 inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 font-mono text-[11px] uppercase tracking-[0.1em] text-primary-light backdrop-blur">
-              <Sparkles size={11} className="text-primary-light" />
-              Naira pricing · 14-day free trial
-            </span>
-            <h1 className="text-balance text-[42px] font-medium leading-[1.05] tracking-[-0.02em] text-white md:text-[56px]">
-              Simple plans. No surprises.
-            </h1>
-            <p className="mx-auto mt-5 max-w-2xl text-pretty text-[17px] leading-relaxed text-white/70">
-              Pay monthly or save with quarterly. Upgrade anytime as you grow. Every plan starts with 14 days free — no credit card required.
-            </p>
-          </div>
-        </div>
-      </section>
+      <HeroGeometric
+        eyebrow="Pricing"
+        titleTop="Simple pricing."
+        titleBottom={
+          <span className="bg-gradient-to-r from-primary-light via-white/95 to-rose-300 bg-clip-text text-transparent">
+            Built to grow with your business.
+          </span>
+        }
+        lede={
+          <>
+            <p>Start free. Upgrade when you&apos;re ready.</p>
+            <p className="text-white/45">No contracts. No hidden fees.</p>
+          </>
+        }
+      />
 
-      <div className="bg-neutral-bg">
-        <Reveal><Pricing /></Reveal>
-        <Reveal><FAQ /></Reveal>
-      </div>
-      <FinalCTA />
+      <CinematicPricing />
+      <ComparePlans />
+      <CinematicFAQ />
+      <CinematicFinalCTA />
     </MarketingShell>
   );
 }
