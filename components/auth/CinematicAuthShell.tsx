@@ -73,18 +73,20 @@ export function CinematicAuthShell({
         </div>
       </motion.div>
 
-      {/* Centered content column. Wrapped in a motion.div so every page
-          inherits the same fade-up entrance — gives the funnel a
-          consistent cadence without each page wiring its own animation. */}
+      {/* Centered content column. The global CinematicTransition already
+          fades + un-blurs the page; this inner motion adds a longer
+          delay so the card emerges AFTER the page-level entrance has
+          settled, giving the funnel a layered "first the surface,
+          then the form" beat instead of competing motion. */}
       <div className="relative container-x flex min-h-[calc(100svh-80px)] items-center justify-center py-12 md:py-16">
         <motion.div
           className="w-full max-w-md"
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{
-            duration: 0.7,
-            delay: 0.1,
-            ease: [0.16, 1, 0.3, 1],
+            duration: 0.9,
+            delay: 0.35,
+            ease: [0.22, 1, 0.36, 1],
           }}
         >
           {children}
@@ -93,7 +95,7 @@ export function CinematicAuthShell({
               className="mt-8 text-center text-[12.5px] text-white/45"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
+              transition={{ duration: 0.7, delay: 1.0 }}
             >
               {footer}
             </motion.div>
@@ -198,18 +200,18 @@ export function AuthCard({
     <div className="cinema-tile p-8 md:p-9">
       <motion.h1
         className="text-balance text-[28px] md:text-[32px] font-semibold tracking-tighter text-white leading-[1.1]"
-        initial={{ opacity: 0, y: 10 }}
+        initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: 0.8, delay: 0.6, ease: [0.22, 1, 0.36, 1] }}
       >
         {title}
       </motion.h1>
       {subtitle && (
         <motion.p
           className="mt-2.5 text-[14.5px] text-white/55 leading-relaxed"
-          initial={{ opacity: 0, y: 6 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.3, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.8, delay: 0.7, ease: [0.22, 1, 0.36, 1] }}
         >
           {subtitle}
         </motion.p>
@@ -222,8 +224,8 @@ export function AuthCard({
           hidden: {},
           visible: {
             transition: {
-              staggerChildren: 0.08,
-              delayChildren: 0.35,
+              staggerChildren: 0.1,
+              delayChildren: 0.85,
             },
           },
         }}
@@ -248,8 +250,12 @@ export function AuthRow({
     <motion.div
       className={className}
       variants={{
-        hidden: { opacity: 0, y: 14 },
-        visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+        hidden: { opacity: 0, y: 16 },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
+        },
       }}
     >
       {children}

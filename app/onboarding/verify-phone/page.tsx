@@ -81,19 +81,19 @@ export default function VerifyPhoneStep() {
   const ss = String(seconds % 60).padStart(2, "0");
 
   return (
-    <div className="w-full max-w-md rounded-xl border border-neutral-border bg-neutral-surface p-8">
+    <div className="w-full max-w-md rounded-xl border border-white/[0.06] bg-cinema-elev p-8">
       <header className="mb-7 text-center">
         <h1 className="text-[24px] leading-tight tracking-[-0.01em] md:text-[26px]">
           Verify your account
         </h1>
-        <p className="mt-2 text-[15px] leading-relaxed text-content-secondary">
+        <p className="mt-2 text-[15px] leading-relaxed text-white/65">
           We&apos;ve sent a 4-digit code to{" "}
-          <span className="font-medium text-ink">{masked}</span>. Enter it below to continue.
+          <span className="font-medium text-white">{masked}</span>. Enter it below to continue.
         </p>
       </header>
 
       {error && (
-        <div className="mb-5 flex items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
+        <div className="mb-5 flex items-center gap-2 rounded-lg border border-danger/20 bg-rose-500/[0.06] px-4 py-3 text-[14px] text-rose-200">
           <AlertCircle size={18} className="shrink-0" /> {error}
         </div>
       )}
@@ -110,12 +110,12 @@ export default function VerifyPhoneStep() {
             maxLength={1}
             onChange={(e) => setDigit(i, e.target.value)}
             onKeyDown={(e) => onKeyDown(i, e)}
-            className="h-16 w-14 rounded-lg border border-neutral-strong bg-neutral-surface text-center font-mono text-[24px] text-ink focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+            className="h-16 w-14 rounded-lg border border-white/10 bg-cinema-elev text-center font-mono text-[24px] text-white focus:border-primary-light focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
         ))}
       </div>
 
-      <p className="mb-5 text-center text-[13px] text-content-muted">
+      <p className="mb-5 text-center text-[13px] text-white/45">
         {seconds > 0 ? (
           <>Resend code in {mm}:{ss}</>
         ) : (
@@ -132,12 +132,12 @@ export default function VerifyPhoneStep() {
 
       <button
         onClick={goBack}
-        className="mt-4 block w-full text-center text-[14px] text-content-secondary hover:text-ink"
+        className="mt-4 block w-full text-center text-[14px] text-white/65 hover:text-white"
       >
         Change my details
       </button>
 
-      <p className="mt-6 text-center text-[13px] text-content-muted">
+      <p className="mt-6 text-center text-[13px] text-white/45">
         Need help?{" "}
         <a href="#" className="font-medium text-primary hover:underline">Contact support</a>
       </p>

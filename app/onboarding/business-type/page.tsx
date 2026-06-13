@@ -63,7 +63,7 @@ export default function BusinessTypeStep() {
         <h1 className="text-[28px] leading-tight tracking-[-0.02em] md:text-[32px]">
           What kind of business do you run?
         </h1>
-        <p className="mt-2 text-[16px] text-content-secondary">
+        <p className="mt-2 text-[16px] text-white/65">
           We set everything up based on your answer.
         </p>
       </header>
@@ -78,8 +78,8 @@ export default function BusinessTypeStep() {
               onClick={() => setSelected(id)}
               className={`relative rounded-xl p-6 text-left transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 ${
                 isSelected
-                  ? "border-2 border-primary bg-primary-bg"
-                  : "border border-neutral-border bg-neutral-surface hover:border-primary hover:bg-neutral-bg"
+                  ? "border-2 border-primary bg-primary/[0.08]"
+                  : "border border-white/[0.06] bg-cinema-elev hover:border-primary hover:bg-cinema-base"
               }`}
             >
               {isSelected && (
@@ -89,8 +89,8 @@ export default function BusinessTypeStep() {
                 />
               )}
               <Icon size={32} strokeWidth={1.75} className="mb-4 text-primary" />
-              <h3 className="mb-1 text-[16px] font-medium text-ink">{label}</h3>
-              <p className="text-[14px] leading-tight text-content-secondary">{desc}</p>
+              <h3 className="mb-1 text-[16px] font-medium text-white">{label}</h3>
+              <p className="text-[14px] leading-tight text-white/65">{desc}</p>
             </button>
           );
         })}

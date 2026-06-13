@@ -73,42 +73,42 @@ export default function ReadyStep() {
         <h1 className="text-[28px] leading-tight tracking-[-0.02em] md:text-[34px]">
           {greeting}
         </h1>
-        <p className="mt-2 text-[16px] text-content-secondary">
+        <p className="mt-2 text-[16px] text-white/65">
           {business} is now on conddo.io.
         </p>
       </div>
 
       {/* Status cards */}
       <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+        <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
           <div className="mb-3 flex items-center justify-between">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-bg text-primary">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
               <LayoutGrid size={20} />
             </span>
             <Chip tone="success">Live</Chip>
           </div>
-          <h3 className="text-[15px] font-medium text-ink">Your dashboard is ready</h3>
-          <p className="mt-1 text-[14px] leading-relaxed text-content-secondary">
+          <h3 className="text-[15px] font-medium text-white">Your dashboard is ready</h3>
+          <p className="mt-1 text-[14px] leading-relaxed text-white/65">
             Start adding customers, orders, and inventory right now.
           </p>
         </div>
-        <div className="rounded-xl border border-neutral-border bg-neutral-surface p-5">
+        <div className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
           <div className="mb-3 flex items-center justify-between">
-            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary-bg text-primary">
+            <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
               <Globe size={20} />
             </span>
             <Chip tone="warning">In progress</Chip>
           </div>
-          <h3 className="text-[15px] font-medium text-ink">Your website is being built</h3>
-          <p className="mt-1 text-[14px] leading-relaxed text-content-secondary">
+          <h3 className="text-[15px] font-medium text-white">Your website is being built</h3>
+          <p className="mt-1 text-[14px] leading-relaxed text-white/65">
             Our team is working on your website. You&apos;ll get a notification when it&apos;s ready.
           </p>
         </div>
       </div>
 
       {/* Head-start checklist */}
-      <div className="mb-8 rounded-xl border border-neutral-border bg-neutral-surface p-5">
-        <p className="mb-3 text-[14px] font-medium text-ink">While you wait, get a head start:</p>
+      <div className="mb-8 rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
+        <p className="mb-3 text-[14px] font-medium text-white">While you wait, get a head start:</p>
         <ul className="divide-y divide-neutral-border">
           {tasks.map(({ label, href, icon: Icon }) => (
             <li key={label}>
@@ -117,12 +117,12 @@ export default function ReadyStep() {
                 className="flex items-center justify-between py-3 transition-colors hover:text-primary"
               >
                 <span className="flex items-center gap-3">
-                  <span className="flex h-8 w-8 items-center justify-center rounded-md bg-neutral-surface2 text-content-secondary">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-md bg-white/[0.02] text-white/65">
                     <Icon size={16} />
                   </span>
-                  <span className="text-[14px] text-ink">{label}</span>
+                  <span className="text-[14px] text-white">{label}</span>
                 </span>
-                <ChevronRight size={18} className="text-content-muted" />
+                <ChevronRight size={18} className="text-white/45" />
               </a>
             </li>
           ))}
@@ -132,7 +132,7 @@ export default function ReadyStep() {
       {/* Actions */}
       <div className="flex flex-col items-center gap-5">
         {status === "error" && (
-          <div className="flex w-full max-w-sm items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
+          <div className="flex w-full max-w-sm items-center gap-2 rounded-lg border border-danger/20 bg-rose-500/[0.06] px-4 py-3 text-[14px] text-rose-200">
             <AlertCircle size={18} className="shrink-0" /> {error}
           </div>
         )}
@@ -150,12 +150,12 @@ export default function ReadyStep() {
           </Button>
         )}
         <div className="text-center">
-          <p className="mb-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-content-muted">
+          <p className="mb-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-white/45">
             Share your conddo.io link
           </p>
-          <span className="inline-flex items-center gap-2 rounded-full border border-neutral-border bg-neutral-surface px-3.5 py-1.5">
+          <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.06] bg-cinema-elev px-3.5 py-1.5">
             <span className="font-mono text-[13px] text-primary">{slug}.conddo.io</span>
-            <Copy size={14} className="text-content-muted" />
+            <Copy size={14} className="text-white/45" />
           </span>
         </div>
       </div>

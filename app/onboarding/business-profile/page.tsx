@@ -12,9 +12,9 @@ const NIGERIAN_STATES = ["Lagos", "Abuja (FCT)", "Rivers", "Oyo", "Kano"];
 const SWATCHES = ["#7C5CBF", "#111111", "#1A6B4A", "#C0392B", "#2980B9", "#C17F3A", "#E84393", "#00CEC9"];
 
 const inputCls =
-  "h-11 w-full rounded-md border border-neutral-strong bg-neutral-surface px-3.5 text-[15px] text-ink placeholder:text-content-muted focus:border-primary focus:outline-none";
+  "h-11 w-full rounded-md border border-white/10 bg-cinema-elev px-3.5 text-[15px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none";
 const labelCls =
-  "mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-content-secondary";
+  "mb-1.5 block text-[12px] font-medium uppercase tracking-[0.06em] text-white/65";
 
 // Built from the Stitch "Business Profile Setup" screen, adapted into the
 // consistent onboarding chrome (form + live preview; setup-sidebar dropped).
@@ -59,7 +59,7 @@ export default function BusinessProfileStep() {
         <h1 className="text-[28px] leading-tight tracking-[-0.02em] md:text-[32px]">
           Tell us about your business
         </h1>
-        <p className="mt-2 text-[16px] text-content-secondary">
+        <p className="mt-2 text-[16px] text-white/65">
           This builds your website automatically based on the details you provide.
         </p>
       </header>
@@ -99,7 +99,7 @@ export default function BusinessProfileStep() {
             <div>
               <label className={labelCls}>Phone number</label>
               <div className="flex">
-                <span className="inline-flex h-11 items-center rounded-l-md border border-r-0 border-neutral-strong bg-neutral-surface2 px-3 font-mono text-[14px] text-content-secondary">
+                <span className="inline-flex h-11 items-center rounded-l-md border border-r-0 border-white/10 bg-white/[0.02] px-3 font-mono text-[14px] text-white/65">
                   +234
                 </span>
                 <input className={`${inputCls} rounded-l-none`} placeholder="801 234 5678" />
@@ -137,19 +137,19 @@ export default function BusinessProfileStep() {
           {/* Logo upload */}
           <div>
             <label className={labelCls}>Logo</label>
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-neutral-strong bg-neutral-bg px-6 py-7 text-center transition-colors hover:border-primary hover:bg-primary-bg/30">
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-white/10 bg-cinema-base px-6 py-7 text-center transition-colors hover:border-primary hover:bg-primary/[0.08]/30">
               <input type="file" accept="image/png,image/jpeg,image/svg+xml" className="sr-only" onChange={onLogoChange} />
               {logoPreview ? (
                 <img src={logoPreview} alt="Logo preview" className="h-16 w-auto max-w-[180px] object-contain" />
               ) : (
-                <Upload size={20} className="text-content-muted" />
+                <Upload size={20} className="text-white/45" />
               )}
-              <p className="text-[14px] text-content-secondary">
+              <p className="text-[14px] text-white/65">
                 <span className="text-primary">{logoPreview ? "Change logo" : "Upload your logo"}</span>
               </p>
-              <p className="font-mono text-[11px] text-content-muted">PNG, JPG or SVG · up to 2MB</p>
+              <p className="font-mono text-[11px] text-white/45">PNG, JPG or SVG · up to 2MB</p>
             </label>
-            {logoError && <p className="mt-1 text-[12px] text-danger">{logoError}</p>}
+            {logoError && <p className="mt-1 text-[12px] text-rose-200">{logoError}</p>}
           </div>
 
           {/* Brand primary colour */}
@@ -185,13 +185,13 @@ export default function BusinessProfileStep() {
                 />
               ))}
               <div className="ml-1 flex items-center">
-                <span className="inline-flex h-9 items-center rounded-l-md border border-r-0 border-neutral-strong bg-neutral-surface2 px-2 font-mono text-[13px] text-content-muted">
+                <span className="inline-flex h-9 items-center rounded-l-md border border-r-0 border-white/10 bg-white/[0.02] px-2 font-mono text-[13px] text-white/45">
                   #
                 </span>
                 <input
                   value={color.replace("#", "")}
                   onChange={(e) => setColor("#" + e.target.value.replace("#", ""))}
-                  className="h-9 w-24 rounded-r-md border border-neutral-strong bg-neutral-surface px-2 font-mono text-[13px] uppercase text-ink focus:border-primary focus:outline-none"
+                  className="h-9 w-24 rounded-r-md border border-white/10 bg-cinema-elev px-2 font-mono text-[13px] uppercase text-white focus:border-primary-light focus:outline-none"
                 />
               </div>
             </div>
@@ -204,15 +204,15 @@ export default function BusinessProfileStep() {
 
         {/* Live website preview */}
         <aside className="lg:sticky lg:top-28 lg:self-start">
-          <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.06em] text-content-muted">
+          <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.06em] text-white/45">
             Your website preview
           </p>
-          <div className="overflow-hidden rounded-xl border border-neutral-border bg-neutral-surface">
-            <div className="flex items-center gap-1.5 border-b border-neutral-border bg-neutral-surface2 px-3 py-2">
+          <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
+            <div className="flex items-center gap-1.5 border-b border-white/[0.06] bg-white/[0.02] px-3 py-2">
               <span className="h-2 w-2 rounded-full bg-neutral-strong" />
               <span className="h-2 w-2 rounded-full bg-neutral-strong" />
               <span className="h-2 w-2 rounded-full bg-neutral-strong" />
-              <span className="ml-2 truncate font-mono text-[10px] text-content-muted">
+              <span className="ml-2 truncate font-mono text-[10px] text-white/45">
                 {(name ? name.toLowerCase().replace(/\s+/g, "-") : "your-business")}.conddo.io
               </span>
             </div>
@@ -227,10 +227,10 @@ export default function BusinessProfileStep() {
                   <ImageIcon size={22} style={{ color }} />
                 )}
               </span>
-              <p className="text-[16px] font-medium text-ink">
+              <p className="text-[16px] font-medium text-white">
                 {name || "Your Business Name"}
               </p>
-              <p className="mt-1.5 text-[12px] leading-relaxed text-content-secondary">
+              <p className="mt-1.5 text-[12px] leading-relaxed text-white/65">
                 {tagline || "Your tagline or mission statement will appear here automatically."}
               </p>
               <span
@@ -240,12 +240,12 @@ export default function BusinessProfileStep() {
                 Book a Consultation
               </span>
               <div className="mt-5 grid w-full grid-cols-2 gap-2">
-                <span className="h-12 rounded-md bg-neutral-surface2" />
-                <span className="h-12 rounded-md bg-neutral-surface2" />
+                <span className="h-12 rounded-md bg-white/[0.02]" />
+                <span className="h-12 rounded-md bg-white/[0.02]" />
               </div>
             </div>
           </div>
-          <p className="mt-3 text-[12px] leading-relaxed text-content-muted">
+          <p className="mt-3 text-[12px] leading-relaxed text-white/45">
             Changes you make on the left update this preview in real-time.
           </p>
         </aside>

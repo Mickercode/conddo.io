@@ -75,13 +75,13 @@ export default function ChoosePlanStep() {
         <h1 className="text-[28px] leading-tight tracking-[-0.02em] md:text-[32px]">
           Choose your plan.
         </h1>
-        <p className="mt-2 text-[16px] text-content-secondary">
+        <p className="mt-2 text-[16px] text-white/65">
           14 days free on every plan. No credit card needed.
         </p>
       </header>
 
       {error && (
-        <div className="mb-6 flex w-full max-w-3xl items-center gap-2 rounded-lg border border-danger/20 bg-danger-bg px-4 py-3 text-[14px] text-danger">
+        <div className="mb-6 flex w-full max-w-3xl items-center gap-2 rounded-lg border border-danger/20 bg-rose-500/[0.06] px-4 py-3 text-[14px] text-rose-200">
           <AlertCircle size={18} className="shrink-0" /> {error}
         </div>
       )}
@@ -90,10 +90,10 @@ export default function ChoosePlanStep() {
         {plans.map((plan) => (
           <div
             key={plan.id}
-            className={`relative flex h-full flex-col rounded-xl bg-neutral-surface p-7 ${
+            className={`relative flex h-full flex-col rounded-xl bg-cinema-elev p-7 ${
               plan.popular
                 ? "border-2 border-primary md:-mt-4 md:pb-9 md:pt-9"
-                : "border border-neutral-border"
+                : "border border-white/[0.06]"
             }`}
           >
             {plan.popular && (
@@ -102,24 +102,24 @@ export default function ChoosePlanStep() {
               </span>
             )}
 
-            <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-content-secondary">
+            <p className="text-[13px] font-medium uppercase tracking-[0.08em] text-white/65">
               {plan.name}
             </p>
-            <p className="mt-1.5 text-[14px] leading-relaxed text-content-secondary">
+            <p className="mt-1.5 text-[14px] leading-relaxed text-white/65">
               {plan.blurb}
             </p>
 
             <div className="mt-4 flex items-baseline gap-1">
-              <span className="font-mono text-[30px] font-medium leading-none text-ink">
+              <span className="font-mono text-[30px] font-medium leading-none text-white">
                 {plan.price}
               </span>
-              <span className="text-[14px] text-content-muted">/month</span>
+              <span className="text-[14px] text-white/45">/month</span>
             </div>
 
             <div className="my-6 h-px bg-neutral-border" />
 
             {plan.inherits && (
-              <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.05em] text-content-secondary">
+              <p className="mb-3 text-[12px] font-medium uppercase tracking-[0.05em] text-white/65">
                 {plan.inherits} +
               </p>
             )}
@@ -127,7 +127,7 @@ export default function ChoosePlanStep() {
               {plan.features.map((f) => (
                 <li key={f} className="flex items-start gap-2.5">
                   <CircleCheck size={17} className="mt-0.5 shrink-0 text-primary" />
-                  <span className="text-[14px] text-content-secondary">{f}</span>
+                  <span className="text-[14px] text-white/65">{f}</span>
                 </li>
               ))}
             </ul>
@@ -152,7 +152,7 @@ export default function ChoosePlanStep() {
       </div>
 
       <div className="mt-8 flex flex-col items-center gap-2 text-center">
-        <p className="text-[13px] text-content-muted">
+        <p className="text-[13px] text-white/45">
           Running 3+ locations or a team that needs custom workflows?
         </p>
         <a
