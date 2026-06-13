@@ -12,14 +12,16 @@ import { landingPathFor, roleDefFor } from "@/lib/api/staff";
 
 export type WorkNavItem = { label: string; href: string; icon: LucideIcon };
 
-/** Lean app shell for staff users. Mirrors AppShell's structure (desktop
- *  permanent sidebar, mobile drawer, auth guard) but renders a much shorter
- *  nav scoped to a single role — no temptation, no clutter, no accidental
- *  navigation into admin-only surfaces.
+/** Lean app shell for staff users — cinematic dark variant. Mirrors
+ *  AppShell's structure (desktop permanent sidebar, mobile drawer, auth
+ *  guard, cinema-base html background on mount) but renders a much shorter
+ *  nav scoped to a single role so a Cashier / Pharmacist / Stock Manager
+ *  / Bookkeeper isn't tempted to wander into admin-only surfaces.
  *
- *  Auth guard: if a TENANT_ADMIN somehow lands inside /work (they shouldn't,
- *  but bookmarks happen), we bounce them to /dashboard. Same in reverse for
- *  STAFF users landing on /dashboard. */
+ *  Cross-shell guards mirror AppShell:
+ *    - TENANT_ADMIN landing in /work → /dashboard
+ *    - STAFF landing in /dashboard   → /work (set in AppShell)
+ *    - /work (no suffix)             → role-specific landing */
 export function WorkShell({
   title,
   subtitle,
@@ -39,7 +41,16 @@ export function WorkShell({
   const [authed, setAuthed] = useState<boolean | null>(null);
   const { data: me } = useApiQuery(meQuery);
 
-  // Standard client-side auth guard — same shape AppShell uses.
+  // Cinema-base html background while inside the staff shell.
+  useEffect(() => {
+    const html = document.documentElement;
+    const prev = html.style.backgroundColor;
+    html.style.backgroundColor = "#0a0a0c";
+    return () => {
+      html.style.backgroundColor = prev;
+    };
+  }, []);
+
   useEffect(() => {
     let active = true;
     (async () => {
@@ -52,7 +63,6 @@ export function WorkShell({
     return () => { active = false; };
   }, [router]);
 
-  // Cross-shell guard: owners shouldn't be on /work. Route them home.
   useEffect(() => {
     if (!me) return;
     if (me.user.role === "TENANT_ADMIN" || me.user.role === "SUPER_ADMIN") {
@@ -60,7 +70,6 @@ export function WorkShell({
     }
   }, [me, router]);
 
-  // /work (no specific suffix) routes the staffer to their role's landing.
   useEffect(() => {
     if (!me) return;
     if (pathname === "/work") {
@@ -74,7 +83,7 @@ export function WorkShell({
   }
 
   if (authed !== true) {
-    return <div className="min-h-screen bg-neutral-bg" />;
+    return <div className="min-h-screen bg-cinema-base" />;
   }
 
   const roleDef = roleDefFor(me?.user.staffRole);
@@ -83,9 +92,9 @@ export function WorkShell({
   const initials = me?.user.initials ?? "?";
 
   return (
-    <div className="min-h-screen bg-neutral-bg">
+    <div className="min-h-screen bg-cinema-base text-white">
       {/* Desktop sidebar */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 border-r border-neutral-border bg-neutral-surface lg:block">
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-60 border-r border-white/[0.06] bg-cinema-elev lg:block">
         <SidebarBody
           pathname={pathname}
           nav={nav}
@@ -100,13 +109,13 @@ export function WorkShell({
       {/* Mobile drawer */}
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-ink/40" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-[15rem] max-w-[82%] border-r border-neutral-border bg-neutral-surface">
+          <div className="absolute inset-0 bg-black/65 backdrop-blur-sm" onClick={() => setOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-[15rem] max-w-[82%] border-r border-white/[0.08] bg-cinema-elev">
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-content-secondary hover:bg-neutral-surface2"
+              className="absolute right-3 top-3 inline-flex h-8 w-8 items-center justify-center rounded-md text-white/55 hover:bg-white/[0.06] hover:text-white"
             >
               <X size={16} />
             </button>
@@ -125,19 +134,19 @@ export function WorkShell({
 
       {/* Main */}
       <main className="lg:pl-60">
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-neutral-border bg-neutral-bg/80 px-4 py-3 backdrop-blur-sm sm:px-6 lg:px-10">
+        <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-white/[0.06] bg-cinema-base/80 px-4 py-3 backdrop-blur-xl sm:px-6 lg:px-10">
           <div className="flex items-center gap-3 min-w-0">
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-content-secondary hover:bg-neutral-surface2 lg:hidden"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-md text-white/55 hover:bg-white/[0.06] hover:text-white lg:hidden"
             >
               <Menu size={18} />
             </button>
             <div className="min-w-0">
-              <h1 className="truncate text-[18px] font-medium text-ink sm:text-[20px]">{title}</h1>
-              {subtitle && <p className="truncate text-[12px] text-content-muted">{subtitle}</p>}
+              <h1 className="truncate text-[18px] font-medium tracking-tighter text-white sm:text-[20px]">{title}</h1>
+              {subtitle && <p className="truncate text-[12.5px] text-white/55">{subtitle}</p>}
             </div>
           </div>
           {actions && <div className="flex shrink-0 items-center gap-2">{actions}</div>}
@@ -169,9 +178,9 @@ function SidebarBody({
   return (
     <div className="flex h-full flex-col">
       {/* Tenant header */}
-      <div className="border-b border-neutral-border px-4 py-4">
-        <p className="text-[11px] font-medium uppercase tracking-[0.08em] text-content-muted">Workspace</p>
-        <p className="mt-0.5 truncate text-[14px] font-medium text-ink">{tenantName}</p>
+      <div className="border-b border-white/[0.06] px-4 py-5">
+        <p className="font-mono text-[10.5px] font-medium uppercase tracking-loose text-white/45">Workspace</p>
+        <p className="mt-1 truncate text-[14px] font-medium text-white">{tenantName}</p>
       </div>
 
       {/* Nav */}
@@ -184,13 +193,23 @@ function SidebarBody({
               <li key={item.href}>
                 <Link
                   href={item.href}
-                  className={`flex items-center gap-3 rounded-md px-3 py-2 text-[14px] transition-colors ${
+                  className={`group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition-colors ${
                     active
-                      ? "bg-primary-bg font-medium text-primary"
-                      : "text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+                      ? "bg-white/[0.06] font-medium text-white"
+                      : "text-white/65 hover:bg-white/[0.03] hover:text-white"
                   }`}
                 >
-                  <Icon size={16} />
+                  {active && (
+                    <span
+                      aria-hidden
+                      className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full bg-primary-light"
+                    />
+                  )}
+                  <Icon
+                    size={16}
+                    strokeWidth={active ? 2.25 : 1.85}
+                    className={active ? "text-primary-light" : "text-white/55 group-hover:text-white/85"}
+                  />
                   {item.label}
                 </Link>
               </li>
@@ -200,20 +219,20 @@ function SidebarBody({
       </nav>
 
       {/* User strip */}
-      <div className="border-t border-neutral-border px-4 py-3">
+      <div className="border-t border-white/[0.06] px-4 py-4">
         <div className="mb-3 flex items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-bg font-mono text-[12px] font-semibold text-primary">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 border border-primary/25 font-mono text-[11.5px] font-semibold text-primary-light">
             {initials}
           </span>
           <div className="min-w-0">
-            <p className="truncate text-[13px] font-medium text-ink">{userName}</p>
-            <p className="truncate text-[11px] text-content-muted">{roleLabel}</p>
+            <p className="truncate text-[13px] font-medium text-white">{userName}</p>
+            <p className="truncate text-[11px] text-white/45">{roleLabel}</p>
           </div>
         </div>
         <button
           type="button"
           onClick={onLogout}
-          className="inline-flex w-full items-center justify-center gap-1.5 rounded-md border border-neutral-border bg-neutral-surface px-3 py-1.5 text-[12px] font-medium text-content-secondary transition-colors hover:border-danger hover:text-danger"
+          className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 text-[12px] font-medium text-white/65 transition-colors hover:border-rose-400/30 hover:bg-rose-500/[0.06] hover:text-rose-200"
         >
           <LogOut size={12} /> Sign out
         </button>

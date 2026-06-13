@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, type ReactNode } from "react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { ArrowLeft, Bell, LogOut, Menu, Search, X } from "lucide-react";
@@ -13,6 +12,7 @@ import { logout, meQuery, type Me } from "@/lib/api/account";
 import { getAccessToken } from "@/lib/api/auth";
 import { refreshAccessToken } from "@/lib/api/client";
 import { InstallAppButton } from "@/components/app/InstallAppButton";
+import { Wordmark } from "@/components/marketing/Wordmark";
 
 type Identity = { businessName: string; userName: string; roleLabel: string; initials: string };
 
@@ -56,22 +56,15 @@ function SidebarBody({
 }) {
   return (
     <div className="flex h-full flex-col">
-      {/* Brand */}
-      <div className="px-5 py-5">
+      {/* Brand — inline wordmark on the cinema surface. */}
+      <div className="px-5 py-6">
         <Link href="/dashboard" onClick={onNavigate} className="inline-block">
-          <Image
-            src="/conddo_logo.png"
-            alt="conddo.io"
-            width={1800}
-            height={480}
-            priority
-            className="h-7 w-auto"
-          />
+          <Wordmark tone="light" />
         </Link>
-        <p className="mt-2 truncate text-[12px] text-content-muted">{identity.businessName}</p>
+        <p className="mt-2.5 truncate text-[12px] text-white/45">{identity.businessName}</p>
       </div>
 
-      {/* Nav */}
+      {/* Nav — active route picks up a soft primary fill + side accent line. */}
       <nav className="flex-1 space-y-1 overflow-y-auto px-3">
         {nav.map(({ label, href, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(href + "/");
@@ -80,42 +73,50 @@ function SidebarBody({
               key={href}
               href={href}
               onClick={onNavigate}
-              className={`flex items-center gap-3 rounded-md px-3 py-2 text-[14px] transition-colors ${
+              className={`group relative flex items-center gap-3 rounded-lg px-3 py-2 text-[14px] transition-colors ${
                 active
-                  ? "bg-primary-bg font-medium text-primary"
-                  : "text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+                  ? "bg-white/[0.06] font-medium text-white"
+                  : "text-white/65 hover:bg-white/[0.03] hover:text-white"
               }`}
             >
-              <Icon size={18} strokeWidth={2} />
+              {active && (
+                <span
+                  aria-hidden
+                  className="absolute left-0 top-1/2 h-5 w-[2px] -translate-y-1/2 rounded-r-full bg-primary-light"
+                />
+              )}
+              <Icon
+                size={17}
+                strokeWidth={active ? 2.25 : 1.85}
+                className={active ? "text-primary-light" : "text-white/55 group-hover:text-white/85"}
+              />
               {label}
             </Link>
           );
         })}
       </nav>
 
-      {/* User */}
-      <div className="border-t border-neutral-border px-4 py-4">
-        {/* Install-app CTA — hidden when already installed or when the
-            platform doesn't support installable webapps. */}
+      {/* User panel at the bottom. */}
+      <div className="border-t border-white/[0.06] px-4 py-4">
         <div className="mb-3 [&:empty]:hidden">
           <InstallAppButton variant="compact" />
         </div>
         <div className="flex items-center gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary-bg font-mono text-[12px] font-medium text-primary">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/15 border border-primary/25 font-mono text-[11.5px] font-medium text-primary-light">
             {identity.initials}
           </span>
           <div className="min-w-0 flex-1">
-            <p className="truncate text-[13px] font-medium text-ink">{identity.userName}</p>
-            <p className="text-[11px] text-content-muted">{identity.roleLabel || "Member"}</p>
+            <p className="truncate text-[13px] font-medium text-white">{identity.userName}</p>
+            <p className="text-[11px] text-white/45">{identity.roleLabel || "Member"}</p>
           </div>
           <button
             type="button"
             onClick={onLogout}
             aria-label="Sign out"
             title="Sign out"
-            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+            className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-white/55 hover:bg-white/[0.04] hover:text-white"
           >
-            <LogOut size={17} />
+            <LogOut size={16} />
           </button>
         </div>
       </div>
@@ -124,9 +125,14 @@ function SidebarBody({
 }
 
 /**
- * The authenticated app shell: a sidebar that is permanently open on desktop
- * (consistent across every screen) and collapses into a dismissable drawer on
- * mobile, plus a top bar with the page title and per-page actions.
+ * The authenticated app shell — cinematic dark surface. Permanent sidebar
+ * on desktop, dismissable drawer on mobile, plus a sticky glass topbar
+ * with the page title and per-page actions.
+ *
+ * Sets html background to cinema-base on mount + restores on unmount —
+ * same pattern as MarketingShell / CinematicAuthShell so iOS overscroll
+ * matches and the marketing→app transition stays on one continuous
+ * surface.
  */
 export function AppShell({
   title,
@@ -150,9 +156,17 @@ export function AppShell({
   const nav = useAppNav();
   const modulePaths = useActiveModulePaths();
 
-  // Client-side auth guard: app screens require an access token. If it's missing
-  // (e.g. cleared/expired on reload) we try the refresh cookie once before
-  // bouncing to /login. Renders nothing until resolved, to avoid a protected-UI flash.
+  // Cinema-base html background while inside the authed shell.
+  useEffect(() => {
+    const html = document.documentElement;
+    const prev = html.style.backgroundColor;
+    html.style.backgroundColor = "#0a0a0c";
+    return () => {
+      html.style.backgroundColor = prev;
+    };
+  }, []);
+
+  // Client-side auth guard: app screens require an access token.
   useEffect(() => {
     let active = true;
     (async () => {
@@ -183,8 +197,6 @@ export function AppShell({
   }, [authed, modulePaths, pathname, router]);
 
   // Cross-shell guard: STAFF users belong on /work, not the owner dashboard.
-  // If they somehow land here (bookmark, old session, manual URL), forward
-  // them to their role's landing. Owners + Conddo support stay on /dashboard.
   useEffect(() => {
     if (authed !== true || !me) return;
     if (me.user.role === "STAFF") {
@@ -198,26 +210,27 @@ export function AppShell({
   }
 
   if (authed !== true) {
-    return <div className="min-h-screen bg-neutral-bg" />;
+    return <div className="min-h-screen bg-cinema-base" />;
   }
 
   return (
-    <div className="min-h-screen bg-neutral-bg">
-      {/* Desktop sidebar — always open. */}
-      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-neutral-border bg-neutral-surface lg:block">
+    <div className="min-h-screen bg-cinema-base text-white">
+      {/* Desktop sidebar — always open. Sits on cinema-elev so it's
+          subtly elevated from the main content surface. */}
+      <aside className="fixed inset-y-0 left-0 z-40 hidden w-64 border-r border-white/[0.06] bg-cinema-elev lg:block">
         <SidebarBody pathname={pathname} identity={identity} nav={nav} onLogout={handleLogout} />
       </aside>
 
-      {/* Mobile drawer — collapsible. */}
+      {/* Mobile drawer — collapsible glass panel. */}
       {open && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-ink/40" onClick={() => setOpen(false)} />
-          <aside className="absolute inset-y-0 left-0 w-[17rem] max-w-[82%] border-r border-neutral-border bg-neutral-surface">
+          <div className="absolute inset-0 bg-black/65 backdrop-blur-sm" onClick={() => setOpen(false)} />
+          <aside className="absolute inset-y-0 left-0 w-[17rem] max-w-[82%] border-r border-white/[0.08] bg-cinema-elev">
             <button
               type="button"
               onClick={() => setOpen(false)}
               aria-label="Close menu"
-              className="absolute right-3 top-4 inline-flex h-8 w-8 items-center justify-center rounded-md text-content-secondary hover:bg-neutral-surface2"
+              className="absolute right-3 top-4 inline-flex h-8 w-8 items-center justify-center rounded-md text-white/55 hover:bg-white/[0.06] hover:text-white"
             >
               <X size={18} />
             </button>
@@ -234,13 +247,14 @@ export function AppShell({
 
       {/* Main column */}
       <div className="lg:pl-64">
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-neutral-border bg-neutral-bg/85 px-4 py-4 backdrop-blur md:px-8">
+        {/* Sticky glass topbar — backdrop blurred over the page content. */}
+        <header className="sticky top-0 z-30 flex items-center justify-between gap-3 border-b border-white/[0.06] bg-cinema-base/80 px-4 py-4 backdrop-blur-xl md:px-8">
           <div className="flex min-w-0 items-center gap-2.5">
             <button
               type="button"
               onClick={() => setOpen(true)}
               aria-label="Open menu"
-              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-ink hover:bg-neutral-surface2 lg:hidden"
+              className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-white hover:bg-white/[0.06] lg:hidden"
             >
               <Menu size={20} />
             </button>
@@ -248,36 +262,40 @@ export function AppShell({
               <Link
                 href={backHref}
                 aria-label="Go back"
-                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-content-secondary hover:bg-neutral-surface2 hover:text-ink"
+                className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-white/55 hover:bg-white/[0.06] hover:text-white"
               >
                 <ArrowLeft size={19} />
               </Link>
             )}
             <div className="min-w-0">
-              <h1 className="truncate text-[18px] font-medium leading-tight tracking-[-0.01em] text-ink md:text-[20px]">
+              <h1 className="truncate text-[18px] font-medium leading-tight tracking-tighter text-white md:text-[20px]">
                 {title}
               </h1>
-              {subtitle && <p className="truncate text-[13px] text-content-muted">{subtitle}</p>}
+              {subtitle && <p className="truncate text-[13px] text-white/55">{subtitle}</p>}
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="flex shrink-0 items-center gap-1.5">
             <Link
               href="/search"
               aria-label="Search"
-              className={`inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-surface2 hover:text-ink ${
-                pathname === "/search" ? "bg-primary-bg text-primary" : "text-content-secondary"
+              className={`inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors ${
+                pathname === "/search"
+                  ? "bg-primary/15 text-primary-light"
+                  : "text-white/55 hover:bg-white/[0.06] hover:text-white"
               }`}
             >
-              <Search size={19} />
+              <Search size={18} />
             </Link>
             <Link
               href="/notifications"
               aria-label="Notifications"
-              className={`inline-flex h-9 w-9 items-center justify-center rounded-md hover:bg-neutral-surface2 hover:text-ink ${
-                pathname === "/notifications" ? "bg-primary-bg text-primary" : "text-content-secondary"
+              className={`inline-flex h-9 w-9 items-center justify-center rounded-md transition-colors ${
+                pathname === "/notifications"
+                  ? "bg-primary/15 text-primary-light"
+                  : "text-white/55 hover:bg-white/[0.06] hover:text-white"
               }`}
             >
-              <Bell size={19} />
+              <Bell size={18} />
             </Link>
             {actions}
           </div>
