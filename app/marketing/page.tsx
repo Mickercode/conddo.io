@@ -9,6 +9,8 @@ import { CreateCampaignModal } from "@/components/app/CreateCampaignModal";
 import { Button } from "@/components/ui/Button";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { marketingApi, type Kpi, type Tone } from "@/lib/api/marketing";
+import { meQuery } from "@/lib/api/account";
+import { verticalOf } from "@/lib/verticalCopy";
 
 const toneText: Record<Tone, string> = {
   success: "text-emerald-300",
@@ -24,16 +26,23 @@ const fmtWhen = (t: string | null) => {
   return isNaN(d.getTime()) ? t : d.toLocaleString("en-NG", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
 };
 
-const QUICK: { label: string; icon: LucideIcon; href: string }[] = [
+/** Marketing quick-action catalogue. `pharmacyOnly: true` items appear
+ *  only when the tenant's vertical is pharmacy — these are clinical
+ *  workflow surfaces (refill reminders, pharmacy follow-ups, drug
+ *  programs) that other verticals shouldn't see by default. Loyalty
+ *  stays cross-vertical (cashback works for any business). */
+type QuickAction = { label: string; icon: LucideIcon; href: string; pharmacyOnly?: true };
+
+const QUICK: QuickAction[] = [
   { label: "Schedule post", icon: FilePlus2, href: "/marketing/social" },
   { label: "Create email campaign", icon: Mail, href: "/marketing/email" },
   { label: "Send SMS blast", icon: MessageSquare, href: "/marketing/sms" },
   { label: "Discounts", icon: Tag, href: "/marketing/discounts" },
-  { label: "Reminders", icon: Bell, href: "/marketing/reminders" },
-  { label: "Refill offers", icon: Gift, href: "/marketing/refill-offers" },
+  { label: "Reminders", icon: Bell, href: "/marketing/reminders", pharmacyOnly: true },
+  { label: "Refill offers", icon: Gift, href: "/marketing/refill-offers", pharmacyOnly: true },
   { label: "Loyalty", icon: Sparkles, href: "/loyalty" },
-  { label: "Follow-ups", icon: ListChecks, href: "/pharmacy/followups" },
-  { label: "Drug programs", icon: ClipboardPlus, href: "/pharmacy/programs" },
+  { label: "Follow-ups", icon: ListChecks, href: "/pharmacy/followups", pharmacyOnly: true },
+  { label: "Drug programs", icon: ClipboardPlus, href: "/pharmacy/programs", pharmacyOnly: true },
   { label: "What's coming next", icon: Compass, href: "/features" },
   { label: "Manage leads", icon: Megaphone, href: "/marketing/leads" },
 ];
@@ -43,6 +52,12 @@ export default function MarketingPage() {
   const posts = useApiQuery(() => marketingApi.posts());
   const campaigns = useApiQuery(() => marketingApi.campaigns());
   const funnel = useApiQuery(marketingApi.funnel);
+  const { data: me } = useApiQuery(meQuery);
+  const isPharmacy = verticalOf(me) === "pharmacy";
+  // Filter pharmacy-only quick actions out for non-pharmacy verticals so
+  // a fashion / studio / consultancy tenant isn't staring at "Drug
+  // programs" and "Refill offers" they can't use.
+  const quickActions = QUICK.filter((q) => !q.pharmacyOnly || isPharmacy);
   const [campaignOpen, setCampaignOpen] = useState(false);
 
   const s = summary.data;
@@ -189,7 +204,7 @@ export default function MarketingPage() {
           <section className="rounded-xl border border-white/[0.06] bg-cinema-elev p-6">
             <h3 className="mb-4 text-[15px] font-medium text-white">Quick Actions</h3>
             <div className="flex flex-col gap-2">
-              {QUICK.map((a) => (
+              {quickActions.map((a) => (
                 <Link key={a.label} href={a.href} className="group flex items-center gap-3 rounded-lg border border-white/[0.06] px-4 py-3 text-left text-[14px] text-white transition-colors hover:bg-white/[0.02]">
                   <a.icon size={18} className="text-primary" />
                   <span className="flex-1">{a.label}</span>
