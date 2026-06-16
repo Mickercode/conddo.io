@@ -45,7 +45,7 @@ export function BetaFeatureGate({
   const isRequested = Boolean(flag);
 
   return (
-    <div className="rounded-2xl border border-primary/20 bg-primary/[0.08]/30 p-8 text-center">
+    <div className="rounded-2xl border border-primary/20 bg-primary/[0.08] p-8 text-center">
       <span className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-primary/[0.08] text-primary">
         {isRequested ? <Sparkles size={22} /> : <Lock size={22} />}
       </span>

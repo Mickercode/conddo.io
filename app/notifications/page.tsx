@@ -117,7 +117,7 @@ export default function NotificationsPage() {
                 <li
                   key={n.id}
                   className={`group flex gap-3 px-5 py-4 transition-colors hover:bg-white/[0.02] ${
-                    isUnread ? "bg-primary/[0.08]/30" : ""
+                    isUnread ? "bg-primary/[0.08]" : ""
                   }`}
                 >
                   <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/[0.08] text-primary">

@@ -225,7 +225,7 @@ export function PaymentModal({
         )}
 
         {balance < 0 && (
-          <p className="flex items-start gap-1.5 rounded-md bg-primary/[0.08]/40 px-3 py-2 text-[12px] text-primary">
+          <p className="flex items-start gap-1.5 rounded-md bg-primary/[0.08] px-3 py-2 text-[12px] text-primary">
             <AlertCircle size={11} className="mt-0.5 shrink-0" />
             Change due to customer: <span className="font-medium">{naira(Math.abs(balance))}</span>
           </p>

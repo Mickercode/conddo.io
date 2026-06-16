@@ -92,7 +92,7 @@ export function CustomerCashbackCard({ customerId }: { customerId: string }) {
   const txs = (txQ.data ?? []).slice(0, 12);
 
   return (
-    <div className="rounded-xl border border-success/20 bg-emerald-500/15/40 p-5">
+    <div className="rounded-xl border border-success/20 bg-emerald-500/15 p-5">
       <div className="mb-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Sparkles size={15} className="text-emerald-300" />

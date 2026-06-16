@@ -229,7 +229,7 @@ function EditRow({
   const price = Number(draft.unitPrice);
   const preview = Number.isFinite(qty) && Number.isFinite(price) ? qty * price : 0;
   return (
-    <tr className={isNew ? "bg-primary/[0.08]/30" : "bg-white/[0.02]"}>
+    <tr className={isNew ? "bg-primary/[0.08]" : "bg-white/[0.02]"}>
       <td className="px-6 py-3">
         <input
           value={draft.description}

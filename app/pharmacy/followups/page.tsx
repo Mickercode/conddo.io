@@ -101,7 +101,7 @@ function FollowupRow({
             <CalendarClock size={11} /> Due {fmtWhen(f.dueDate)}
           </p>
           {f.outcome && (
-            <div className="mt-2 rounded-md bg-emerald-500/15/40 px-3 py-2 text-[12px] text-white/65">
+            <div className="mt-2 rounded-md bg-emerald-500/15 px-3 py-2 text-[12px] text-white/65">
               <p className="font-medium text-emerald-300">Outcome: {f.outcomeType}</p>
               <p className="mt-0.5">{f.outcome}</p>
               {f.completedBy?.name && (

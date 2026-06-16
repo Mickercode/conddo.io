@@ -170,7 +170,7 @@ export default function BookingsPage() {
                 {dates.map((d, i) => {
                   const isToday = sameDay(d, today);
                   return (
-                    <div key={i} className={`border-r border-white/[0.06] p-3 text-center last:border-r-0 ${isToday ? "bg-primary/[0.08]/40" : ""}`}>
+                    <div key={i} className={`border-r border-white/[0.06] p-3 text-center last:border-r-0 ${isToday ? "bg-primary/[0.08]" : ""}`}>
                       <div className={`text-[11px] uppercase tracking-[0.05em] ${isToday ? "font-bold text-primary" : "text-white/45"}`}>{DOW[i]}</div>
                       <div className={`text-[16px] ${isToday ? "font-bold text-primary" : "text-white"}`}>{d.getDate()}</div>
                     </div>
@@ -189,7 +189,7 @@ export default function BookingsPage() {
                 <div className="relative" style={{ height: GRID_HEIGHT }}>
                   <div className="absolute inset-0 grid grid-cols-7">
                     {dates.map((d, i) => (
-                      <div key={i} className={`border-r border-white/[0.06] last:border-r-0 ${sameDay(d, today) ? "bg-primary/[0.08]/10" : ""}`} />
+                      <div key={i} className={`border-r border-white/[0.06] last:border-r-0 ${sameDay(d, today) ? "bg-primary/[0.08]" : ""}`} />
                     ))}
                   </div>
                   <div className="absolute inset-0">

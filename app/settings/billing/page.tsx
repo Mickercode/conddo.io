@@ -212,7 +212,7 @@ export default function BillingSettings() {
             below as the path forward. Shown when BE explicitly reports
             "no active subscription" (404 or the message check). */}
         {!sub.loading && isMissingSubscription && (
-          <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/[0.08]/30 px-5 py-4">
+          <div className="flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/[0.08] px-5 py-4">
             <Info className="mt-0.5 shrink-0 text-primary" size={20} />
             <div>
               <p className="text-[14px] font-medium text-white">No active subscription yet</p>

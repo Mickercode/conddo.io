@@ -73,7 +73,7 @@ export default function ReconciliationLandingPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
           {resume && (
-            <div className="rounded-xl border border-warning/20 bg-amber-500/15/40 p-5">
+            <div className="rounded-xl border border-warning/20 bg-amber-500/15 p-5">
               <div className="mb-2 flex items-center gap-2">
                 <History size={16} className="text-amber-300" />
                 <p className="text-[14px] font-medium text-white">Continue previous session</p>

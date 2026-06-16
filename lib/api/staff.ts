@@ -49,6 +49,13 @@ export type StaffRoleDef = {
    *  local STAFF_ROLE_CATALOGUE (which doesn't carry the matrix) still
    *  compiles as a fallback for the offline / pre-shipment path. */
   moduleAccess?: ModuleAccessMatrix;
+  /** True for roles whose copy + workflow only makes sense for the pharmacy
+   *  vertical — currently just PHARMACIST. The invite + manage modals
+   *  filter these out for non-pharmacy tenants so a fashion / studio /
+   *  consultancy owner doesn't see a "Pharmacist" option in their team
+   *  invite. The BE enum still accepts the key (so legacy invites remain
+   *  consumable) — this is purely a UI surface decision. */
+  pharmacyOnly?: true;
 };
 
 /** BE wire shape for `/staff/roles`. Keeps `permissions` matching the BE
@@ -101,15 +108,16 @@ export const STAFF_ROLE_CATALOGUE: StaffRoleDef[] = [
       "Access full customer profiles for clinical context",
       "Cannot change inventory pricing or run POS",
     ],
+    pharmacyOnly: true,
   },
   {
     key: "CASHIER",
     label: "Cashier",
-    description: "Walk-in sales only — open shifts, run sales, take payments, close shifts.",
+    description: "Front-of-house sales — open shifts, take payments, close shifts.",
     access: [
       "Open and close shifts with cash reconciliation",
-      "Run POS sales — add items, take payment, print receipts",
-      "Attach customers to sales for cashback",
+      "Run sales — add items, take payment, print receipts",
+      "Attach customers to sales for loyalty",
       "View customer phone numbers and names (read-only)",
       "Cannot edit inventory, see revenue, or void completed sales",
     ],
@@ -117,7 +125,7 @@ export const STAFF_ROLE_CATALOGUE: StaffRoleDef[] = [
   {
     key: "STOCK_MANAGER",
     label: "Stock Manager",
-    description: "Inventory keeper — receive deliveries, run counts, manage SKUs.",
+    description: "Inventory keeper — receive deliveries, run counts, manage products.",
     access: [
       "Add and edit products, categories, batch numbers",
       "Record restocks and run reconciliations",
@@ -138,6 +146,15 @@ export const STAFF_ROLE_CATALOGUE: StaffRoleDef[] = [
     ],
   },
 ];
+
+/** Filter the catalogue to roles relevant for a given vertical. Drops the
+ *  pharmacy-only PHARMACIST role for non-pharmacy tenants so a music
+ *  studio / fashion / consultancy owner doesn't see clinical roles in
+ *  their team-invite picker. */
+export function rolesForVertical(verticalId?: string | null): StaffRoleDef[] {
+  const isPharmacy = verticalId === "pharmacy";
+  return STAFF_ROLE_CATALOGUE.filter((r) => !r.pharmacyOnly || isPharmacy);
+}
 
 /** Lookup helper. Falls back to a generic "Staff member" def for unknown
  *  keys so older invites issued before a role rename still render gracefully. */

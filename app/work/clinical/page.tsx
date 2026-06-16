@@ -47,7 +47,7 @@ export default function ClinicalLanding() {
     <WorkShell title={greet} subtitle="Pharmacist dashboard" nav={NAV}>
       <div className="space-y-6">
         {followupsEnabled && due.length > 0 && (
-          <div className="rounded-2xl border border-primary/30 bg-primary/[0.08]/40 p-5">
+          <div className="rounded-2xl border border-primary/30 bg-primary/[0.08] p-5">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.05em] text-primary">Follow-ups due today</p>
@@ -131,7 +131,7 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 transition-colors hover:border-primary hover:bg-primary/[0.08]/30"
+      className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 transition-colors hover:border-primary hover:bg-primary/[0.08]"
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
         <Icon size={18} />

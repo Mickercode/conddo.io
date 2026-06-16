@@ -528,7 +528,7 @@ function ListSection<T>({
       </ul>
 
       {adding && (
-        <div className="mt-3 rounded-md border border-primary/20 bg-primary/[0.08]/30 p-3">
+        <div className="mt-3 rounded-md border border-primary/20 bg-primary/[0.08] p-3">
           {editor(adding, setAdding)}
           <div className="mt-3 flex items-center justify-end gap-2">
             <Button variant="secondary" size="md" onClick={() => setAdding(null)} disabled={saving}>

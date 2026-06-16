@@ -230,7 +230,7 @@ export function ProductModal({
     >
       <form id="product-form" onSubmit={submit} className="space-y-4">
         {isPharmacy && (
-          <div className="rounded-lg border border-primary/20 bg-primary/[0.08]/40 p-3">
+          <div className="rounded-lg border border-primary/20 bg-primary/[0.08] p-3">
             {!aiResult ? (
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-start gap-2.5">

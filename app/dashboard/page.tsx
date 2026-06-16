@@ -131,7 +131,7 @@ function SetupNudge({
           {checklist.steps.map((step) => (
             <li
               key={step.key}
-              className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 hover:bg-amber-500/15/60"
+              className="flex items-center justify-between gap-2 rounded-md px-2 py-1.5 hover:bg-amber-500/15"
             >
               <span className="flex items-center gap-2 text-[13px]">
                 {step.done ? (

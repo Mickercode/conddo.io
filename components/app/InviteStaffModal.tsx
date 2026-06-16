@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { CheckCircle2, Crown } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -8,10 +8,13 @@ import { Field, TextInput } from "@/components/ui/Field";
 import { useToast } from "@/components/ui/Toast";
 import {
   staffApi,
-  STAFF_ROLE_CATALOGUE,
+  rolesForVertical,
   roleDefFor,
   type StaffSubRole,
 } from "@/lib/api/staff";
+import { useApiQuery } from "@/hooks/useApiQuery";
+import { meQuery } from "@/lib/api/account";
+import { verticalOf } from "@/lib/verticalCopy";
 import { ApiError } from "@/lib/api/client";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -29,6 +32,13 @@ export function InviteStaffModal({
   onInvited?: () => void;
 }) {
   const toast = useToast();
+  const { data: me } = useApiQuery(meQuery);
+  const vertical = verticalOf(me);
+  // Filter PHARMACIST out for non-pharmacy verticals so a music studio
+  // owner doesn't see clinical roles. Same filter governs the permission
+  // preview list shown below the role picker.
+  const roles = useMemo(() => rolesForVertical(vertical), [vertical]);
+
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
   const [selectedRole, setSelectedRole] = useState<StaffSubRole>("CASHIER");
@@ -137,7 +147,7 @@ export function InviteStaffModal({
             Role
           </label>
           <div className="space-y-2">
-            {STAFF_ROLE_CATALOGUE.map((r) => {
+            {roles.map((r) => {
               const active = r.key === selectedRole;
               return (
                 <button
@@ -146,7 +156,7 @@ export function InviteStaffModal({
                   onClick={() => setSelectedRole(r.key)}
                   className={`flex w-full items-start gap-3 rounded-xl border p-3 text-left transition-colors ${
                     active
-                      ? "border-primary bg-primary/[0.08]/30"
+                      ? "border-primary bg-primary/[0.08]"
                       : "border-white/[0.06] bg-cinema-elev hover:border-primary-light"
                   }`}
                 >
@@ -166,7 +176,7 @@ export function InviteStaffModal({
         </div>
 
         {/* Selected role's permission preview */}
-        <div className="rounded-xl border border-primary/20 bg-primary/[0.08]/30 p-3">
+        <div className="rounded-xl border border-primary/20 bg-primary/[0.08] p-3">
           <p className="mb-2 text-[11px] font-medium uppercase tracking-[0.05em] text-primary">
             What {roleDef.label}s can do
           </p>

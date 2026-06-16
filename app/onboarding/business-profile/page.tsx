@@ -137,7 +137,7 @@ export default function BusinessProfileStep() {
           {/* Logo upload */}
           <div>
             <label className={labelCls}>Logo</label>
-            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-white/10 bg-cinema-base px-6 py-7 text-center transition-colors hover:border-primary hover:bg-primary/[0.08]/30">
+            <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-white/10 bg-cinema-base px-6 py-7 text-center transition-colors hover:border-primary hover:bg-primary/[0.08]">
               <input type="file" accept="image/png,image/jpeg,image/svg+xml" className="sr-only" onChange={onLogoChange} />
               {logoPreview ? (
                 <img src={logoPreview} alt="Logo preview" className="h-16 w-auto max-w-[180px] object-contain" />

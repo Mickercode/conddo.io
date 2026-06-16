@@ -65,7 +65,7 @@ export default function FeaturesPage() {
         />
       ) : (
         <>
-          <div className="mb-5 flex flex-wrap items-center gap-2 rounded-lg border border-primary/20 bg-primary/[0.08]/30 px-4 py-3 text-[13px] text-white/65">
+          <div className="mb-5 flex flex-wrap items-center gap-2 rounded-lg border border-primary/20 bg-primary/[0.08] px-4 py-3 text-[13px] text-white/65">
             <Sparkles size={15} className="text-primary" />
             <span>
               <strong className="font-medium text-white">{betaCount} in beta</strong> · {" "}

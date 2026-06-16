@@ -169,7 +169,7 @@ export function MeasurementsModal({
         })}
 
         {missingFields.length > 0 && (
-          <div className="rounded-md border border-primary/20 bg-primary/[0.08]/30 p-3">
+          <div className="rounded-md border border-primary/20 bg-primary/[0.08] p-3">
             <p className="mb-2 inline-flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.04em] text-primary">
               <Sparkles size={11} /> Quick add for {verticalQ.data?.name ?? "your vertical"}
             </p>

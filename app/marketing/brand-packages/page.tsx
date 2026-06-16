@@ -63,7 +63,7 @@ function CurrentSubscriptionCard({
 }) {
   const chip = STATUS_CHIP[subscription.status];
   return (
-    <div className="mb-6 rounded-2xl border border-primary/30 bg-primary/[0.08]/40 p-6">
+    <div className="mb-6 rounded-2xl border border-primary/30 bg-primary/[0.08] p-6">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
           <div className="mb-1 flex items-center gap-2">

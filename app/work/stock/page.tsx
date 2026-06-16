@@ -32,7 +32,7 @@ export default function StockLanding() {
       <div className="space-y-6">
         {/* Headline alert */}
         {lowStock.length > 0 && (
-          <div className="flex items-start gap-3 rounded-2xl border border-warning/30 bg-amber-500/15/40 p-5">
+          <div className="flex items-start gap-3 rounded-2xl border border-warning/30 bg-amber-500/15 p-5">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-warning/15 text-amber-300">
               <AlertTriangle size={18} />
             </span>
@@ -128,7 +128,7 @@ function QuickLink({
   return (
     <Link
       href={target}
-      className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 transition-colors hover:border-primary hover:bg-primary/[0.08]/30"
+      className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 transition-colors hover:border-primary hover:bg-primary/[0.08]"
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
         <Icon size={18} />

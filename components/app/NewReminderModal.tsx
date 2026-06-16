@@ -233,7 +233,7 @@ export function NewReminderModal({
         </Field>
 
         {message.trim() && (
-          <div className="rounded-lg border border-primary/20 bg-primary/[0.08]/40 p-3">
+          <div className="rounded-lg border border-primary/20 bg-primary/[0.08] p-3">
             <div className="mb-1 flex items-center gap-1.5 text-[11px] font-medium uppercase tracking-[0.04em] text-primary">
               <Sparkles size={11} /> Preview
             </div>

@@ -38,7 +38,7 @@ export default function CashierLanding() {
       <div className="space-y-6">
         {/* Open-shift / continue-shift card */}
         {session ? (
-          <div className="rounded-2xl border border-success/30 bg-emerald-500/15/40 p-6">
+          <div className="rounded-2xl border border-success/30 bg-emerald-500/15 p-6">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.05em] text-emerald-300">Shift open</p>
@@ -126,7 +126,7 @@ function QuickLink({
   return (
     <Link
       href={href}
-      className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 transition-colors hover:border-primary hover:bg-primary/[0.08]/30"
+      className="group flex items-start gap-3 rounded-xl border border-white/[0.06] bg-cinema-elev p-5 transition-colors hover:border-primary hover:bg-primary/[0.08]"
     >
       <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
         <Icon size={18} />

@@ -242,7 +242,7 @@ function SuggestionChips({
   }
 
   return (
-    <div className="mb-5 rounded-xl border border-primary/20 bg-primary/[0.08]/40 p-4">
+    <div className="mb-5 rounded-xl border border-primary/20 bg-primary/[0.08] p-4">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <Sparkles size={15} className="text-primary" />

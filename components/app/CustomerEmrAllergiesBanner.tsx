@@ -32,8 +32,8 @@ export function CustomerEmrAllergiesBanner({ customerId }: { customerId: string 
   return (
     <div className={`rounded-xl border p-4 ${
       tone === "danger"
-        ? "border-danger/30 bg-rose-500/[0.06]/40"
-        : "border-warning/30 bg-amber-500/15/40"
+        ? "border-danger/30 bg-rose-500/[0.06]"
+        : "border-warning/30 bg-amber-500/15"
     }`}>
       <div className="flex items-start gap-3">
         <ShieldAlert size={18} className={tone === "danger" ? "shrink-0 text-rose-200" : "shrink-0 text-amber-300"} />

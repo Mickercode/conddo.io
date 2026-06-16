@@ -64,7 +64,7 @@ export function DashboardProgramsWidget() {
               {totalEnrolled}
             </p>
           </div>
-          <div className="rounded-md bg-emerald-500/15/50 px-3 py-2.5">
+          <div className="rounded-md bg-emerald-500/15 px-3 py-2.5">
             <p className="inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.05em] text-emerald-300">
               <TrendingUp size={10} /> MRR
             </p>

@@ -247,7 +247,7 @@ function PickStage({
         className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-6 py-10 text-center transition-colors ${
           isDragging
             ? "border-primary bg-primary/[0.08]"
-            : "border-white/[0.06] bg-white/[0.02] hover:border-primary hover:bg-primary/[0.08]/30"
+            : "border-white/[0.06] bg-white/[0.02] hover:border-primary hover:bg-primary/[0.08]"
         }`}
         onClick={() => fileInputRef.current?.click()}
       >
@@ -291,7 +291,7 @@ function PickStage({
         </button>
       </div>
 
-      <p className="flex items-start gap-1.5 rounded-md bg-amber-500/15/50 px-3 py-2 text-[11px] text-amber-300">
+      <p className="flex items-start gap-1.5 rounded-md bg-amber-500/15 px-3 py-2 text-[11px] text-amber-300">
         <AlertCircle size={11} className="mt-0.5 shrink-0" />
         Existing SKUs have their stock <strong>set absolute</strong> (not added — it's a replacement). New SKUs create a Product. Every change is logged in the movement log so you can audit later.
       </p>

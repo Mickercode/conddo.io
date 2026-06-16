@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Mail, Crown } from "lucide-react";
 import { Modal } from "@/components/ui/Modal";
 import { Button } from "@/components/ui/Button";
@@ -8,11 +8,14 @@ import { Field, Select } from "@/components/ui/Field";
 import { useToast } from "@/components/ui/Toast";
 import {
   staffApi,
-  STAFF_ROLE_CATALOGUE,
+  rolesForVertical,
   roleDefFor,
   type StaffMember,
   type StaffSubRole,
 } from "@/lib/api/staff";
+import { useApiQuery } from "@/hooks/useApiQuery";
+import { meQuery } from "@/lib/api/account";
+import { verticalOf } from "@/lib/verticalCopy";
 import { ApiError } from "@/lib/api/client";
 
 /** Manage a teammate (PATCH /staff/{id}): change sub-role, activate /
@@ -31,6 +34,14 @@ export function ManageStaffModal({
   onChanged?: () => void;
 }) {
   const toast = useToast();
+  const { data: me } = useApiQuery(meQuery);
+  const vertical = verticalOf(me);
+  // PHARMACIST is filtered out for non-pharmacy verticals — same rule
+  // as InviteStaffModal. If the existing member already has the role
+  // (legacy invite on a tenant whose vertical changed), keep it in the
+  // dropdown for THIS member so the value isn't dropped on the floor.
+  const roles = useMemo(() => rolesForVertical(vertical), [vertical]);
+
   const [staffRole, setStaffRole] = useState<StaffSubRole>("CASHIER");
   const [active, setActive] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -117,11 +128,20 @@ export function ManageStaffModal({
               value={staffRole}
               onChange={(e) => setStaffRole(e.target.value as StaffSubRole)}
             >
-              {STAFF_ROLE_CATALOGUE.map((r) => (
-                <option key={r.key} value={r.key}>
-                  {r.label}
-                </option>
-              ))}
+              {/* If the existing member's role would be filtered out
+                  (e.g. PHARMACIST on a now-non-pharmacy tenant), keep
+                  it visible so we don't silently drop their value. */}
+              {roles
+                .concat(
+                  roles.some((r) => r.key === staffRole)
+                    ? []
+                    : [{ key: staffRole, label: staffRole, description: "", access: [] }],
+                )
+                .map((r) => (
+                  <option key={r.key} value={r.key}>
+                    {r.label}
+                  </option>
+                ))}
             </Select>
           </Field>
 

@@ -193,7 +193,7 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
 
         {/* Medical record (pharmacy only — full EMR lives at /pharmacy/emr) */}
         {isPharmacy && (
-          <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/[0.08]/30 px-5 py-4">
+          <div className="flex items-center justify-between rounded-xl border border-primary/20 bg-primary/[0.08] px-5 py-4">
             <div className="flex items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/[0.08] text-primary">
                 <Activity size={16} />
