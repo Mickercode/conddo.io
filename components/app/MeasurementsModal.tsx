@@ -51,6 +51,45 @@ export function MeasurementsModal({
   );
   const fields: VerticalMeasurementField[] = verticalQ.data?.measurementFields ?? [];
 
+  // Vertical-aware copy. Body measurements are only meaningful in fashion;
+  // for music-studio the same key/value JSONB stores artist-profile fields
+  // (Stage name, Genre, BPM, DAW, gear notes); other verticals get a
+  // generic profile editor. Title + placeholders flip per vertical so a
+  // music-studio owner doesn't see "Chest" as the example field.
+  const verticalCopy = (() => {
+    if (verticalId === "music-studio") {
+      return {
+        title: "Artist profile",
+        empty: "Record artist details — stage name, genre, BPM, DAW, gear preferences.",
+        keyPlaceholder: "Label (e.g. Stage name)",
+        valuePlaceholder: "Value (e.g. Wizzy Beats)",
+        savedToast: "Artist profile saved",
+        errorToast: "Couldn't save artist profile",
+        addLabel: "Add field",
+      };
+    }
+    if (verticalId === "fashion") {
+      return {
+        title: "Measurements",
+        empty: "Record body measurements as label + value pairs.",
+        keyPlaceholder: "Label (e.g. Chest)",
+        valuePlaceholder: "Value (e.g. 38in)",
+        savedToast: "Measurements saved",
+        errorToast: "Couldn't save measurements",
+        addLabel: "Add measurement",
+      };
+    }
+    return {
+      title: "Customer profile",
+      empty: "Record any details as label + value pairs.",
+      keyPlaceholder: "Label",
+      valuePlaceholder: "Value",
+      savedToast: "Profile saved",
+      errorToast: "Couldn't save profile",
+      addLabel: "Add field",
+    };
+  })();
+
   const [rows, setRows] = useState<Row[]>(toRows(initial));
   const [saving, setSaving] = useState(false);
 
@@ -112,11 +151,11 @@ export function MeasurementsModal({
     setSaving(true);
     try {
       await onSave(map);
-      toast.success("Measurements saved");
+      toast.success(verticalCopy.savedToast);
       onClose();
       onSaved?.();
     } catch (err) {
-      toast.error("Couldn't save measurements", err instanceof ApiError ? err.message : "Please try again.");
+      toast.error(verticalCopy.errorToast, err instanceof ApiError ? err.message : "Please try again.");
     } finally {
       setSaving(false);
     }
@@ -126,10 +165,10 @@ export function MeasurementsModal({
     <Modal
       open={open}
       onClose={close}
-      title="Measurements"
+      title={verticalCopy.title}
       description={fields.length > 0
         ? `${verticalQ.data?.name ?? "Your vertical"}: standard fields are seeded. Add or remove freely.`
-        : "Record any measurements as label + value pairs."}
+        : verticalCopy.empty}
       footer={
         <>
           <Button variant="secondary" size="md" onClick={close} disabled={saving}>Cancel</Button>
@@ -147,13 +186,13 @@ export function MeasurementsModal({
               <TextInput
                 value={r.key}
                 onChange={(e) => setRow(i, { key: e.target.value })}
-                placeholder="Label (e.g. Chest)"
+                placeholder={verticalCopy.keyPlaceholder}
                 className="flex-1"
               />
               <TextInput
                 value={r.value}
                 onChange={(e) => setRow(i, { value: e.target.value })}
-                placeholder={unit ? `Value (${unit})` : "Value (e.g. 38in)"}
+                placeholder={unit ? `Value (${unit})` : verticalCopy.valuePlaceholder}
                 className="flex-1"
               />
               <button
@@ -194,7 +233,7 @@ export function MeasurementsModal({
           onClick={() => setRows((prev) => [...prev, { key: "", value: "" }])}
           className="inline-flex items-center gap-1.5 text-[13px] font-medium text-primary hover:underline"
         >
-          <Plus size={15} /> Add measurement
+          <Plus size={15} /> {verticalCopy.addLabel}
         </button>
       </form>
     </Modal>

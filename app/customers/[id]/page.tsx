@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { Phone, Mail, CalendarDays, Plus, Ruler, Users, ShoppingBag, ReceiptText, Activity, X } from "lucide-react";
+import { Phone, Mail, CalendarDays, Plus, Ruler, Users, ShoppingBag, ReceiptText, Activity, X, Music2 } from "lucide-react";
 import { AppShell } from "@/components/app/AppShell";
 import { NewOrderModal } from "@/components/app/NewOrderModal";
 import { MeasurementsModal } from "@/components/app/MeasurementsModal";
@@ -36,7 +36,14 @@ const fmtShort = (t: string | null | undefined) => {
 function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void }) {
   const toast = useToast();
   const { data: me } = useApiQuery(meQuery);
-  const isPharmacy = verticalOf(me) === "pharmacy";
+  const vertical = verticalOf(me);
+  const isPharmacy = vertical === "pharmacy";
+  // Measurement Profile is fashion-only — body measurements (waist,
+  // chest, sleeve, etc.) are the use case. Pharmacy / music-studio /
+  // logistics etc. don't have an equivalent and should not see the
+  // empty "No measurements on file yet" card.
+  const isFashion = vertical === "fashion";
+  const isMusicStudio = vertical === "music-studio";
   const display = c.name || c.email || "Customer";
   const measurements = c.measurements ? Object.entries(c.measurements) : [];
 
@@ -215,28 +222,68 @@ function Profile({ c, onChanged }: { c: CustomerDetail; onChanged: () => void })
         {/* Cashback wallet (pharmacy only — silent if cashback flag off OR no wallet) */}
         {isPharmacy && <CustomerCashbackCard customerId={c.id} />}
 
-        {/* Measurement Profile */}
-        <div className="rounded-xl border border-white/[0.06] bg-cinema-elev">
-          <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-4">
-            <h3 className="text-[15px] font-medium text-white">Measurement Profile</h3>
-            <button onClick={() => setMeasureOpen(true)} className="text-[12px] font-semibold text-primary hover:underline">Update measurements</button>
+        {/* Measurement Profile — fashion vertical only. Body measurements
+            don't translate to any other vertical, so we hide the panel
+            entirely rather than show an empty card with a misleading
+            "Update measurements" CTA. Per-vertical profile panels for
+            music-studio / consultancy / etc. live in their own blocks
+            below this one. */}
+        {isFashion && (
+          <div className="rounded-xl border border-white/[0.06] bg-cinema-elev">
+            <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-4">
+              <h3 className="text-[15px] font-medium text-white">Measurement Profile</h3>
+              <button onClick={() => setMeasureOpen(true)} className="text-[12px] font-semibold text-primary hover:underline">Update measurements</button>
+            </div>
+            {measurements.length > 0 ? (
+              <div className="grid grid-cols-2 gap-x-8 gap-y-5 px-6 py-5 sm:grid-cols-3">
+                {measurements.map(([label, value]) => (
+                  <div key={label} className="space-y-1">
+                    <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">{label}</p>
+                    <p className="font-mono text-[17px] text-white">{String(value)}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center px-6 py-10 text-center">
+                <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/[0.08] text-primary"><Ruler size={22} /></span>
+                <p className="text-[14px] text-white/65">No measurements on file yet.</p>
+              </div>
+            )}
           </div>
-          {measurements.length > 0 ? (
-            <div className="grid grid-cols-2 gap-x-8 gap-y-5 px-6 py-5 sm:grid-cols-3">
-              {measurements.map(([label, value]) => (
-                <div key={label} className="space-y-1">
-                  <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">{label}</p>
-                  <p className="font-mono text-[17px] text-white">{String(value)}</p>
-                </div>
-              ))}
+        )}
+
+        {/* Artist Profile — music studio vertical. Stores artist-specific
+            fields (stage name, genre, BPM range, preferred DAW, gear notes)
+            in the same `measurements` JSONB on the customer row so we don't
+            need a new BE column. The MeasurementsModal driven by
+            setMeasureOpen renders vertical-aware fields when the tenant is
+            music-studio — see the modal's field-set switch. */}
+        {isMusicStudio && (
+          <div className="rounded-xl border border-white/[0.06] bg-cinema-elev">
+            <div className="flex items-center justify-between border-b border-white/[0.06] px-6 py-4">
+              <h3 className="text-[15px] font-medium text-white">Artist Profile</h3>
+              <button onClick={() => setMeasureOpen(true)} className="text-[12px] font-semibold text-primary hover:underline">Update profile</button>
             </div>
-          ) : (
-            <div className="flex flex-col items-center px-6 py-10 text-center">
-              <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/[0.08] text-primary"><Ruler size={22} /></span>
-              <p className="text-[14px] text-white/65">No measurements on file yet.</p>
-            </div>
-          )}
-        </div>
+            {measurements.length > 0 ? (
+              <div className="grid grid-cols-2 gap-x-8 gap-y-5 px-6 py-5 sm:grid-cols-3">
+                {measurements.map(([label, value]) => (
+                  <div key={label} className="space-y-1">
+                    <p className="text-[11px] uppercase tracking-[0.05em] text-white/45">{label}</p>
+                    <p className="font-mono text-[17px] text-white">{String(value)}</p>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center px-6 py-10 text-center">
+                <span className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/[0.08] text-primary-light">
+                  <Music2 size={22} strokeWidth={1.75} />
+                </span>
+                <p className="text-[14px] text-white/65">No artist profile on file yet.</p>
+                <p className="mt-1 text-[12.5px] text-white/45">Capture stage name, genre, BPM, and gear preferences so every engineer walks into the session ready.</p>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Order History */}
         <div className="overflow-hidden rounded-xl border border-white/[0.06] bg-cinema-elev">
