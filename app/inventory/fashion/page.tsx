@@ -9,6 +9,7 @@ import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
+import { fashionProductApi, type FashionProduct } from "@/lib/api/fashion";
 
 // Fashion-specific inventory attributes
 const SHOE_SIZES = ["36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46"];
@@ -31,85 +32,6 @@ interface FashionInventoryItem {
   status: "in_stock" | "low" | "out";
 }
 
-// Mock data for development
-const mockFashionInventory: FashionInventoryItem[] = [
-  {
-    id: "INV-001",
-    shoeId: "1",
-    shoeName: "Classic Leather Oxford",
-    sku: "SH-001-42-BLK",
-    size: "42",
-    color: "Black",
-    category: "Formal",
-    stock: 5,
-    reorderLevel: 10,
-    unitPrice: 45000,
-    totalValue: 225000,
-    lastRestocked: "2024-06-01",
-    status: "low",
-  },
-  {
-    id: "INV-002",
-    shoeId: "1",
-    shoeName: "Classic Leather Oxford",
-    sku: "SH-001-41-BLK",
-    size: "41",
-    color: "Black",
-    category: "Formal",
-    stock: 12,
-    reorderLevel: 10,
-    unitPrice: 45000,
-    totalValue: 540000,
-    lastRestocked: "2024-06-01",
-    status: "in_stock",
-  },
-  {
-    id: "INV-003",
-    shoeId: "2",
-    shoeName: "Urban Canvas Sneaker",
-    sku: "SH-002-40-WHT",
-    size: "40",
-    color: "White",
-    category: "Sneakers",
-    stock: 15,
-    reorderLevel: 10,
-    unitPrice: 25000,
-    totalValue: 375000,
-    lastRestocked: "2024-06-10",
-    status: "in_stock",
-  },
-  {
-    id: "INV-004",
-    shoeId: "2",
-    shoeName: "Urban Canvas Sneaker",
-    sku: "SH-002-40-NAV",
-    size: "40",
-    color: "Navy",
-    category: "Sneakers",
-    stock: 3,
-    reorderLevel: 10,
-    unitPrice: 25000,
-    totalValue: 75000,
-    lastRestocked: "2024-05-20",
-    status: "low",
-  },
-  {
-    id: "INV-005",
-    shoeId: "3",
-    shoeName: "Comfort Loafer",
-    sku: "SH-003-41-TAN",
-    size: "41",
-    color: "Tan",
-    category: "Loafers",
-    stock: 0,
-    reorderLevel: 5,
-    unitPrice: 35000,
-    totalValue: 0,
-    lastRestocked: "2024-05-15",
-    status: "out",
-  },
-];
-
 const statusConfig = {
   in_stock: { tone: "success" as const, label: "In stock" },
   low: { tone: "warning" as const, label: "Low stock" },
@@ -124,23 +46,44 @@ export default function FashionInventoryPage() {
   const [lowOnly, setLowOnly] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Filter inventory
-  const filteredItems = mockFashionInventory.filter((item) => {
-    const matchesSearch = 
-      item.shoeName.toLowerCase().includes(search.toLowerCase()) ||
-      item.sku.toLowerCase().includes(search.toLowerCase());
-    
-    const matchesCategory = categoryFilter === "all" || item.category === categoryFilter;
+  // Fetch products from API
+  const { data: products = [], loading, error, refetch } = useApiQuery(
+    () => fashionProductApi.list({
+      search: search || undefined,
+      category: categoryFilter === "all" ? undefined : categoryFilter,
+      lowStockOnly: lowOnly || undefined,
+    })
+  );
+
+  // Transform products into inventory items
+  const inventoryItems: FashionInventoryItem[] = (products || []).flatMap((product: FashionProduct) =>
+    product.variants.map((variant, idx) => ({
+      id: `${product.id}-${variant.size}-${variant.color}`,
+      shoeId: product.id,
+      shoeName: product.name,
+      sku: product.sku || `${product.name}-${variant.size}-${variant.color}`,
+      size: variant.size,
+      color: variant.color,
+      category: product.category,
+      stock: variant.stock,
+      reorderLevel: 5,
+      unitPrice: product.basePrice,
+      totalValue: variant.stock * product.basePrice,
+      lastRestocked: new Date().toISOString().split('T')[0],
+      status: variant.stock === 0 ? "out" : variant.stock < 5 ? "low" : "in_stock" as const,
+    }))
+  );
+
+  // Filter inventory items
+  const filteredItems = inventoryItems.filter((item) => {
     const matchesSize = sizeFilter === "all" || item.size === sizeFilter;
     const matchesColor = colorFilter === "all" || item.color === colorFilter;
-    const matchesLow = !lowOnly || item.status === "low" || item.status === "out";
-    
-    return matchesSearch && matchesCategory && matchesSize && matchesColor && matchesLow;
+    return matchesSize && matchesColor;
   });
 
-  const totalPairs = filteredItems.reduce((sum, item) => sum + item.stock, 0);
-  const totalValue = filteredItems.reduce((sum, item) => sum + item.totalValue, 0);
-  const lowStockCount = filteredItems.filter((item) => item.status === "low" || item.status === "out").length;
+  const totalPairs = filteredItems.reduce((sum: number, item: FashionInventoryItem) => sum + item.stock, 0);
+  const totalValue = filteredItems.reduce((sum: number, item: FashionInventoryItem) => sum + item.totalValue, 0);
+  const lowStockCount = filteredItems.filter((item: FashionInventoryItem) => item.status === "low" || item.status === "out").length;
 
   return (
     <AppShell
@@ -227,10 +170,10 @@ export default function FashionInventoryPage() {
       </div>
 
       <QueryBoundary
-        loading={false}
-        error={null}
-        isEmpty={filteredItems.length === 0}
-        onRetry={() => {}}
+        loading={loading}
+        error={error}
+        isEmpty={!products || products.length === 0}
+        onRetry={() => refetch()}
         loadingLabel="Loading inventory…"
         empty={
           <EmptyState

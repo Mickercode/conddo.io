@@ -9,6 +9,7 @@ import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
+import { fashionProductApi, type FashionProduct } from "@/lib/api/fashion";
 
 // Shoe-specific attributes
 const SHOE_SIZES = ["36", "37", "38", "39", "40", "41", "42", "43", "44", "45", "46"];
@@ -16,98 +17,25 @@ const SHOE_COLORS = ["Black", "White", "Brown", "Tan", "Navy", "Red", "Blue", "G
 const SHOE_MATERIALS = ["Leather", "Suede", "Canvas", "Synthetic", "Textile", "Rubber"];
 const SHOE_CATEGORIES = ["Sneakers", "Formal", "Casual", "Boots", "Sandals", "Loafers", "Athletic"];
 
-interface ShoeProduct {
-  id: string;
-  name: string;
-  sku: string;
-  category: string;
-  material: string;
-  basePrice: number;
-  sizes: { size: string; stock: number; color: string }[];
-  totalStock: number;
-  status: "active" | "discontinued";
-  createdAt: string;
-}
-
-// Mock data for development
-const mockShoes: ShoeProduct[] = [
-  {
-    id: "1",
-    name: "Classic Leather Oxford",
-    sku: "SH-001",
-    category: "Formal",
-    material: "Leather",
-    basePrice: 45000,
-    sizes: [
-      { size: "40", stock: 5, color: "Black" },
-      { size: "41", stock: 8, color: "Black" },
-      { size: "42", stock: 3, color: "Black" },
-      { size: "40", stock: 4, color: "Brown" },
-      { size: "41", stock: 6, color: "Brown" },
-    ],
-    totalStock: 26,
-    status: "active",
-    createdAt: "2024-01-15",
-  },
-  {
-    id: "2",
-    name: "Urban Canvas Sneaker",
-    sku: "SH-002",
-    category: "Sneakers",
-    material: "Canvas",
-    basePrice: 25000,
-    sizes: [
-      { size: "39", stock: 10, color: "White" },
-      { size: "40", stock: 15, color: "White" },
-      { size: "41", stock: 12, color: "White" },
-      { size: "42", stock: 8, color: "White" },
-      { size: "40", stock: 6, color: "Navy" },
-      { size: "41", stock: 4, color: "Navy" },
-    ],
-    totalStock: 55,
-    status: "active",
-    createdAt: "2024-02-01",
-  },
-  {
-    id: "3",
-    name: "Comfort Loafer",
-    sku: "SH-003",
-    category: "Loafers",
-    material: "Leather",
-    basePrice: 35000,
-    sizes: [
-      { size: "41", stock: 7, color: "Tan" },
-      { size: "42", stock: 5, color: "Tan" },
-      { size: "43", stock: 3, color: "Tan" },
-    ],
-    totalStock: 15,
-    status: "active",
-    createdAt: "2024-02-10",
-  },
-];
-
 export default function ShoesPage() {
   const [search, setSearch] = useState("");
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [materialFilter, setMaterialFilter] = useState<string>("all");
   const [modalOpen, setModalOpen] = useState(false);
-  const [editingShoe, setEditingShoe] = useState<ShoeProduct | null>(null);
+  const [editingShoe, setEditingShoe] = useState<FashionProduct | null>(null);
 
-  // Filter shoes based on search and filters
-  const filteredShoes = mockShoes.filter((shoe) => {
-    const matchesSearch = 
-      shoe.name.toLowerCase().includes(search.toLowerCase()) ||
-      shoe.sku.toLowerCase().includes(search.toLowerCase());
-    
-    const matchesCategory = categoryFilter === "all" || shoe.category === categoryFilter;
-    const matchesMaterial = materialFilter === "all" || shoe.material === materialFilter;
-    
-    return matchesSearch && matchesCategory && matchesMaterial;
-  });
+  // Fetch shoes from API
+  const { data: shoes = [], loading, error, refetch } = useApiQuery(
+    () => fashionProductApi.list({
+      search: search || undefined,
+      category: categoryFilter === "all" ? undefined : categoryFilter,
+      material: materialFilter === "all" ? undefined : materialFilter,
+    })
+  );
 
-  const totalStock = filteredShoes.reduce((sum, shoe) => sum + shoe.totalStock, 0);
-  const totalValue = filteredShoes.reduce((sum, shoe) => sum + (shoe.totalStock * shoe.basePrice), 0);
-  const lowStockCount = filteredShoes.filter((shoe) => shoe.totalStock < 10).length;
+  const totalStock = (shoes || []).reduce((sum: number, shoe: FashionProduct) => sum + shoe.totalStock, 0);
+  const totalValue = (shoes || []).reduce((sum: number, shoe: FashionProduct) => sum + (shoe.totalStock * shoe.basePrice), 0);
+  const lowStockCount = (shoes || []).filter((shoe: FashionProduct) => shoe.hasLowStock).length;
 
   return (
     <AppShell
@@ -175,10 +103,10 @@ export default function ShoesPage() {
       </div>
 
       <QueryBoundary
-        loading={false}
-        error={null}
-        isEmpty={filteredShoes.length === 0}
-        onRetry={() => {}}
+        loading={loading}
+        error={error}
+        isEmpty={!shoes || shoes.length === 0}
+        onRetry={() => refetch()}
         loadingLabel="Loading shoes…"
         empty={
           <EmptyState
@@ -200,15 +128,15 @@ export default function ShoesPage() {
         }
       >
         <div className="space-y-4">
-          {filteredShoes.map((shoe) => (
+          {(shoes || []).map((shoe: FashionProduct) => (
             <div key={shoe.id} className="rounded-xl border border-white/[0.06] bg-cinema-elev p-5">
               <div className="mb-4 flex items-start justify-between">
                 <div>
                   <div className="mb-2 flex items-center gap-2">
                     <h3 className="text-[15px] font-semibold text-white">{shoe.name}</h3>
-                    <Chip tone={shoe.status === "active" ? "success" : "neutral"}>{shoe.status}</Chip>
+                    <Chip tone={shoe.active ? "success" : "neutral"}>{shoe.active ? "active" : "inactive"}</Chip>
                   </div>
-                  <p className="font-mono text-[12px] text-white/45">SKU: {shoe.sku}</p>
+                  <p className="font-mono text-[12px] text-white/45">SKU: {shoe.sku || "N/A"}</p>
                   <div className="mt-2 flex items-center gap-3 text-[12px] text-white/65">
                     <span>{shoe.category}</span>
                     <span>·</span>
@@ -238,7 +166,7 @@ export default function ShoesPage() {
               <div className="rounded-lg border border-white/[0.06] bg-white/[0.02] p-4">
                 <p className="mb-3 text-[12px] uppercase tracking-[0.05em] text-white/45">Stock by size & color</p>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  {shoe.sizes.map((variant) => (
+                  {shoe.variants.map((variant) => (
                     <div
                       key={`${variant.size}-${variant.color}`}
                       className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-cinema-elev px-3 py-2"

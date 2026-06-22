@@ -10,6 +10,7 @@ import { QueryBoundary } from "@/components/ui/QueryBoundary";
 import { EmptyState } from "@/components/ui/States";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
+import { fashionOrderApi, type FashionOrder } from "@/lib/api/fashion";
 
 // Fashion-specific order stages
 const FASHION_STAGES = [
@@ -20,99 +21,6 @@ const FASHION_STAGES = [
   { name: "Ready", position: 5 },
   { name: "Shipped", position: 6 },
   { name: "Delivered", position: 7 },
-];
-
-interface FashionOrderItem {
-  shoeId: string;
-  shoeName: string;
-  size: string;
-  color: string;
-  quantity: number;
-  unitPrice: number;
-  totalPrice: number;
-}
-
-interface FashionOrder {
-  id: string;
-  reference: string;
-  customer: string;
-  customerId: string;
-  stage: string;
-  items: FashionOrderItem[];
-  totalAmount: number;
-  orderDate: string;
-  expectedDelivery?: string;
-  notes?: string;
-  flag?: "URGENT" | "OVERDUE";
-}
-
-// Mock data for development
-const mockFashionOrders: FashionOrder[] = [
-  {
-    id: "ORD-001",
-    reference: "SH-2024-001",
-    customer: "John Doe",
-    customerId: "CUST-001",
-    stage: "Production",
-    items: [
-      {
-        shoeId: "1",
-        shoeName: "Classic Leather Oxford",
-        size: "42",
-        color: "Black",
-        quantity: 1,
-        unitPrice: 45000,
-        totalPrice: 45000,
-      },
-    ],
-    totalAmount: 45000,
-    orderDate: "2024-06-15",
-    expectedDelivery: "2024-07-15",
-    notes: "Custom width requested",
-  },
-  {
-    id: "ORD-002",
-    reference: "SH-2024-002",
-    customer: "Jane Smith",
-    customerId: "CUST-002",
-    stage: "Processing",
-    items: [
-      {
-        shoeId: "2",
-        shoeName: "Urban Canvas Sneaker",
-        size: "40",
-        color: "White",
-        quantity: 2,
-        unitPrice: 25000,
-        totalPrice: 50000,
-      },
-    ],
-    totalAmount: 50000,
-    orderDate: "2024-06-18",
-    expectedDelivery: "2024-07-10",
-    flag: "URGENT",
-  },
-  {
-    id: "ORD-003",
-    reference: "SH-2024-003",
-    customer: "Mike Johnson",
-    customerId: "CUST-003",
-    stage: "Quality Check",
-    items: [
-      {
-        shoeId: "3",
-        shoeName: "Comfort Loafer",
-        size: "41",
-        color: "Tan",
-        quantity: 1,
-        unitPrice: 35000,
-        totalPrice: 35000,
-      },
-    ],
-    totalAmount: 35000,
-    orderDate: "2024-06-10",
-    expectedDelivery: "2024-06-25",
-  },
 ];
 
 const stageColors: Record<string, string> = {
@@ -130,16 +38,13 @@ export default function FashionOrdersPage() {
   const [stageFilter, setStageFilter] = useState<string>("all");
   const [modalOpen, setModalOpen] = useState(false);
 
-  // Filter orders
-  const filteredOrders = mockFashionOrders.filter((order) => {
-    const matchesSearch = 
-      order.customer.toLowerCase().includes(search.toLowerCase()) ||
-      order.reference.toLowerCase().includes(search.toLowerCase());
-    
-    const matchesStage = stageFilter === "all" || order.stage === stageFilter;
-    
-    return matchesSearch && matchesStage;
-  });
+  // Fetch orders from API
+  const { data: orders = [], loading, error, refetch } = useApiQuery(
+    () => fashionOrderApi.list({
+      search: search || undefined,
+      stage: stageFilter === "all" ? undefined : stageFilter,
+    })
+  );
 
   // Group by stage for kanban-like view
   const stages = FASHION_STAGES.filter((s) => s.name !== "Delivered");
@@ -147,10 +52,10 @@ export default function FashionOrdersPage() {
 
   const ordersByStage = stages.map((stage) => ({
     ...stage,
-    orders: filteredOrders.filter((o) => o.stage === stage.name),
+    orders: (orders || []).filter((o: FashionOrder) => o.stage === stage.name),
   }));
 
-  const deliveredOrders = filteredOrders.filter((o) => o.stage === "Delivered");
+  const deliveredOrders = (orders || []).filter((o: FashionOrder) => o.stage === "Delivered");
 
   return (
     <AppShell
@@ -202,10 +107,10 @@ export default function FashionOrdersPage() {
       </div>
 
       <QueryBoundary
-        loading={false}
-        error={null}
-        isEmpty={filteredOrders.length === 0}
-        onRetry={() => {}}
+        loading={loading}
+        error={error}
+        isEmpty={!orders || orders.length === 0}
+        onRetry={() => refetch()}
         loadingLabel="Loading orders…"
         empty={
           <EmptyState
@@ -304,7 +209,7 @@ function OrderCard({ order }: { order: FashionOrder }) {
         )}
         <span className="font-mono text-[13px] text-white">{naira(order.totalAmount)}</span>
       </div>
-      <h3 className="mb-1 text-[14px] font-semibold text-white">{order.customer}</h3>
+      <h3 className="mb-1 text-[14px] font-semibold text-white">{order.customerName}</h3>
       
       {/* Show items summary */}
       <div className="mb-3 space-y-1">
@@ -319,9 +224,9 @@ function OrderCard({ order }: { order: FashionOrder }) {
       </div>
 
       <div className="flex items-center justify-between">
-        <Chip tone="neutral" className={stageColors[order.stage]}>{order.stage}</Chip>
+        <Chip tone="neutral">{order.stage}</Chip>
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/[0.02] font-mono text-[10px] font-bold text-white/65">
-          {order.customer.split(" ").map((n) => n[0]).join("")}
+          {order.customerName.split(" ").map((n: string) => n[0]).join("")}
         </span>
       </div>
     </Link>
