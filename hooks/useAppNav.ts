@@ -1,6 +1,6 @@
 "use client";
 
-import { Home, Settings, Activity, Sparkles } from "lucide-react";
+import { Home, Settings, Activity, Sparkles, Package, Scissors } from "lucide-react";
 import { useManifests } from "./useManifests";
 import { useApiQuery } from "./useApiQuery";
 import { APP_NAV } from "@/lib/app-nav";
@@ -30,6 +30,18 @@ const VERTICAL_EXTRAS: Partial<Record<VerticalId, SpliceEntry[]>> = {
       // Patient-centric clinical record. Sits next to Consultations + Prescriptions.
       item: { label: "Medical Records", href: "/pharmacy/emr", icon: Activity },
       insertAfter: "/consultations",
+    },
+  ],
+  fashion: [
+    {
+      // Shoe product catalog with size/color tracking. Sits next to Inventory.
+      item: { label: "Shoes", href: "/shoes", icon: Package },
+      insertAfter: "/inventory",
+    },
+    {
+      // Fashion-specific order management. Sits next to Orders.
+      item: { label: "Fashion Orders", href: "/orders/fashion", icon: Scissors },
+      insertAfter: "/orders",
     },
   ],
 };
