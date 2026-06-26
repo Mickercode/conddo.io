@@ -1,0 +1,75 @@
+name: CI
+
+# Per Infrastructure Working Doc §5: every push runs lint + typecheck +
+# build. Deploys happen on merge to dev / staging / production via
+# separate workflows (see deploy.yml — wired once deploy targets are
+# finalised). For now this is the quality-gate safety net.
+
+on:
+  push:
+    branches: [main, dev, staging, production]
+  pull_request:
+    # Run on PRs targeting any of the long-lived branches. feature/*
+    # branches don't deploy; they only run CI through this PR trigger.
+
+# Cancel an in-flight run if the same ref gets pushed again — saves
+# minutes on the GitHub Actions free tier (Infra Doc §7: 2,000 min/mo).
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Lint · Typecheck · Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          # Pin to the LTS that matches our local development.
+          # Bump alongside the engines field in package.json.
+          node-version: "20"
+          cache: npm
+
+      - name: Install dependencies
+        # `npm ci` enforces package-lock.json — no silent dep drift
+        # between local and CI. Fails fast if lockfile is out of sync.
+        run: npm ci
+
+      - name: ESLint
+        # next lint runs the project-configured ESLint via the Next
+        # CLI. Non-blocking warnings still pass; only actual errors
+        # fail the job.
+        run: npm run lint
+
+      - name: TypeScript typecheck
+        # The build will also typecheck, but running tsc separately
+        # gives a cleaner error surface when something breaks — and
+        # lets the build step focus on bundler errors.
+        run: npx tsc --noEmit
+
+      - name: Build
+        # Reuses the same build path Vercel uses for production, so
+        # if CI passes, deploy should too. Cache the .next folder
+        # between runs to keep this under 60s.
+        run: npm run build
+        env:
+          # Public env vars only — secrets stay in the deploy workflow.
+          # Defaults below let the build pass on a fresh fork that
+          # hasn't configured anything yet.
+          NEXT_PUBLIC_APP_DOMAIN: ${{ vars.NEXT_PUBLIC_APP_DOMAIN || 'conddo.io' }}
+          NEXT_PUBLIC_EMAIL_DOMAIN: ${{ vars.NEXT_PUBLIC_EMAIL_DOMAIN || 'conddo.io' }}
+
+      - name: Upload .next as artifact (PR only)
+        # Saves the build output on PR runs so a reviewer can pull
+        # and run it locally without re-building. Skip on push
+        # builds — they go straight to deploy via Vercel.
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: next-build-${{ github.sha }}
+          path: .next
+          retention-days: 3
