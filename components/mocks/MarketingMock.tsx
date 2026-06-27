@@ -1,5 +1,6 @@
 import { Instagram, Facebook, Calendar } from "lucide-react";
 import { Frame } from "./Frame";
+import { APP_DOMAIN } from "@/lib/brand";
 import { Chip } from "../ui/Chip";
 
 const week = [
@@ -14,7 +15,7 @@ const week = [
 
 export function MarketingMock() {
   return (
-    <Frame url="marketing · conddo.io">
+    <Frame url={`marketing · ${APP_DOMAIN}`}>
       <div className="bg-neutral-surface p-5">
         {/* Mini content calendar */}
         <div className="mb-4 flex items-center justify-between">

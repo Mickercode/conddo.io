@@ -1,5 +1,6 @@
 import { Package, AlertTriangle } from "lucide-react";
 import { Frame } from "./Frame";
+import { APP_DOMAIN } from "@/lib/brand";
 import { Chip } from "../ui/Chip";
 
 const pipeline = [
@@ -11,7 +12,7 @@ const pipeline = [
 
 export function OperationsMock() {
   return (
-    <Frame url="orders · conddo.io">
+    <Frame url={`orders · ${APP_DOMAIN}`}>
       <div className="bg-neutral-surface p-5">
         {/* Order pipeline */}
         <div className="mb-4 flex items-center justify-between">

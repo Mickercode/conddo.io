@@ -17,6 +17,7 @@ import { login, slugify } from "@/lib/api/account";
 import { loginWithGoogle, hasGoogleClient } from "@/lib/api/google";
 import { clearAccessToken } from "@/lib/api/auth";
 import { ApiError } from "@/lib/api/client";
+import { APP_DOMAIN } from "@/lib/brand";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -101,7 +102,7 @@ export default function LoginPage() {
                 required
               />
               <span className="inline-flex h-11 items-center rounded-r-lg border border-l-0 border-white/10 bg-white/[0.02] px-3 font-mono text-[12.5px] text-white/45">
-                .conddo.io
+                .{APP_DOMAIN}
               </span>
             </div>
           </AuthRow>

@@ -1,5 +1,6 @@
 import { TrendingUp } from "lucide-react";
 import { Frame } from "./Frame";
+import { APP_DOMAIN } from "@/lib/brand";
 
 const stats = [
   { label: "Revenue", value: "₦1.84M" },
@@ -18,7 +19,7 @@ const line = [30, 42, 38, 55, 48, 67, 60, 78];
 
 export function AnalyticsMock() {
   return (
-    <Frame url="analytics · conddo.io">
+    <Frame url={`analytics · ${APP_DOMAIN}`}>
       <div className="bg-neutral-surface p-5">
         {/* Stat tiles */}
         <div className="mb-4 grid grid-cols-3 gap-3">

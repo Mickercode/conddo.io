@@ -14,6 +14,7 @@ import { api, ApiError } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { websiteApi } from "@/lib/api/website";
 import type { Result } from "@/lib/api/types";
+import { BRAND_NAME, tenantWorkspaceUrl } from "@/lib/brand";
 
 // FE-side normalized status — keep this stable; backend casing/values get
 // mapped to these.
@@ -89,7 +90,7 @@ function WebsiteContent({ site, onChanged }: { site: Website; onChanged: () => v
   const [connectingDomain, setConnectingDomain] = useState(false);
   const changeRequestsQ = useApiQuery(websiteApi.changeRequests);
   const analyticsQ = useApiQuery(() => websiteApi.analytics("30d"));
-  const domain = site.customDomain ?? `${site.subdomain}.conddo.io`;
+  const domain = site.customDomain ?? tenantWorkspaceUrl(site.subdomain);
   const chip = statusChip[site.status] ?? statusChip.draft;
 
   async function connectDomain(e: React.FormEvent) {
@@ -252,7 +253,7 @@ function WebsiteContent({ site, onChanged }: { site: Website; onChanged: () => v
           )}
         </div>
         <p className="mb-4 text-[14px] text-white/65">
-          Point your own domain (e.g. yourbusiness.com) at your conddo.io website. Growth tenants get a free .com.ng via 9stacks; Scaler unlocks any custom domain.
+          Point your own domain (e.g. yourbusiness.com) at your {BRAND_NAME} website. Growth tenants get a free .com.ng via 9stacks; Scaler unlocks any custom domain.
         </p>
         <form onSubmit={connectDomain} className="flex flex-col gap-2 sm:flex-row">
           <div className="relative flex-1">

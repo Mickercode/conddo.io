@@ -6,6 +6,7 @@ import { useApiQuery } from "@/hooks/useApiQuery";
 import { meQuery } from "@/lib/api/account";
 import { naira } from "@/lib/format";
 import type { OrderDetail } from "@/lib/api/orders";
+import { tenantWorkspaceUrl } from "@/lib/brand";
 
 // Print stylesheet — when the user hits Print, the browser's Save-as-PDF
 // option is one of the destinations they can pick. We hide everything on
@@ -89,7 +90,7 @@ export function InvoiceModal({
           <div>
             <h1 className="text-[26px] font-semibold tracking-[-0.01em] text-white">{tenant?.name ?? "Your business"}</h1>
             <p className="mt-0.5 font-mono text-[12px] text-white/45">
-              {tenant?.subdomain ? `${tenant.subdomain}.conddo.io` : ""}
+              {tenant?.subdomain ? tenantWorkspaceUrl(tenant.subdomain) : ""}
             </p>
           </div>
           <div className="text-right">

@@ -8,6 +8,7 @@ import { useApiQuery } from "@/hooks/useApiQuery";
 import { publicBookingApi } from "@/lib/api/public-booking";
 import { ApiError, isNotConfigured, isServerError } from "@/lib/api/client";
 import type { DayKey } from "@/lib/api/bookings";
+import { BRAND_NAME } from "@/lib/brand";
 
 const inputCls =
   "h-11 w-full rounded-md border border-white/10 bg-cinema-elev px-3.5 text-[15px] text-white placeholder:text-white/35 focus:border-primary-light focus:outline-none";
@@ -66,7 +67,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
     <main className="flex min-h-screen items-center justify-center bg-cinema-base px-4 py-10">
       <div className="w-full max-w-md">
         <div className="mb-8 flex justify-center">
-          <Image src="/conddo_logo.png" alt="conddo.io" width={1800} height={480} priority className="h-7 w-auto opacity-80" />
+          <Image src="/conddo_logo.png" alt={BRAND_NAME} width={1800} height={480} priority className="h-7 w-auto opacity-80" />
         </div>
 
         <div className="rounded-2xl border border-white/[0.06] bg-cinema-elev p-7 sm:p-8">
@@ -175,7 +176,7 @@ export default function PublicBookingPage({ params }: { params: { slug: string }
         </div>
 
         <p className="mt-6 text-center text-[12px] text-white/45">
-          Powered by <span className="font-medium text-white/65">conddo.io</span>
+          Powered by <span className="font-medium text-white/65">{BRAND_NAME}</span>
         </p>
       </div>
     </main>

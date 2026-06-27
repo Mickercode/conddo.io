@@ -1,6 +1,7 @@
 import { Link2, Copy } from "lucide-react";
 import { Frame } from "./Frame";
 import { Chip } from "../ui/Chip";
+import { APP_DOMAIN, tenantPayUrl } from "@/lib/brand";
 
 const invoices = [
   { id: "INV-204", name: "Adaeze O.", amount: "₦42,000", tone: "success" as const, status: "Paid" },
@@ -10,7 +11,7 @@ const invoices = [
 
 export function PaymentsMock() {
   return (
-    <Frame url="payments · conddo.io">
+    <Frame url={`payments · ${APP_DOMAIN}`}>
       <div className="bg-neutral-surface p-5">
         {/* Headline figure */}
         <div className="mb-4 rounded-lg border border-neutral-border p-4">
@@ -53,7 +54,7 @@ export function PaymentsMock() {
           <div className="flex items-center gap-2.5">
             <Link2 size={15} className="text-primary" />
             <span className="font-mono text-[12px] text-primary">
-              conddo.io/pay/amaka-styles
+              {tenantPayUrl("amaka-styles")}
             </span>
           </div>
           <Copy size={14} className="text-primary" />

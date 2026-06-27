@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { useOnboarding } from "@/lib/onboarding-store";
 import { hrefFor, nextStep } from "@/lib/onboarding-steps";
 import { businessNamePlaceholder, type VerticalId } from "@/lib/verticalCopy";
+import { tenantWorkspaceUrl } from "@/lib/brand";
 
 const NIGERIAN_STATES = ["Lagos", "Abuja (FCT)", "Rivers", "Oyo", "Kano"];
 const SWATCHES = ["#7C5CBF", "#111111", "#1A6B4A", "#C0392B", "#2980B9", "#C17F3A", "#E84393", "#00CEC9"];
@@ -213,7 +214,7 @@ export default function BusinessProfileStep() {
               <span className="h-2 w-2 rounded-full bg-neutral-strong" />
               <span className="h-2 w-2 rounded-full bg-neutral-strong" />
               <span className="ml-2 truncate font-mono text-[10px] text-white/45">
-                {(name ? name.toLowerCase().replace(/\s+/g, "-") : "your-business")}.conddo.io
+                {tenantWorkspaceUrl(name ? name.toLowerCase().replace(/\s+/g, "-") : undefined)}
               </span>
             </div>
             <div className="flex flex-col items-center px-5 py-7 text-center">

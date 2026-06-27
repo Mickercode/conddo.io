@@ -7,6 +7,7 @@ import {
 } from "lucide-react";
 import { Frame } from "./Frame";
 import { Chip } from "../ui/Chip";
+import { APP_DOMAIN } from "@/lib/brand";
 
 const navItems = [
   { icon: LayoutGrid, label: "Dashboard", active: true },
@@ -33,7 +34,7 @@ const orders = [
 
 export function DashboardPreview() {
   return (
-    <Frame url="amaka-styles.conddo.io">
+    <Frame url={`amaka-styles.${APP_DOMAIN}`}>
       <div className="grid grid-cols-1 sm:grid-cols-[180px_1fr]">
         {/* Sidebar */}
         <aside className="hidden border-r border-neutral-border bg-neutral-surface2/60 p-4 sm:block">

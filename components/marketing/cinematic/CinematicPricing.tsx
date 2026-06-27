@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import { Check, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import { mailtoSales } from "@/lib/brand";
 
 /** Cinematic pricing block — three plan cards above a Monthly/Quarterly
  *  toggle. Same dark-on-dark surface as the rest of the cinematic system.
@@ -83,7 +84,7 @@ const plans: Plan[] = [
       "Custom configurations",
       "Priority phone support",
     ],
-    cta: { label: "Talk to sales", href: "mailto:sales@conddo.io?subject=Scaler%20plan" },
+    cta: { label: "Talk to sales", href: mailtoSales("Scaler plan") },
   },
 ];
 

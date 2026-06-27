@@ -8,6 +8,7 @@ import {
 import { Section, Eyebrow } from "./ui/Section";
 import { Frame } from "./mocks/Frame";
 import { Chip } from "./ui/Chip";
+import { APP_DOMAIN } from "@/lib/brand";
 
 /**
  * The single most important differentiator on the page: Conddo.io is
@@ -97,7 +98,7 @@ export function BusinessTypes() {
         <p className="mx-auto mb-6 max-w-xl text-center text-[15px] text-content-secondary">
           {active.promise}
         </p>
-        <Frame url={`${active.id}-business.conddo.io`}>
+        <Frame url={`${active.id}-business.${APP_DOMAIN}`}>
           <div className="p-5 sm:p-6">
             <ActiveBody />
           </div>

@@ -1,5 +1,6 @@
 import { Shirt, ArrowRight } from "lucide-react";
 import { Frame } from "./Frame";
+import { APP_DOMAIN } from "@/lib/brand";
 
 const products = [
   { name: "Ankara Wrap Dress", price: "₦42,000" },
@@ -9,7 +10,7 @@ const products = [
 
 export function WebsiteMock() {
   return (
-    <Frame url="amaka-styles.conddo.io">
+    <Frame url={`amaka-styles.${APP_DOMAIN}`}>
       <div className="bg-neutral-surface">
         {/* Site nav */}
         <div className="flex items-center justify-between border-b border-neutral-border px-5 py-3">

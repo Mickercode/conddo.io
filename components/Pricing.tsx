@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Check } from "lucide-react";
 import { Section, Eyebrow } from "./ui/Section";
 import { Button } from "./ui/Button";
+import { APP_DOMAIN, mailtoSupport } from "@/lib/brand";
 
 // Plans match conddo-pricing-tiers.md (the canonical source). When this is
 // hooked up to /billing/plans (BILLING_TIERS_SPEC.md), this static catalog
@@ -30,7 +31,7 @@ const plans: Plan[] = [
     quarterlySavings: 6_000,
     blurb: "For businesses going digital for the first time.",
     features: [
-      "Custom website (conddo.io subdomain)",
+      `Custom website (${APP_DOMAIN} subdomain)`,
       "Payment collection",
       "CRM & customer records",
       "Order management",
@@ -80,7 +81,7 @@ const plans: Plan[] = [
       "Custom module configuration",
       "Priority phone support",
     ],
-    cta: { label: "Book a free consultation", href: "mailto:hello@conddo.io?subject=Scaler%20consultation" },
+    cta: { label: "Book a free consultation", href: mailtoSupport("Scaler consultation") },
   },
 ];
 

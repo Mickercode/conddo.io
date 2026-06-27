@@ -28,6 +28,7 @@ import { Chip } from "@/components/ui/Chip";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { useActiveModulePaths, isPathAllowed } from "@/hooks/useModuleAccess";
 import { naira } from "@/lib/format";
+import { tenantWorkspaceUrl } from "@/lib/brand";
 import { dashboardApi, type Summary, type Tone } from "@/lib/api/dashboard";
 import { ordersApi } from "@/lib/api/orders";
 import { bookingsApi } from "@/lib/api/bookings";
@@ -300,7 +301,7 @@ export default function DashboardPage() {
             {website?.subdomain ? (
               <>
                 <div className="mb-4 rounded-md bg-white/[0.02] px-3 py-2 font-mono text-[12px] text-white/65">
-                  {website.subdomain}.conddo.io
+                  {tenantWorkspaceUrl(website.subdomain)}
                 </div>
                 <div className="grid grid-cols-2 gap-3">
                   <div>

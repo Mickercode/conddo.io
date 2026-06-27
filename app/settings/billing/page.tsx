@@ -17,6 +17,7 @@ import {
 import { meQuery } from "@/lib/api/account";
 import { ApiError } from "@/lib/api/client";
 import { openPaystackInline, paystackInlineAvailable } from "@/lib/paystack-inline";
+import { mailtoSupport } from "@/lib/brand";
 
 // Catalog mirrors the marketing pricing page. Source of truth at run time is
 // /billing/plans (BE), but the static copy here lets the page render fully
@@ -74,7 +75,7 @@ export default function BillingSettings() {
   async function selectPlan(targetId: PlanId) {
     if (targetId === "scaler") {
       // Scaler is sales-led, not self-serve — open consultation email.
-      window.location.href = "mailto:hello@conddo.io?subject=Scaler%20upgrade";
+      window.location.href = mailtoSupport("Scaler upgrade");
       return;
     }
     if (targetId === currentPlan) return;

@@ -7,6 +7,13 @@ import {
 } from "lucide-react";
 import { Frame } from "./Frame";
 import { Chip } from "../ui/Chip";
+import { APP_DOMAIN } from "@/lib/brand";
+
+// Mock tenant subdomain shown in the hero preview's URL pill. Doesn't
+// resolve to a real tenant — it's purely a visual "look, the product
+// runs on a subdomain" cue. Built from the active app domain so the
+// marketing site reads consistently after the `getconddo.com` cutover.
+const DEMO_SUBDOMAIN = `amaka-styles.${APP_DOMAIN}`;
 
 /**
  * The hero's product preview. Auto-rotates through 5 tabs so a visitor sees
@@ -33,11 +40,11 @@ type Tab = {
 };
 
 const TABS: Tab[] = [
-  { id: "dashboard", label: "Dashboard", icon: LayoutGrid, url: "amaka-styles.conddo.io", Body: DashboardBody },
-  { id: "orders",    label: "Orders",    icon: ShoppingBag, url: "amaka-styles.conddo.io/orders", Body: OrdersBody },
-  { id: "customers", label: "Customers", icon: Users,       url: "amaka-styles.conddo.io/customers", Body: CustomersBody },
-  { id: "payments",  label: "Payments",  icon: Wallet,      url: "amaka-styles.conddo.io/payments", Body: PaymentsBody },
-  { id: "marketing", label: "Marketing", icon: Megaphone,   url: "amaka-styles.conddo.io/marketing", Body: MarketingBody },
+  { id: "dashboard", label: "Dashboard", icon: LayoutGrid, url: DEMO_SUBDOMAIN,                  Body: DashboardBody },
+  { id: "orders",    label: "Orders",    icon: ShoppingBag, url: `${DEMO_SUBDOMAIN}/orders`,    Body: OrdersBody },
+  { id: "customers", label: "Customers", icon: Users,       url: `${DEMO_SUBDOMAIN}/customers`, Body: CustomersBody },
+  { id: "payments",  label: "Payments",  icon: Wallet,      url: `${DEMO_SUBDOMAIN}/payments`,  Body: PaymentsBody },
+  { id: "marketing", label: "Marketing", icon: Megaphone,   url: `${DEMO_SUBDOMAIN}/marketing`, Body: MarketingBody },
 ];
 
 const ROTATE_MS = 4000;
