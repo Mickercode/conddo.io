@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Wordmark } from "@/components/marketing/Wordmark";
 import { routeBySlug, TOTAL_STEPS } from "@/lib/onboarding-steps";
+import { BRAND_NAME } from "@/lib/brand";
 
 /**
  * Onboarding chrome — cinematic dark version. Shared shell for every
@@ -39,7 +40,7 @@ export function OnboardingChrome({ children }: { children: ReactNode }) {
       {/* Header — wordmark + step counter + Save & Exit. Floating against
           the cinematic surface, no border, glass-style on scroll. */}
       <header className="relative z-10 flex w-full items-center justify-between px-6 py-5 md:px-8 md:py-6">
-        <Link href="/" aria-label="conddo.io home" className="inline-flex items-center">
+        <Link href="/" aria-label={`${BRAND_NAME} home`} className="inline-flex items-center">
           <Wordmark tone="light" />
         </Link>
         <div className="flex items-center gap-4">

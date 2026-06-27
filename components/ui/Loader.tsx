@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 /**
- * Branded spinner — the conddo.io four-square mark rotating 360°.
+ * Branded spinner — the Conddo four-square mark rotating 360°.
  * Used by the route-transition overlay and available for any loading state.
  */
 export function Loader({ size = 56 }: { size?: number }) {

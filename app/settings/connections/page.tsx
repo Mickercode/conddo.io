@@ -18,6 +18,7 @@ import {
   type SocialAccountPlatform,
 } from "@/lib/api/social";
 import { ApiError, isPlanUpgradeRequired, planUpgradeDetails } from "@/lib/api/client";
+import { mailtoSupport } from "@/lib/brand";
 
 // "live" = Ayrshare covers this provider end-to-end (the BE shipment
 // b7eccb0 wires it). "coming_soon" = on the roadmap but no integration
@@ -239,7 +240,7 @@ function ConnectionSettingsInner() {
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3 text-[12px] text-white/45">
         <p>
           Need a connection that isn't listed?{" "}
-          <a href="mailto:hello@conddo.io?subject=Connection%20request" className="font-medium text-primary hover:underline">
+          <a href={mailtoSupport("Connection request")} className="font-medium text-primary hover:underline">
             Tell us what you use
           </a>
         </p>

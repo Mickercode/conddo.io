@@ -19,6 +19,7 @@ import { Button } from "@/components/ui/Button";
 import { Chip } from "@/components/ui/Chip";
 import { useOnboarding } from "@/lib/onboarding-store";
 import { registerComplete } from "@/lib/api/account";
+import { BRAND_NAME, tenantWorkspaceUrl } from "@/lib/brand";
 
 const tasks: { label: string; href: string; icon: LucideIcon }[] = [
   { label: "Add your first customer", href: "/customers", icon: UserPlus },
@@ -74,7 +75,7 @@ export default function ReadyStep() {
           {greeting}
         </h1>
         <p className="mt-2 text-[16px] text-white/65">
-          {business} is now on conddo.io.
+          {business} is now on {BRAND_NAME}.
         </p>
       </div>
 
@@ -151,10 +152,10 @@ export default function ReadyStep() {
         )}
         <div className="text-center">
           <p className="mb-1.5 text-[11px] font-medium uppercase tracking-[0.08em] text-white/45">
-            Share your conddo.io link
+            Share your {BRAND_NAME} link
           </p>
           <span className="inline-flex items-center gap-2 rounded-full border border-white/[0.06] bg-cinema-elev px-3.5 py-1.5">
-            <span className="font-mono text-[13px] text-primary">{slug}.conddo.io</span>
+            <span className="font-mono text-[13px] text-primary">{tenantWorkspaceUrl(slug)}</span>
             <Copy size={14} className="text-white/45" />
           </span>
         </div>

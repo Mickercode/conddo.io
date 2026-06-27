@@ -9,10 +9,12 @@ import { useToast } from "@/components/ui/Toast";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { websiteApi, type TenantSite } from "@/lib/api/website";
 import { ApiError } from "@/lib/api/client";
+import { DOCS_URL, PUBLIC_API_BASE } from "@/lib/brand";
 
-// Public docs URL for the integration guide. Lives outside conddo-app; if
-// the marketing site is down, the link still doesn't break the page.
-const DOCS_URL = "https://docs.conddo.io/website-integration";
+// Page-local docs URL for the integration guide. Joins the env-driven
+// DOCS_URL base with the path. Lives outside conddo-app; if the marketing
+// site is down, the link still doesn't break the page.
+const INTEGRATION_DOCS_URL = `${DOCS_URL}/website-integration`;
 
 function ApiKeyRow({ site, onRegenerated }: { site: TenantSite; onRegenerated: (next: TenantSite) => void }) {
   const toast = useToast();
@@ -117,14 +119,14 @@ function QuickStart({ slug, apiKey }: { slug: string; apiKey: string }) {
   // write) cover the common cases.
   const snippet = `// Fetch store info
 const res = await fetch(
-  "https://api.conddo.io/api/v1/public/${slug}/store-info",
+  "${PUBLIC_API_BASE}/api/v1/public/${slug}/store-info",
   { headers: { "X-Conddo-Site-Key": "${apiKey}" } }
 );
 const store = await res.json();
 
 // Submit an order
 await fetch(
-  "https://api.conddo.io/api/v1/public/${slug}/pharmacy/orders",
+  "${PUBLIC_API_BASE}/api/v1/public/${slug}/pharmacy/orders",
   {
     method: "POST",
     headers: {
@@ -198,7 +200,7 @@ export function SiteIntegrationPanel({ slug }: { slug: string }) {
             Quick start
           </h3>
           <a
-            href={DOCS_URL}
+            href={INTEGRATION_DOCS_URL}
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-1 text-[12px] font-medium text-primary hover:underline"

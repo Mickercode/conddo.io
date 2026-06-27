@@ -3,6 +3,7 @@
 import { Lock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { planUpgradeDetails } from "@/lib/api/client";
+import { mailtoSales } from "@/lib/brand";
 
 // Wire-shape that backend returns on a 403 PLAN_UPGRADE_REQUIRED — see
 // backend/BILLING_TIERS_SPEC.md §5. The FE can also synthesize this locally
@@ -60,7 +61,7 @@ export function PlanGate({
           <Sparkles size={15} /> Upgrade plan
         </Button>
         <a
-          href="mailto:hello@conddo.io?subject=Plan%20questions"
+          href={mailtoSales("Plan questions")}
           className="text-[13px] text-white/45 hover:text-white"
         >
           Talk to sales

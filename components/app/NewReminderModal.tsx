@@ -18,6 +18,7 @@ import {
   type CreateReminderInput,
 } from "@/lib/api/reminders";
 import { ApiError } from "@/lib/api/client";
+import { tenantWorkspaceHttpsUrl } from "@/lib/brand";
 
 type Errors = Partial<Record<"customerId" | "message" | "scheduledAt", string>>;
 
@@ -105,7 +106,7 @@ export function NewReminderModal({
     websiteUrl: me?.tenant?.subdomain
       ? `https://${me.tenant.subdomain}`
       : me?.tenant?.slug
-        ? `https://${me.tenant.slug}.conddo.io`
+        ? tenantWorkspaceHttpsUrl(me.tenant.slug)
         : "your website",
   };
   const preview = previewReminderMessage(message, previewCtx);

@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type ReactNode } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { APP_DOMAIN } from "@/lib/brand";
 import {
   Globe, Users, Wallet, Package, BarChart3, Megaphone, IdCard, ShoppingCart,
 } from "lucide-react";
@@ -141,7 +142,7 @@ function BentoCell({
 export function WebsiteVisual() {
   // A miniature mock website slowly tilts + the URL bar types out.
   const [chars, setChars] = useState(0);
-  const url = "wellspring.conddo.io";
+  const url = `wellspring.${APP_DOMAIN}`;
   useEffect(() => {
     const id = setInterval(() => {
       setChars((c) => (c >= url.length ? 0 : c + 1));

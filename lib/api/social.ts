@@ -6,7 +6,7 @@
 // BE provisions an Ayrshare User Profile (one per tenant), returns the
 // hosted-connect URL → FE redirects → user authorises inside Ayrshare's
 // dialog → Ayrshare bounces back to
-// app.conddo.io/settings/connections?reconnect=1 → FE refetches accounts.
+// app.<APP_DOMAIN>/settings/connections?reconnect=1 → FE refetches accounts.
 
 import { api } from "./client";
 

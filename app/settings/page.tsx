@@ -9,6 +9,7 @@ import { ApiError, isNotConfigured } from "@/lib/api/client";
 import { useApiQuery } from "@/hooks/useApiQuery";
 import { settingsApi } from "@/lib/api/settings";
 import { mediaApi } from "@/lib/api/media";
+import { APP_DOMAIN, tenantWorkspaceUrl } from "@/lib/brand";
 
 const WEEKDAYS = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -161,7 +162,7 @@ export default function BusinessProfileSettings() {
                 <div>
                   <label className={labelCls}>Subdomain</label>
                   <div className="cursor-not-allowed rounded-lg border border-white/[0.06] bg-white/[0.02] px-3.5 py-2.5 font-mono text-[14px] text-white/65">
-                    {p?.subdomain ? `${p.subdomain}.conddo.io` : "—.conddo.io"}
+                    {p?.subdomain ? tenantWorkspaceUrl(p.subdomain) : `—.${APP_DOMAIN}`}
                   </div>
                 </div>
               </div>

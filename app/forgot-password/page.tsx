@@ -10,6 +10,7 @@ import {
   fieldInputCls,
 } from "@/components/auth/CinematicAuthShell";
 import { forgotPassword, slugify } from "@/lib/api/account";
+import { APP_DOMAIN } from "@/lib/brand";
 
 export default function ForgotPasswordPage() {
   const [workspace, setWorkspace] = useState("");
@@ -87,7 +88,7 @@ export default function ForgotPasswordPage() {
                 required
               />
               <span className="inline-flex h-11 items-center rounded-r-lg border border-l-0 border-white/10 bg-white/[0.02] px-3 font-mono text-[12.5px] text-white/45">
-                .conddo.io
+                .{APP_DOMAIN}
               </span>
             </div>
           </div>

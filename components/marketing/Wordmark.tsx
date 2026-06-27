@@ -2,7 +2,7 @@
  *  surface so there's no baked-in background plate that conflicts with
  *  the dark header capsule.
  *
- *  Structure: a small 2×2 gradient brand mark + the "conddo.io" wordmark
+ *  Structure: a small 2×2 gradient brand mark + the "Conddo" wordmark
  *  in the body font (semibold, tight tracking). Tone prop switches
  *  between light (for dark surfaces — default) and dark (for light
  *  surfaces, if we ever need it). */

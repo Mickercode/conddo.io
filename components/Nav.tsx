@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Menu, X, ArrowRight, Sparkles } from "lucide-react";
 import { Wordmark } from "@/components/marketing/Wordmark";
+import { BRAND_NAME } from "@/lib/brand";
 
 /** Marketing nav links. /product is the deep-dive (so we don't clash with
  *  the dashboard's auth-gated /features), /businesses is "Solutions" in
@@ -72,7 +73,7 @@ export function Nav() {
             {/* Brand — inline wordmark (no PNG plate). */}
             <Link
               href="/"
-              aria-label="conddo.io home"
+              aria-label={`${BRAND_NAME} home`}
               className="inline-flex items-center shrink-0"
             >
               <Wordmark tone="light" />

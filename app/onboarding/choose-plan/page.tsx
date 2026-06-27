@@ -6,6 +6,7 @@ import { CircleCheck, Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useOnboarding } from "@/lib/onboarding-store";
 import { hrefFor, nextStep } from "@/lib/onboarding-steps";
+import { mailtoSupport } from "@/lib/brand";
 
 // Plan IDs match the canonical catalog in conddo-pricing-tiers.md /
 // backend/BILLING_TIERS_SPEC.md. Self-serve onboarding only offers Launcher
@@ -156,7 +157,7 @@ export default function ChoosePlanStep() {
           Running 3+ locations or a team that needs custom workflows?
         </p>
         <a
-          href="mailto:hello@conddo.io?subject=Scaler%20consultation"
+          href={mailtoSupport("Scaler consultation")}
           className="text-[14px] font-medium text-primary hover:underline"
         >
           Book a Scaler consultation →

@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft } from "lucide-react";
 import { Wordmark } from "@/components/marketing/Wordmark";
 import { cn } from "@/lib/utils";
+import { BRAND_NAME } from "@/lib/brand";
 
 /** Wraps every auth surface (login, signup, onboarding step, accept-invite,
  *  forgot/reset password) with the cinematic dark shell so the conversion
@@ -58,7 +59,7 @@ export function CinematicAuthShell({
         transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
       >
         <div className="container-x flex items-center justify-between pt-6 md:pt-8">
-          <Link href="/" aria-label="conddo.io home" className="inline-flex items-center">
+          <Link href="/" aria-label={`${BRAND_NAME} home`} className="inline-flex items-center">
             <Wordmark tone="light" />
           </Link>
           {back && (

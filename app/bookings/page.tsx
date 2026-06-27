@@ -22,6 +22,7 @@ import { useApiQuery } from "@/hooks/useApiQuery";
 import { naira } from "@/lib/format";
 import { meQuery } from "@/lib/api/account";
 import { bookingsApi, type BookingEvent, type DayKey } from "@/lib/api/bookings";
+import { tenantBookingUrl } from "@/lib/brand";
 
 const DAY_KEYS: DayKey[] = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 const DOW = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -91,7 +92,7 @@ export default function BookingsPage() {
   const upcomingList = upcoming.data ?? [];
   const availability = availabilityQ.data;
   const hours = availability?.workingHours;
-  const bookingLink = me?.tenant?.subdomain ? `conddo.io/book/${me.tenant.subdomain}` : "conddo.io/book/…";
+  const bookingLink = tenantBookingUrl(me?.tenant?.subdomain);
 
   function refetchAll() {
     events.refetch();
